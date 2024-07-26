@@ -1,0 +1,2 @@
+site,measurment_date,actuator_extension,permittivity,water_percentage,density,vna_filename,latitude,longitude
+port_of_brisbane,2024-07-25T04:38:34.150107Z,210,48.478176806789,74.50681770248181,8.649472315066328,2024-07-25T04-38-34.150107Z_210_vnaData.s1p,-27.43289,153.138586
