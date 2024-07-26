@@ -1,0 +1,121 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="card mb-3">
+    <h5 class="card-header">
+        Site Selection
+    </h5>
+    <div class="card-body">
+        <div class="row" id="site_selection"></div>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <h5 class="card-header">
+        Measurement Delay
+    </h5>
+    <div class="card-body">
+        <div class="row" id="measurement_delay_selection"></div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        var site_list = JSON.parse('{{ sites | tojson | safe }}');
+        var current_site = '{{ config.CONFIG_RUN.site }}';
+
+        var measurement_delay_list = JSON.parse('{{ measurement_delays | tojson | safe }}');
+        var current_measurement_delay = '{{ config.CONFIG_RUN.measurement_manager.measurement_delay }}';
+
+        // create a list of buttons in the site selection div
+        for (var i = 0; i < site_list.length; i++) {
+            var site = site_list[i];
+            let button_colour = 'bg-primary';
+            let button_text = 'Select';
+            if (site.id == current_site) {
+                button_colour = 'bg-success';
+                button_text = 'Selected';
+            }
+            $("#site_selection").append(`<div class="col-md-4 my-2 card-group">
+                <div class="card">
+                <div class="row mx-0 h-100">
+                    <div class="col-md-4 ${button_colour} d-flex align-items-center justify-content-center settings-page-panel">
+                        <a class="btn btn-outline-light stretched-link site-select-button" data-site="${site.id}">${button_text}</a>
+                    </div>
+                    <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title">${site.name}</h5>
+                        <p class="card-text">${site.country}</p>
+                        <p class="card-text"><small class="text-muted">Last calibrated: ${site.calibration_date}.</small></p>
+                    </div>
+                    </div>
+                </div>
+                </div>
+                </div>`);
+        }
+
+        // create a list of buttons in the measurement delay selection div
+        for (var i = 0; i < measurement_delay_list.length; i++) {
+            var measurement_delay = measurement_delay_list[i];
+            let button_colour = 'bg-primary';
+            let button_text = 'Select';
+            if (measurement_delay == current_measurement_delay) {
+                button_colour = 'bg-success';
+                button_text = 'Selected';
+            }
+            //$("#site_selection").append(`<button class="btn btn-primary site-select-button ${button_colour} m-4 p-4" type="button" data-site="${site.id}">${site.name}</button>`);
+            $("#measurement_delay_selection").append(`<div class="col-md-4 my-2 card-group">
+                <div class="card">
+                <div class="row mx-0 h-100">
+                    <div class="col-md-4 ${button_colour} d-flex align-items-center justify-content-center settings-page-panel">
+                        <a class="btn btn-outline-light stretched-link delay-select-button" data-measurement-delay="${measurement_delay}">${button_text}</a>
+                    </div>
+                    <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title">${measurement_delay}</h5>
+                        <p class="card-text">Seconds</p>
+                    </div>
+                    </div>
+                </div>
+                </div>
+                </div>`);
+        }
+
+        // add the click event to the buttons
+        $(".site-select-button").click(function () {
+            var site = $(this).data('site');
+            $.ajax({
+                url: '{{ url_for("main.settings_post") }}',
+                type: 'POST',
+                data: JSON.stringify({
+                    site: site
+                }),
+                success: function (data) {
+                    location.reload();
+                }
+            });
+        });
+        
+        $(".delay-select-button").click(function () {
+            var measurement_delay = $(this).data('measurement-delay');
+            $.ajax({
+                url: '{{ url_for("main.settings_post") }}',
+                type: 'POST',
+                data: JSON.stringify({
+                    measurement_delay: measurement_delay
+                }),
+                success: function (data) {
+                    location.reload();
+                }
+            });
+        });
+
+        
+    });
+</script>
+{% endblock %}

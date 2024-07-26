@@ -1,0 +1,282 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div clas="mb-3">
+    <h1>{{ config.CONFIG_MACHINE.machineNumber}}</h1>
+    <hr>
+</div>
+
+<div id="mount_controls" class="row">
+    <div class="col-md-6 mb-4">
+        <div class="h-100 p-5 text-white bg-dark rounded-3 position-relative">
+            <h2>Actuator Position</h2>
+            <p>
+                <span id="current_position">xx</span> mm
+            </p>
+            <p>
+                <span id="current_action" style="color: red;">not currently performing action</span>
+            </p>
+
+            <p>
+                Check that the 3 right side indicators at the top right are green.
+                If not reconnect Sensor and Actuator to Computer.
+            </p>
+            <p>
+                Note that leaving page will not stop measurments from being taken
+                click the red Retract and Cancel Measurements button to stop Readings from being taken
+            </p>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="h-100 py-3 rounded-3 position-relative">
+            <div class="row">
+                <div class="col-8">
+                    <div class="d-grid gap-4">
+                        <button id="calibrate-button" class="btn btn-primary btn-lg"
+                            data-distance="-{{ config.CONFIG_SYSTEM.mountingSystem.retract_distance }}"
+                            type="button">Calibrate</button>
+                        <button id="run-measurements-button" class="btn btn-primary btn-lg"
+                            data-distance="{{ config.CONFIG_SYSTEM.mountingSystem.extend_distance }}" type="button">Run/Stop
+                            Measurements</button>
+                        <button id="retract-button" class="btn btn-danger btn-lg" type="button">Retract and Cancel
+                            Measurements</button>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <div class="card mb-3">
+        <h5 class="card-header">
+            Measurement Delay
+        </h5>
+        <div class="card-body">
+            <div class="row" id="measurement_delay_selection"></div>
+        </div>
+    </div>
+
+    {% endblock %}
+
+    {% block scripts %}
+    <script type="text/javascript">
+
+        var source_actuator = new EventSource("{{ url_for('eventStreams.mountingSystem_actuator_position')}}");
+
+
+        var measurement_delay_list = JSON.parse('{{ measurement_delays | tojson | safe }}');
+        var current_measurement_delay = '{{ config.CONFIG_RUN.measurement_manager.measurement_delay }}';
+
+
+        source_actuator.onmessage = function (event) {
+            // split the message data
+            var data = JSON.parse(event.data);
+            console.log(data);
+            // update the current position
+            $("#current_position").text(data.position);
+        };
+
+        // Function to send AJAX request to fullyExtend endpoint
+        function calibrateButtonAction() {
+            $("#current_action").text("Extending actuator then Calibrating");
+            $.ajax({
+                url: '/mounting-system-v2/Calibrate',
+                type: 'GET',
+                success: function (response) {
+                    if (response.error) {
+                        console.error('Error:', response.error);
+                        $("#current_action").text(response.error); // Display the error message
+                    } else {
+                        console.log('Fully extended:', response);
+                        $("#current_action").text("Done Calibrating"); // Show "Done Calibrating" message
+                        // Optionally update UI or perform other actions upon success
+                    }
+                },
+                error: function (error) {
+                    console.error('Error while extending:', error);
+                    $("#current_action").text("Error While Calibrating likely timed out while getting vna data");
+                    // Handle error cases
+                }
+            });
+        }
+
+        // Function to send AJAX request to fullyRetract endpoint
+        function runMeasurementAction() {
+            $("#current_action").text("Extending actuator then Running Measurements");
+            $.ajax({
+                url: '/mounting-system-v2/Measure',
+                type: 'GET',
+                success: function (response) {
+                    if (response.error) {
+                        console.error('Error:', response.error);
+                        $("#current_action").text(response.error); // Display the error message
+                    } else {
+                        console.log('Measurements completed:', response);
+                        $("#current_action").text(response.message); // Show "Measurements Completed" message
+                        // Optionally update UI or perform other actions upon success
+                    }
+                },
+                error: function (error) {
+                    console.error('Error while running measurements:', error);
+                    $("#current_action").text("Error While Running Measurements");
+                    // Handle error cases
+                }
+            });
+        }
+
+        // Function to send AJAX request to fullyRetract endpoint
+        function fullyRetract() {
+            $("#current_action").text("Retracting Actuator And Canceling Measurements");
+            $.ajax({
+                url: '/mounting-system-v2/fullyRetract',
+                type: 'GET',
+                success: function (response) {
+                    if (response.error) {
+                        console.error('Error:', response.error);
+                        $("#current_action").text(response.error); // Display the error message
+                    } else {
+                        console.log('Fully retracted:', response);
+                        $("#current_action").text("Actuator Fully Retracted"); // Show "Actuator Fully Retracted" message
+                        // Optionally update UI or perform other actions upon success
+                    }
+                },
+                error: function (error) {
+                    console.error('Error while retracting:', error);
+                    $("#current_action").text("Error while Retracting");
+                    // Handle error cases
+                }
+            });
+        }
+
+        // Event listeners for button clicks
+        $('#calibrate-button').click(function () {
+            var button = this; // Store the reference to the button element
+
+            button.disabled = true; // Disable the button immediately
+            calibrateButtonAction(); // Call the function to extend the mounting system
+
+            setTimeout(function () {
+                // Enable the button after the action completes
+                button.disabled = false;
+            }, 4000); // Adjust the delay as needed
+        });
+
+        $('#run-measurements-button').click(function () {
+            var button = this; // Store the reference to the button element
+
+            button.disabled = true; // Disable the button immediately
+            runMeasurementAction(); // Call the function to retract the mounting system
+            setTimeout(function () {
+                // Enable the button after the action completes
+                button.disabled = false;
+            }, 5000); // Adjust the delay as needed
+        });
+
+        $('#retract-button').click(function () {
+            var button = this; // Store the reference to the button element
+
+            button.disabled = true; // Disable the button immediately
+            fullyRetract(); // Call the function to retract the mounting system
+            setTimeout(function () {
+                // Enable the button after the action completes
+                button.disabled = false;
+            }, 1000); // Adjust the delay as needed
+        });
+
+        $(document).ready(function () {
+
+            var measurement_delay_list = JSON.parse('{{ measurement_delays | tojson | safe }}');
+            var current_measurement_delay = '{{ config.CONFIG_RUN.measurement_manager.measurement_delay }}';
+
+
+
+            // create a list of buttons in the measurement delay selection div
+            for (var i = 0; i < measurement_delay_list.length; i++) {
+                var measurement_delay = measurement_delay_list[i];
+                let button_colour = 'bg-primary';
+                let button_text = 'Select';
+                if (measurement_delay == current_measurement_delay) {
+                    button_colour = 'bg-success';
+                    button_text = 'Selected';
+                }
+                $("#measurement_delay_selection").append(`<div class="col-md-4 my-2 card-group">
+                <div class="card">
+                <div class="row mx-0 h-100">
+                    <div class="col-md-4 ${button_colour} d-flex align-items-center justify-content-center settings-page-panel">
+                        <a class="btn btn-outline-light stretched-link delay-select-button" data-measurement-delay="${measurement_delay}">${button_text}</a>
+                    </div>
+                    <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title">${measurement_delay}</h5>
+                        <p class="card-text">Seconds</p>
+                    </div>
+                    </div>
+                </div>
+                </div>
+                </div>`);
+            }
+
+
+
+            $(".delay-select-button").click(function () {
+                var measurement_delay = $(this).data('measurement-delay');
+                $.ajax({
+                    url: '{{ url_for("main.settings_post") }}',
+                    type: 'POST',
+                    data: JSON.stringify({
+                        measurement_delay: measurement_delay
+                    }),
+                    success: function (data) {
+                        location.reload();
+                    }
+                });
+            });
+
+            /*$(window).on('beforeunload', function () {
+                // Send an AJAX request or perform any action before the user leaves the page
+                $.ajax({
+                    url: '/mounting-system-v2/Leave', // Replace with your endpoint URL
+                    type: 'GET', // Use POST or GET as appropriate
+                    async: false, // Synchronous request to ensure it completes before page unload
+                    success: function (response) {
+                        console.log('Unload request sent successfully');
+                    },
+                    error: function (error) {
+                        console.error('Error sending unload request:', error);
+                    }
+                });
+            });*/
+
+
+        });
+
+        var source_status_indicators = new EventSource("{{ url_for('eventStreams.systemStatusIndicators')}}");
+
+        source_status_indicators.onmessage = function (event) {
+                var data = JSON.parse(event.data);
+                console.log(data)
+                if (data.errorMeasureing == 0) {
+
+                } else {
+                    $("#current_action").text("Error While Running Measurements Measureing Stopped (likely issues reading VNA Data - timed out) - Check Connections and refresh page and restart Measureing");
+                }
+                if (data.errorActuatorReadWrite == 0) {
+
+                } else {
+                    $("#current_action").text("Error communicating to Actuator Measureing Stopped - Check Connections and refresh page if issues persist restart server (measuring thread sometimes break on error)");
+                }
+                if (data.errorTeltonika == 0) {
+
+                } else {
+                    $("#current_action").text("Error communicating to Teltonika Measureing Stopped - Check Connections and refresh page if issues persist restart server (measuring thread sometimes break on error)");
+                }
+        };
+
+
+
+
+    </script>
+    {% endblock %}

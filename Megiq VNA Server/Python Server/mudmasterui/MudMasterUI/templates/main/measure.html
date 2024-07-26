@@ -1,0 +1,252 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<!-- Help Modal -->
+<div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="helpModalLabel">Measurement Help</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="accordion" id="help_accordian">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="help_actuator_control">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_actuator_control" aria-expanded="true" aria-controls="collapse_actuator_control">
+                                Actuator Control
+                            </button>
+                        </h2>
+                        <div id="collapse_actuator_control" class="accordion-collapse collapse show" aria-labelledby="steps_setup" data-bs-parent="#help_accordian">
+                            <div class="accordion-body">
+                                <p>
+                                    The current position of the actuator can be controlled from this 
+                                    screen by clicking/tapping on the <i>Actuator Control</i> box on 
+                                    the bottom left. This will open a popup window with the current 
+                                    position of the actuator and buttons to control the current 
+                                    extension of the actuator.
+                                </p>
+                                <img src="{{ url_for('static', filename='images/ActuatorControl.JPG') }}" class="img-fluid mx-auto">
+                                <p>
+                                    The sections of this display are:
+                                    <ul>
+                                        <li>Current actuator position - left</li>
+                                        <li>
+                                            Actuator control buttons - middle
+                                            <ul>
+                                                <li>Extend actuator {{ config.CONFIG_SYSTEM.mountingSystem.extend_distance }} mm</li>
+                                                <li>Retract actuator {{ config.CONFIG_SYSTEM.mountingSystem.retract_distance }} mm</li>
+                                                <li>Specify the actuator position (in mm)</li>
+                                            </ul>
+                                        </li>
+                                        <li>Actuator home button - return to 0 mm</li>
+                                    </ul>
+                                </p> 
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Mounting System Modal -->
+<div class="modal fade" id="armModal" tabindex="-1" aria-labelledby="armModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="armModalLabel">Mounting System</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="mount_controls" class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="h-100 p-5 text-white bg-dark rounded-3 position-relative">
+                            <h2>Actuator Position</h2>
+                            <p>
+                                <span id="current_position">xx</span> mm
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="h-100 py-3 rounded-3 position-relative">
+                            <div class="row">
+                                <div class="col-8">
+                                    <div class="d-grid gap-4">
+                                        <button class="btn btn-primary btn-lg move-button" data-distance="{{ config.CONFIG_SYSTEM.mountingSystem.extend_distance }}" type="button">Extend {{ config.CONFIG_SYSTEM.mountingSystem.extend_distance }} mm</button>
+                                        <button class="btn btn-primary btn-lg move-button" data-distance="-{{ config.CONFIG_SYSTEM.mountingSystem.retract_distance }}" type="button">Retract {{ config.CONFIG_SYSTEM.mountingSystem.retract_distance }} mm</button>
+                                        <input type="number" class="form-control" id="set_position" min="{{ config.CONFIG_SYSTEM.mountingSystem.actuator_min }}" max="{{ config.CONFIG_SYSTEM.mountingSystem.actuator_max }}" placeholder="mm" value="{{ current_actuator_position }}">
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <button class="btn btn-primary btn-lg set-button" data-position="0" type="button"><i class="fas fa-home fa-2x"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4 card-group">
+        <div class="card bg-dark mb-3 shadow flex-fill text-white">
+            <div class="card-body my-2">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5>Current Site</h5>
+                    <div id="display_site"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4 card-group">
+        <div class="card bg-dark mb-3 shadow flex-fill text-white">
+            <div class="card-body my-2">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5>Last Measurement</h5>
+                    <div id="display_date"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4 card-group">
+        <div class="card bg-dark mb-3 shadow flex-fill text-white">
+            <div class="card-body my-2">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5>Actuator Control</h5>
+                    <div><span id="display_actuator"></span> mm</div>
+                </div>
+                <a data-bs-toggle="modal" data-bs-target="#armModal" role="button" class="stretched-link"></a>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="gauge_container" class="row">
+    <div class="col-4 chart-container">
+        <canvas id="gauge_water"></canvas>
+    </div>
+    <div class="col-4 chart-container">
+        <canvas id="gauge_density"></canvas>
+    </div>
+    <div class="col-4 chart-container">
+        <canvas id="gauage_permittivity"></canvas>
+    </div>
+</div>
+<div class="d-flex">
+    <div id="display_status" class="alert flex-fill alert-primary" role="alert"></div>
+    <button type="button" class="btn btn-dark ms-2 mb-3" data-bs-toggle="modal" data-bs-target="#helpModal">
+        Help
+    </button>
+</div>
+
+
+
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='scripts/plotting/gauges.js') }}"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var source_progress = new EventSource("{{ url_for('eventStreams.measurement_progress')}}");
+
+        var gauge_water_percentage = new Gauge('gauge_water', 'Water Percentage', 0, 100, 0, '%')
+        var gauge_density = new Gauge('gauge_density', 'Density', 0, 20, 0, ' g/cm³')
+        var gauage_permittivity = new Gauge('gauage_permittivity', 'Relative Permittivity', "{{ config.CONFIG_SYSTEM.nn.permittivity_scale.min }}", "{{ config.CONFIG_SYSTEM.nn.permittivity_scale.max }}", 0, '')
+
+        source_progress.onmessage = function (event) {
+            // split the message data
+            var data = JSON.parse(event.data);
+            console.log(data);
+            
+            $('#display_site').html(data.site);
+            $('#display_date').html(new Date(data.measurement_date).toString().split(' GMT')[0]);
+            $('#display_actuator').html(data.actuator_extension);
+            $("#current_position").text(data.actuator_extension);
+
+            gauge_water_percentage.setValue(data.water_percentage.toFixed(2));
+            gauge_density.setValue(data.density.toFixed(1));
+            gauage_permittivity.setValue(data.permittivity.toFixed(1));
+
+            if (data.status == 0) {
+                if(data.next_measurement_seconds > 1) {
+                    $('#display_status').html(`Next measurment starting in ${data.next_measurement_seconds} seconds.`);
+                } else {
+                    $('#display_status').html(`Next measurment starting in ${data.next_measurement_seconds} second.`);
+                }
+                $('#display_status').removeClass('alert-success');
+                $('#display_status').addClass('alert-primary');
+            } else if (data.status == 1) {
+                $('#display_status').html('Measuring...');
+                $('#display_status').removeClass('alert-primary');
+                $('#display_status').addClass('alert-success');
+            }
+
+        };
+
+
+        var current_position = 0;
+
+        $('.move-button').click(function () {
+            var distance = $(this).data('distance');
+            console.log(distance);
+            $.ajax({
+                url: "{{ url_for('mountingSystem.move') }}",
+                type: 'GET',
+                data: {
+                    'distance': distance
+                },
+                success: function (data) {
+                    console.log(data);
+                    current_position = data.current_position;
+                    $('#set_position').val(current_position);
+                }
+            });
+        });
+
+        $('.set-button').click(function () {
+            var position = $(this).data('position');
+            console.log(position);
+            $.ajax({
+                url: "{{ url_for('mountingSystem.position_set') }}",
+                type: 'GET',
+                data: {
+                    'position': position
+                },
+                success: function (data) {
+                    console.log(data);
+                    current_position = data.current_position;
+                    $('#set_position').val(current_position);
+                }
+            });
+        });
+
+        $('#set_position').change(function () {
+            var position = $(this).val();
+            console.log(position);
+            $.ajax({
+                url: "{{ url_for('mountingSystem.position_set') }}",
+                type: 'GET',
+                data: {
+                    'position': position
+                },
+                success: function (data) {
+                    console.log(data);
+                    current_position = data.current_position;
+                    $('#set_position').val(current_position);
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

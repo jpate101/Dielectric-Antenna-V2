@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - Mudmaster UI</title>
+    <link rel="stylesheet" type="text/css" href="/static/content/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="/static/content/site.css" />
+    <link rel="stylesheet" type="text/css" href="/static/content/all.css" />
+    <link rel="stylesheet" type="text/css" href="/static/content/Chart.css" />
+    <script src="/static/scripts/modernizr-2.6.2.js"></script>
+</head>
+
+<body class="d-flex flex-column h-100">
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-dark bg-dark fixed-top px-4">
+            <a class="navbar-brand" style="min-width: 110px" href="{{ url_for('main.home') }}">Menu</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+                <div class="navbar-nav mx-auto text-white">
+                    <h4 class="my-auto d-none d-md-block">{{ title }}</h4>
+                </div>
+
+                <!--Right-hand side navbar-->
+                <div class="navbar-nav" style="min-width: 110px">
+                    <li class="nav-item my-auto"><span class="fas fa-exclamation-triangle mx-1 text-center align-middle" style="vertical-align: middle; text-align: center; color:gray" id="errorIndicator" title=""></span></li>
+                    <li class="nav-item my-auto"><span class="fas fa-chart-line mx-1 text-center align-middle" style="vertical-align: middle; text-align: center; color: gray" id="vnaConnection" title=""></span></li>
+                    <li class="nav-item my-auto"><span class="fas fa-cog mx-1 text-center align-middle" style="vertical-align: middle; text-align: center; color: gray" id="mountingSystemConection" title=""></span></li>
+                    <li class="nav-item my-auto"><span class="fas fa-map-marker-alt mx-1 text-center align-middle" style="vertical-align: middle; text-align: center; color: gray" id="teltonikaConnection" title=""></span></li>
+                </div>
+            </div>
+        </nav>
+    </header>
+    
+
+    <main class="flex-shrink-0 mt-3">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+        
+    <footer class="footer fixed-bottom py-3 bg-light">
+        <div class="container">
+            <div class="text-muted">Mudmaster  UI - Version: {{ config.VERSION }} | Machine: {{ config.CONFIG_MACHINE.machineNumber }}</div>
+        </div>
+    </footer>
+
+    <script src="/static/scripts/jquery-3.6.0.min.js"></script>
+    <script src="/static/scripts/bootstrap.js"></script>
+    <script src="/static/scripts/respond.js"></script>
+    <script src="/static/scripts/Chart.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var source_status_indicators = new EventSource("{{ url_for('eventStreams.systemStatusIndicators')}}");
+
+            source_status_indicators.onmessage = function (event) {
+                // split the message data
+                var data = JSON.parse(event.data);
+
+                if (data.errorIndicator == 0) {
+                    $("#errorIndicator").css('color', "#343a40");
+                    $("#errorIndicator").attr('title', "No Errors");
+
+                } else {
+                    $("#errorIndicator").css('color', "red");
+                    $("#errorIndicator").attr('title', "Error");
+                }
+
+                if (data.vnaConnection == 0) {
+                    $("#vnaConnection").css('color', "darkorange");
+                    $("#vnaConnection").attr('title', "VNA not connected");
+
+                } else {
+                    $("#vnaConnection").css('color', "limegreen");
+                    $("#vnaConnection").attr('title', "VNA connected");
+                }
+
+                if (data.teltonikaConnection == 0) {
+                    $("#teltonikaConnection").css('color', "red");
+                    $("#teltonikaConnection").attr('title', "Error Cant find Teltonika");
+
+                } else {
+                    $("#teltonikaConnection").css('color', "limegreen");
+                    $("#teltonikaConnection").attr('title', "Teltonika Connected");
+                }
+
+                if (data.mountingSystemConection == -1) {
+                    $("#mountingSystemConection").css('color', "darkorange");
+                    $("#mountingSystemConection").attr('title', "Mounting system not connected");
+
+                } else if (data.mountingSystemConection == 1) {
+                    $("#mountingSystemConection").css('color', "red");
+                    $("#mountingSystemConection").attr('title', "Mounting system error");
+                } else {
+                    $("#mountingSystemConection").css('color', "limegreen");
+                    $("#mountingSystemConection").attr('title', "Mounting system connected");
+                }
+            };
+        });
+    </script>
+    <script type="text/javascript">
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    </script>
+    {% block scripts %}{% endblock %}
+
+</body>
+</html>
