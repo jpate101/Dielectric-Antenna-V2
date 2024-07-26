@@ -1,0 +1,1002 @@
+// Generated .IDL file (by the OLE/COM Object Viewer)
+// 
+// typelib filename: MiQVNA.exe
+
+[
+  uuid(EF07EAAE-A60C-47D1-AF67-CCF5EB89587E),
+  version(27.0)
+]
+library miqVNA
+{
+    // TLib :     // TLib : OLE Automation : {00020430-0000-0000-C000-000000000046}
+    importlib("stdole2.tlb");
+
+    // Forward declare all types defined in this typelib
+    interface _mvnaVNAMain;
+    interface _mvnaMeasurement;
+    interface _mvnaSession;
+    interface _mvnaTraceSet;
+    interface _mvnaParameter;
+    interface _mvnaTrace;
+    interface _mvnaTraceChannel;
+    interface _mvnaIQData;
+    interface _mvnaIQ;
+    interface _mvnaEnums;
+    interface _mvnaTraces;
+    interface _mvnaTraceChannels;
+    interface _mvnaParameters;
+    interface _mvnaTraceDataSet;
+    interface _mvnaCalibration;
+    interface _mvnaCalibrations;
+    interface _mvnaMeasurements;
+    interface _mvnaApplication;
+    interface _mvnaVNADevice;
+    dispinterface __mvnaVNAMain;
+    dispinterface __mvnaMeasurement;
+    dispinterface __mvnaSession;
+
+    [
+      odl,
+      uuid(FDC33B91-536B-4B5F-BF79-EC2F9E3E576D),
+      version(1.0),
+      hidden,
+      dual,
+      nonextensible,
+      oleautomation
+    ]
+    interface _mvnaVNAMain : IDispatch {
+        [id(0x68030005), propget]
+        HRESULT TraceSet([out, retval] _mvnaTraceSet** );
+        [id(0x68030004), propget]
+        HRESULT Application([out, retval] _mvnaApplication** );
+        [id(0x68030003), propget]
+        HRESULT VNADevice([out, retval] _mvnaVNADevice** );
+        [id(0x68030002), propget]
+        HRESULT Measurement([out, retval] _mvnaMeasurement** );
+        [id(0x68030002), propputref]
+        HRESULT Measurement([in, out] _mvnaMeasurement** );
+        [id(0x68030001), propget]
+        HRESULT PresetSession([out, retval] _mvnaSession** );
+        [id(0x68030000), propget]
+        HRESULT SystemStatus([out, retval] mvnaVNAStatus* );
+        [id(0x60030006)]
+        HRESULT Connect();
+        [id(0x60030007)]
+        HRESULT Disconnect();
+        [id(0x60030008)]
+        HRESULT OpenSession(
+                        [in, out] BSTR* FileName, 
+                        [out, retval] _mvnaSession** );
+        [id(0x60030009)]
+        HRESULT RunCalibration([in] long CalIndex);
+        [id(0x6003000a)]
+        HRESULT RunSweepOnce();
+        [id(0x6003000b)]
+        HRESULT RunSweepContinuously();
+        [id(0x6003000c)]
+        HRESULT StopSweep();
+    };
+
+    [
+      uuid(B3E84C0E-1C78-411F-9C74-AE9A5A764157),
+      version(1.0)
+    ]
+    coclass mvnaVNAMain {
+        [default] interface _mvnaVNAMain;
+        [default, source] dispinterface __mvnaVNAMain;
+    };
+
+    [
+      odl,
+      uuid(D775FC89-198D-4A51-B77D-5FD54B07EC08),
+      version(1.0),
+      hidden,
+      dual,
+      nonextensible,
+      oleautomation
+    ]
+    interface _mvnaMeasurement : IDispatch {
+        [id(0x6803000c), propget]
+        HRESULT Dirty([out, retval] VARIANT_BOOL* );
+        [id(0x6803000b), propget]
+        HRESULT DateTime([out, retval] DATE* );
+        [id(0x6803000b), propput]
+        HRESULT DateTime([in] DATE );
+        [id(0x6803000a), propget]
+        HRESULT Name([out, retval] BSTR* );
+        [id(0x6803000a), propput]
+        HRESULT Name([in, out] BSTR* );
+        [id(0x68030009), propget]
+        HRESULT Key([out, retval] BSTR* );
+        [id(0x68030008), propget]
+        HRESULT DualCalkit([out, retval] VARIANT_BOOL* );
+        [id(0x68030008), propput]
+        HRESULT DualCalkit([in] VARIANT_BOOL );
+        [id(0x68030007), propget]
+        HRESULT UseCalibration([out, retval] VARIANT_BOOL* );
+        [id(0x68030007), propput]
+        HRESULT UseCalibration([in] VARIANT_BOOL );
+        [id(0x68030006), propget]
+        HRESULT TraceSet([out, retval] _mvnaTraceSet** );
+        [id(0x68030005), propget]
+        HRESULT Parameters([out, retval] _mvnaParameters** );
+        [id(0x68030004), propget]
+        HRESULT Calibrations([out, retval] _mvnaCalibrations** );
+        [id(0x68030003), propget]
+        HRESULT PortBias(
+                        [in] mvnaVNAPort Port, 
+                        [out, retval] mvnaVNABiasControl* );
+        [id(0x68030003), propput]
+        HRESULT PortBias(
+                        [in] mvnaVNAPort Port, 
+                        [in] mvnaVNABiasControl );
+        [id(0x68030002), propget]
+        HRESULT PortIdleGenerator([out, retval] mvnaVNAPort* );
+        [id(0x68030002), propput]
+        HRESULT PortIdleGenerator([in] mvnaVNAPort );
+        [id(0x6003000d)]
+        HRESULT Renormalize();
+        [id(0x6003000e)]
+        HRESULT ClearData();
+        [id(0x6003000f)]
+        HRESULT ClearCalibration();
+    };
+
+    [
+      uuid(5343EFE1-B3F9-43F5-A99E-F1A4C4F36955),
+      version(1.0),
+      noncreatable
+    ]
+    coclass mvnaMeasurement {
+        [default] interface _mvnaMeasurement;
+        [default, source] dispinterface __mvnaMeasurement;
+    };
+
+    [
+      odl,
+      uuid(1164BAD8-A3F2-4FD8-96D5-81769DE042C0),
+      version(1.0),
+      hidden,
+      dual,
+      nonextensible,
+      oleautomation
+    ]
+    interface _mvnaSession : IDispatch {
+        [id(0x68030003), propget]
+        HRESULT FileName([out, retval] BSTR* );
+        [id(0x68030002), propget]
+        HRESULT Dirty([out, retval] VARIANT_BOOL* );
+        [id(0x68030001), propget]
+        HRESULT Measurements([out, retval] _mvnaMeasurements** );
+        [id(0x60030004)]
+        HRESULT Clear();
+        [id(0x60030005)]
+        HRESULT SaveSession(
+                        [in, out] BSTR* FileName, 
+                        [in] VARIANT_BOOL SaveAs, 
+                        [in] mvnaVNADataOptions SaveOptions, 
+                        [out, retval] VARIANT_BOOL* );
+    };
+
+    [
+      uuid(DD779428-B041-4E54-AB7E-E2E9C8B35B97),
+      version(1.0),
+      noncreatable
+    ]
+    coclass mvnaSession {
+        [default] interface _mvnaSession;
+        [default, source] dispinterface __mvnaSession;
+    };
+
+    [
+      odl,
+      uuid(8A05AFA5-0424-4821-8016-573EBE663FED),
+      version(1.0),
+      hidden,
+      dual,
+      nonextensible,
+      oleautomation
+    ]
+    interface _mvnaTraceSet : IDispatch {
+        [id(00000000), propget]
+        HRESULT Traces([out, retval] _mvnaTraces** );
+        [id(0x68030000), propget]
+        HRESULT Parameters([out, retval] _mvnaParameters** );
+    };
+
+    [
+      uuid(D87A8E4C-8322-40E6-9847-6EEED77763F0),
+      version(1.0),
+      noncreatable
+    ]
+    coclass mvnaTraceSet {
+        [default] interface _mvnaTraceSet;
+    };
+
+    [
+      odl,
+      uuid(70762979-7FA8-40F9-98F9-7B355DACE28B),
+      version(1.0),
+      hidden,
+      dual,
+      nonextensible,
+      oleautomation
+    ]
+    interface _mvnaParameter : IDispatch {
+        [id(00000000), propget]
+        HRESULT Name([out, retval] BSTR* );
+        [id(0x68030007), propget]
+        HRESULT Dimension([out, retval] BSTR* );
+        [id(0x68030006), propget]
+        HRESULT IsSweep([out, retval] VARIANT_BOOL* );
+        [id(0x68030005), propget]
+        HRESULT MinValue([out, retval] double* );
+        [id(0x68030004), propget]
+        HRESULT MaxValue([out, retval] double* );
+        [id(0x68030003), propget]
+        HRESULT CurrentValue([out, retval] double* );
+        [id(0x68030003), propput]
+        HRESULT CurrentValue([in] double );
+        [id(0x68030002), propget]
+        HRESULT StartValue([out, retval] double* );
+        [id(0x68030002), propput]
+        HRESULT StartValue([in] double );
+        [id(0x68030001), propget]
+        HRESULT StopValue([out, retval] double* );
+        [id(0x68030001), propput]
+        HRESULT StopValue([in] double );
+        [id(0x68030000), propget]
+        HRESULT Steps([out, retval] long* );
+        [id(0x68030000), propput]
+        HRESULT Steps([in] long );
+        [id(0x60030008)]
+        HRESULT Update();
+    };
+
+    [
+      uuid(7027FF26-7584-4A78-80E1-A95F38ECA176),
+      version(1.0),
+      noncreatable
+    ]
+    coclass mvnaParameter {
+        [default] interface _mvnaParameter;
+    };
+
+    [
+      odl,
+      uuid(DAEFE443-7242-4D21-861C-93CF4943C727),
+      version(1.0),
+      hidden,
+      dual,
+      nonextensible,
+      oleautomation
+    ]
+    interface _mvnaTrace : IDispatch {
+        [id(0x68030002), propget]
+        HRESULT Channels([out, retval] _mvnaTraceChannels** );
+        [id(0x68030001), propget]
+        HRESULT Parameters([out, retval] _mvnaParameters** );
+        [id(0x68030000), propget]
+        HRESULT TraceNumber([out, retval] long* );
+    };
+
+    [
+      uuid(BA76132C-FCDA-425B-B62D-EB802032D3F5),
+      version(1.0),
+      noncreatable
+    ]
+    coclass mvnaTrace {
+        [default] interface _mvnaTrace;
+    };
+
+    [
+      odl,
+      uuid(1EAEA5C9-0CE1-4431-870B-6F3E20B173AE),
+      version(1.0),
+      hidden,
+      dual,
+      nonextensible,
+      oleautomation
+    ]
+    interface _mvnaTraceChannel : IDispatch {
+        [id(00000000), propget]
+        HRESULT Name([out, retval] BSTR* );
+        [id(0x68030000), propget]
+        HRESULT DataSet([out, retval] _mvnaTraceDataSet** );
+    };
+
+    [
+      uuid(693DD91D-ACDA-4F0B-AD94-6DF3DA7B642B),
+      version(1.0),
+      noncreatable
+    ]
+    coclass mvnaTraceChannel {
+        [default] interface _mvnaTraceChannel;
+    };
+
+    [
+      odl,
+      uuid(B60409C4-8B1B-47EC-97AA-B4DA3E4CA0F8),
+      version(1.0),
+      hidden,
+      dual,
+      nonextensible,
+      oleautomation
+    ]
+    interface _mvnaIQData : IDispatch {
+        [id(0x60030018)]
+        HRESULT CopyFrom([in, out] _mvnaIQData** IQData);
+        [id(0x60030019)]
+        HRESULT GetCopy([out, retval] _mvnaIQData** );
+        [id(0x68030017), propget]
+        HRESULT Name([out, retval] BSTR* );
+        [id(0x68030017), propput]
+        HRESULT Name([in, out] BSTR* );
+        [id(0x68030016), propget]
+        HRESULT Size([out, retval] long* );
+        [id(0x68030016), propput]
+        HRESULT Size([in] long );
+        [id(0x68030015), propput]
+        HRESULT SizePreserve([in] long rhs);
+        [id(0x68030014), propget]
+        HRESULT PLower([out, retval] double* );
+        [id(0x68030013), propget]
+        HRESULT PUpper([out, retval] double* );
+        [id(0x68030012), propget]
+        HRESULT IValue(
+                        [in] long Index, 
+                        [out, retval] double* );
+        [id(0x68030012), propput]
+        HRESULT IValue(
+                        [in] long Index, 
+                        [in] double );
+        [id(0x68030011), propget]
+        HRESULT QValue(
+                        [in] long Index, 
+                        [out, retval] double* );
+        [id(0x68030011), propput]
+        HRESULT QValue(
+                        [in] long Index, 
+                        [in] double );
+        [id(0x68030010), propget]
+        HRESULT PValue(
+                        [in] long Index, 
+                        [out, retval] double* );
+        [id(0x68030010), propput]
+        HRESULT PValue(
+                        [in] long Index, 
+                        [in] double );
+        [id(0x6803000f), propget]
+        HRESULT IValues([out, retval] SAFEARRAY(double)* );
+        [id(0x6003001b)]
+        HRESULT GetIValues([in, out] SAFEARRAY(double)* Vals);
+        [id(0x6003001c)]
+        HRESULT SetIValues([in, out] SAFEARRAY(double)* Vals);
+        [id(0x6803000e), propget]
+        HRESULT QValues([out, retval] SAFEARRAY(double)* );
+        [id(0x6003001d)]
+        HRESULT GetQValues([in, out] SAFEARRAY(double)* Vals);
+        [id(0x6003001e)]
+        HRESULT SetQValues([in, out] SAFEARRAY(double)* Vals);
+        [id(0x6803000d), propget]
+        HRESULT PValues([out, retval] SAFEARRAY(double)* );
+        [id(0x6003001f)]
+        HRESULT GetPValues([in, out] SAFEARRAY(double)* Vals);
+        [id(0x60030020)]
+        HRESULT SetPValues([in, out] SAFEARRAY(double)* Vals);
+        [id(0x6803000c), propget]
+        HRESULT Values([out, retval] SAFEARRAY(_mvnaIQ*)* );
+        [id(0x60030021)]
+        HRESULT GetValues([in, out] SAFEARRAY(_mvnaIQ*)* Vals);
+        [id(0x60030022)]
+        HRESULT SetValues([in, out] SAFEARRAY(_mvnaIQ*)* Vals);
+        [id(0x6803000b), propget]
+        HRESULT Value(
+                        [in] long Index, 
+                        [out, retval] _mvnaIQ** );
+        [id(0x6803000b), propputref]
+        HRESULT Value(
+                        [in] long Index, 
+                        [in, out] _mvnaIQ** );
+        [id(0x6803000a), propputref]
+        HRESULT ValuesAll([in, out] _mvnaIQ** rhs);
+        [id(0x60030023)]
+        HRESULT GetAmpValues([in, out] SAFEARRAY(double)* Vals);
+        [id(0x60030024)]
+        HRESULT GetAmpValuesDb([in, out] SAFEARRAY(double)* Vals);
+        [id(0x60030025)]
+        HRESULT GetAmpPhaseValuesDbDegrees(
+                        [in, out] SAFEARRAY(double)* Amp, 
+                        [in, out] SAFEARRAY(double)* Phase);
+        [id(0x68030009), propget]
+        HRESULT AmpValue(
+                        [in] long Index, 
+                        [out, retval] double* );
+        [id(0x68030008), propget]
+        HRESULT AmpValueDB(
+                        [in] long Index, 
+                        [out, retval] double* );
+        [id(0x60030026)]
+        HRESULT GetZ(
+                        [in, out] SAFEARRAY(_mvnaIQ*)* Z, 
+                        [in, out] _mvnaIQ** Zo);
+        [id(0x60030027)]
+        HRESULT SetZ(
+                        [in, out] SAFEARRAY(_mvnaIQ*)* Z, 
+                        [in, out] _mvnaIQ** Zo);
+        [id(0x60030028)]
+        HRESULT GetSWR([in, out] SAFEARRAY(double)* SWR);
+        [id(0x60030029)]
+        HRESULT GetFL([in, out] SAFEARRAY(double)* FL);
+        [id(0x6003002a)]
+        HRESULT AverageData(
+                        [in, out] _mvnaIQData** Data, 
+                        [in] double Average);
+        [id(0x68030007), propget]
+        HRESULT Zero([out, retval] _mvnaIQData** );
+        [id(0x68030006), propget]
+        HRESULT One([out, retval] _mvnaIQData** );
+        [id(0x68030005), propget]
+        HRESULT OneQ([out, retval] _mvnaIQData** );
+        [id(0x68030004), propget]
+        HRESULT Two([out, retval] _mvnaIQData** );
+        [id(0x68030003), propget]
+        HRESULT Amp([out, retval] _mvnaIQData** );
+        [id(0x68030002), propget]
+        HRESULT Neg([out, retval] _mvnaIQData** );
+        [id(0x68030001), propget]
+        HRESULT SqRoot([out, retval] _mvnaIQData** );
+        [id(0x68030000), propget]
+        HRESULT Smooth(
+                        [in, out] double* Factor, 
+                        [out, retval] _mvnaIQData** );
+        [id(0x6003002b)]
+        HRESULT Add(
+                        [in, out] _mvnaIQData** Val, 
+                        [out, retval] _mvnaIQData** );
+        [id(0x6003002c)]
+        HRESULT VectorAdd(
+                        [in, out] _mvnaIQData** Val, 
+                        [out, retval] _mvnaIQData** );
+        [id(0x6003002d)]
+        HRESULT Subtract(
+                        [in, out] _mvnaIQData** Val, 
+                        [out, retval] _mvnaIQData** );
+        [id(0x6003002e)]
+        HRESULT Multiply(
+                        [in, out] _mvnaIQData** Val, 
+                        [out, retval] _mvnaIQData** );
+        [id(0x6003002f)]
+        HRESULT Divide(
+                        [in, out] _mvnaIQData** Val, 
+                        [out, retval] _mvnaIQData** );
+        [id(0x60030042)]
+        HRESULT CreateIQData(
+                        [in, out] double* PMin, 
+                        [in, out] double* PMax, 
+                        [in, out] double* IVal, 
+                        [in, out] double* QVal, 
+                        [in, out] long* NrPoints);
+    };
+
+    [
+      uuid(2D6B0DFE-4AB5-4A2A-AAE7-A22B86B6C620),
+      version(1.0)
+    ]
+    coclass mvnaIQData {
+        [default] interface _mvnaIQData;
+    };
+
+    [
+      odl,
+      uuid(75BC619C-2830-484A-A25B-D59353FACF30),
+      version(1.0),
+      hidden,
+      dual,
+      nonextensible,
+      oleautomation
+    ]
+    interface _mvnaIQ : IDispatch {
+        [id(0x40030000), propget]
+        HRESULT IVal([out, retval] double* IVal);
+        [id(0x40030000), propput]
+        HRESULT IVal([in] double IVal);
+        [id(0x40030001), propget]
+        HRESULT QVal([out, retval] double* QVal);
+        [id(0x40030001), propput]
+        HRESULT QVal([in] double QVal);
+        [id(0x6803000a), propget]
+        HRESULT Value([out, retval] _mvnaIQ** );
+        [id(0x6803000a), propputref]
+        HRESULT Value([in, out] _mvnaIQ** );
+        [id(0x6003000b)]
+        HRESULT AssignPolar(
+                        [in] double Amp, 
+                        [in] double Phi);
+        [id(0x68030009), propget]
+        HRESULT Amp([out, retval] double* );
+        [id(0x68030008), propget]
+        HRESULT Phi([out, retval] double* );
+        [id(0x6003000c)]
+        HRESULT AssingPolarDB180(
+                        [in] double Amp, 
+                        [in] double Phi);
+        [id(0x68030007), propget]
+        HRESULT IsEqual(
+                        [in, out] _mvnaIQ** Val, 
+                        [out, retval] VARIANT_BOOL* );
+        [id(0x68030006), propget]
+        HRESULT AmpDB([out, retval] double* );
+        [id(0x68030005), propget]
+        HRESULT Phi180([out, retval] double* );
+        [id(0x68030004), propget]
+        HRESULT Zero([out, retval] _mvnaIQ** );
+        [id(0x68030003), propget]
+        HRESULT One([out, retval] _mvnaIQ** );
+        [id(0x68030002), propget]
+        HRESULT OneQ([out, retval] _mvnaIQ** );
+        [id(0x68030001), propget]
+        HRESULT Two([out, retval] _mvnaIQ** );
+        [id(0x68030000), propget]
+        HRESULT Neg([out, retval] _mvnaIQ** );
+        [id(0x6003000d)]
+        HRESULT Add(
+                        [in, out] _mvnaIQ** V, 
+                        [out, retval] _mvnaIQ** );
+        [id(0x6003000e)]
+        HRESULT Subtract(
+                        [in, out] _mvnaIQ** V, 
+                        [out, retval] _mvnaIQ** );
+        [id(0x6003000f)]
+        HRESULT Multiply(
+                        [in, out] _mvnaIQ** V, 
+                        [out, retval] _mvnaIQ** );
+        [id(0x60030010)]
+        HRESULT Divide(
+                        [in, out] _mvnaIQ** V, 
+                        [out, retval] _mvnaIQ** );
+    };
+
+    [
+      uuid(5D1F4E1A-F2D1-48E4-8237-4C0583525D6A),
+      version(1.0)
+    ]
+    coclass mvnaIQ {
+        [default] interface _mvnaIQ;
+    };
+
+    [
+      odl,
+      uuid(E82B1CF2-CB2B-4E33-9DF7-DED45E2B13F8),
+      version(1.0),
+      hidden,
+      dual,
+      nonextensible,
+      oleautomation
+    ]
+    interface _mvnaEnums : IDispatch {
+    };
+
+    [
+      uuid(8D1CBEF7-6733-4266-AF4A-A6D5B2945090),
+      version(1.0),
+      noncreatable
+    ]
+    coclass mvnaEnums {
+        [default] interface _mvnaEnums;
+    };
+
+    [
+      odl,
+      uuid(99694087-C992-4A0B-80E1-1206CD2408FC),
+      version(1.0),
+      hidden,
+      dual,
+      nonextensible,
+      oleautomation
+    ]
+    interface _mvnaTraces : IDispatch {
+        [id(00000000), propget]
+        HRESULT Item(
+                        [in, out] VARIANT* IndexKey, 
+                        [out, retval] _mvnaTrace** );
+        [id(0x68030000), propget]
+        HRESULT Count([out, retval] long* );
+        [id(0xfffffffc), propget, hidden]
+        HRESULT NewEnum([out, retval] IUnknown** );
+    };
+
+    [
+      uuid(8105F72A-2999-412E-9BB8-3E4CC3E8E34A),
+      version(1.0),
+      noncreatable
+    ]
+    coclass mvnaTraces {
+        [default] interface _mvnaTraces;
+    };
+
+    [
+      odl,
+      uuid(E0BFB966-806B-4822-AED8-EC440408590E),
+      version(1.0),
+      hidden,
+      dual,
+      nonextensible,
+      oleautomation
+    ]
+    interface _mvnaTraceChannels : IDispatch {
+        [id(00000000), propget]
+        HRESULT Item(
+                        [in, out] VARIANT* IndexKey, 
+                        [out, retval] _mvnaTraceChannel** );
+        [id(0x68030000), propget]
+        HRESULT Count([out, retval] long* );
+        [id(0xfffffffc), propget, hidden]
+        HRESULT NewEnum([out, retval] IUnknown** );
+    };
+
+    [
+      uuid(0865ACA8-921C-4DCD-A2F4-9329DCCFC27A),
+      version(1.0)
+    ]
+    coclass mvnaTraceChannels {
+        [default] interface _mvnaTraceChannels;
+    };
+
+    [
+      odl,
+      uuid(D91B004B-FF22-4EBA-B03A-116F41871FC0),
+      version(1.0),
+      hidden,
+      dual,
+      nonextensible,
+      oleautomation
+    ]
+    interface _mvnaParameters : IDispatch {
+        [id(00000000), propget]
+        HRESULT Item(
+                        [in, out] VARIANT* IndexKey, 
+                        [out, retval] _mvnaParameter** );
+        [id(0x68030000), propget]
+        HRESULT Count([out, retval] long* );
+        [id(0xfffffffc), propget, hidden]
+        HRESULT NewEnum([out, retval] IUnknown** );
+    };
+
+    [
+      uuid(778490F0-EE08-4E9A-ADE3-FF2FF16D9FF4),
+      version(1.0),
+      noncreatable
+    ]
+    coclass mvnaParameters {
+        [default] interface _mvnaParameters;
+    };
+
+    [
+      odl,
+      uuid(72972FB3-70C9-4494-9DFC-B88827491A16),
+      version(1.0),
+      hidden,
+      dual,
+      nonextensible,
+      oleautomation
+    ]
+    interface _mvnaTraceDataSet : IDispatch {
+        [id(00000000), propget]
+        HRESULT Item(
+                        [in, out] VARIANT* IndexKey, 
+                        [out, retval] _mvnaIQData** );
+        [id(0x68030000), propget]
+        HRESULT Count([out, retval] long* );
+        [id(0xfffffffc), propget, hidden]
+        HRESULT NewEnum([out, retval] IUnknown** );
+    };
+
+    [
+      uuid(8F08C7A9-3FA6-494B-9657-48D5F8DA8FD4),
+      version(1.0),
+      noncreatable
+    ]
+    coclass mvnaTraceDataSet {
+        [default] interface _mvnaTraceDataSet;
+    };
+
+    [
+      odl,
+      uuid(87D18315-C86E-4838-B017-45F2BD83FB29),
+      version(1.0),
+      hidden,
+      dual,
+      nonextensible,
+      oleautomation
+    ]
+    interface _mvnaCalibration : IDispatch {
+        [id(0x68030002), propget]
+        HRESULT Index([out, retval] long* );
+        [id(0x68030001), propget]
+        HRESULT Caption([out, retval] BSTR* );
+        [id(0x68030000), propget]
+        HRESULT Complete([out, retval] VARIANT_BOOL* );
+    };
+
+    [
+      uuid(7582C95D-D162-4173-BB1E-573F240C8463),
+      version(1.0),
+      noncreatable
+    ]
+    coclass mvnaCalibration {
+        [default] interface _mvnaCalibration;
+    };
+
+    [
+      odl,
+      uuid(5A1711CB-69F8-404B-B71B-B813654C9385),
+      version(1.0),
+      hidden,
+      dual,
+      nonextensible,
+      oleautomation
+    ]
+    interface _mvnaCalibrations : IDispatch {
+        [id(0x68030001), propget]
+        HRESULT Item(
+                        [in, out] VARIANT* IndexKey, 
+                        [out, retval] _mvnaCalibration** );
+        [id(0x68030000), propget]
+        HRESULT Count([out, retval] long* );
+        [id(0xfffffffc), propget, hidden]
+        HRESULT NewEnum([out, retval] IUnknown** );
+    };
+
+    [
+      uuid(4AC26CFB-28F6-42B6-85AD-AA2BD189FEA2),
+      version(1.0),
+      noncreatable
+    ]
+    coclass mvnaCalibrations {
+        [default] interface _mvnaCalibrations;
+    };
+
+    [
+      odl,
+      uuid(84E572A3-2BF4-40E7-B9F0-82233E87BF38),
+      version(1.0),
+      hidden,
+      dual,
+      nonextensible,
+      oleautomation
+    ]
+    interface _mvnaMeasurements : IDispatch {
+        [id(0x60030003)]
+        HRESULT AddItem(
+                        [in, out] _mvnaMeasurement** Measurement, 
+                        [in, out] BSTR* Name, 
+                        [in] DATE DateTime, 
+                        [out, retval] _mvnaMeasurement** );
+        [id(0x60030005)]
+        HRESULT Remove([in, out] VARIANT* IndexKey);
+        [id(0x68030001), propget]
+        HRESULT Item(
+                        [in, out] VARIANT* IndexKey, 
+                        [out, retval] _mvnaMeasurement** );
+        [id(0x68030000), propget]
+        HRESULT Count([out, retval] long* );
+        [id(0xfffffffc), propget, hidden]
+        HRESULT NewEnum([out, retval] IUnknown** );
+    };
+
+    [
+      uuid(A00045C1-33C1-45B1-8FE8-BC087085A14B),
+      version(1.0),
+      noncreatable
+    ]
+    coclass mvnaMeasurements {
+        [default] interface _mvnaMeasurements;
+    };
+
+    [
+      odl,
+      uuid(3CCAA7B7-7AAB-49C0-9C56-58C3B54BACB1),
+      version(1.0),
+      hidden,
+      dual,
+      nonextensible,
+      oleautomation
+    ]
+    interface _mvnaApplication : IDispatch {
+        [id(0x68030004), propget]
+        HRESULT Name([out, retval] BSTR* );
+        [id(0x68030003), propget]
+        HRESULT ExeName([out, retval] BSTR* );
+        [id(0x68030002), propget]
+        HRESULT Path([out, retval] BSTR* );
+        [id(0x68030001), propget]
+        HRESULT Version([out, retval] BSTR* );
+        [id(0x68030000), propget]
+        HRESULT ShowState([out, retval] mvnaWindowShowState* );
+        [id(0x68030000), propput]
+        HRESULT ShowState([in] mvnaWindowShowState );
+    };
+
+    [
+      uuid(1D753211-EBAC-4673-AA83-F49011644008),
+      version(1.0),
+      noncreatable
+    ]
+    coclass mvnaApplication {
+        [default] interface _mvnaApplication;
+    };
+
+    [
+      odl,
+      uuid(5B8E87E3-8478-4987-8682-2A5944F3C65D),
+      version(1.0),
+      hidden,
+      dual,
+      nonextensible,
+      oleautomation
+    ]
+    interface _mvnaVNADevice : IDispatch {
+        [id(0x6803000b), propget]
+        HRESULT VNAInfoString([out, retval] BSTR* );
+        [id(0x6803000a), propget]
+        HRESULT IsBootloader([out, retval] VARIANT_BOOL* );
+        [id(0x68030009), propget]
+        HRESULT Vendor([out, retval] BSTR* );
+        [id(0x68030008), propget]
+        HRESULT Product([out, retval] BSTR* );
+        [id(0x68030007), propget]
+        HRESULT DeviceType([out, retval] BSTR* );
+        [id(0x68030006), propget]
+        HRESULT SerialNumber([out, retval] BSTR* );
+        [id(0x68030005), propget]
+        HRESULT HardwareVersion([out, retval] BSTR* );
+        [id(0x68030004), propget]
+        HRESULT FirmwareVersion([out, retval] BSTR* );
+        [id(0x68030003), propget]
+        HRESULT CpldVersion([out, retval] BSTR* );
+        [id(0x68030002), propget]
+        HRESULT Ports([out, retval] mvnaVNAPort* );
+        [id(0x68030001), propget]
+        HRESULT BiasOption([out, retval] VARIANT_BOOL* );
+        [id(0x68030000), propget]
+        HRESULT DeviceID([out, retval] BSTR* );
+        [id(0x6003000c)]
+        HRESULT OverrideLedState(
+                        [in] mvnaVNAPort Port, 
+                        [in] mvnaColor Color, 
+                        [in] mvnaLedState State);
+    };
+
+    [
+      uuid(B76A1AC4-DEF1-4FC3-92D8-F52487F72306),
+      version(1.0),
+      noncreatable
+    ]
+    coclass mvnaVNADevice {
+        [default] interface _mvnaVNADevice;
+    };
+
+    [
+      uuid(8337B2DE-CAFB-49F4-88DE-4BA8EB013609),
+      version(1.0),
+      hidden,
+      nonextensible
+    ]
+    dispinterface __mvnaVNAMain {
+        properties:
+        methods:
+            [id(0x00000001)]
+            void evtSystemStatus([in] mvnaVNAStatus Status);
+            [id(0x00000002)]
+            void evtDataChange(
+                            [in] long TraceNr, 
+                            [in] long NrTraces);
+            [id(0x00000003)]
+            void evtSweepProgress(
+                            [in] long PointsReceived, 
+                            [in] long PointsTotal);
+            [id(0x00000004)]
+            void evtMeasurementChange();
+    };
+
+    [
+      uuid(61AFAB65-CCE2-42CF-AEE4-5B6EF830BA44),
+      version(1.0),
+      hidden,
+      nonextensible
+    ]
+    dispinterface __mvnaMeasurement {
+        properties:
+        methods:
+            [id(0x00000001)]
+            void evtDirty([in] VARIANT_BOOL Flag);
+            [id(0x00000002)]
+            void evtSetupChange();
+            [id(0x00000003)]
+            void evtSettingsChange();
+            [id(0x00000004)]
+            void evtDataChange(
+                            [in] long TraceNr, 
+                            [in] long NrTraces);
+            [id(0x00000005)]
+            void evtCalibrationChange(
+                            [in] long CalibrationNr, 
+                            [in] long NrCalibrations);
+            [id(0x00000006)]
+            void evtSweepProgress(
+                            [in] long PointsReceived, 
+                            [in] long PointsTotal);
+            [id(0x00000007)]
+            void evtIdleSettingsChange();
+    };
+
+    [
+      uuid(F2F70288-D65C-4937-9B5D-B678752D2658),
+      version(1.0),
+      hidden,
+      nonextensible
+    ]
+    dispinterface __mvnaSession {
+        properties:
+        methods:
+            [id(0x00000001)]
+            void evtDirty([in] VARIANT_BOOL Flag);
+    };
+
+    typedef [uuid(0F41472F-4CE4-4622-B2C6-45A2AB06A1D5), version(1.0)]
+    enum {
+        mvnaVST_Disconnected = 0,
+        mvnaVST_Initializing = 1,
+        mvnaVST_Idle = 2,
+        mvnaVST_Calibrating = 3,
+        mvnaVST_Sweeping = 4
+    } mvnaVNAStatus;
+
+    typedef [uuid(1D929649-E834-4D99-9BB5-9491664AE687), version(1.0)]
+    enum {
+        mvnaVDO_NONE = 0,
+        mvnaVDO_CALIBRATION = 2,
+        mvnaVDO_DATA = 4
+    } mvnaVNADataOptions;
+
+    typedef [uuid(F12C0C65-C206-4918-B67B-F54D63F8CB3A), version(1.0)]
+    enum {
+        mvnaVBC_Off = 0,
+        mvnaVBC_Ground = 1,
+        mvnaVBC_On = 2
+    } mvnaVNABiasControl;
+
+    typedef [uuid(D87D122A-0A58-47E6-945E-47BF48DB58B5), version(1.0)]
+    enum {
+        mvnaVNP_None = 0,
+        mvnaVNP_Port1 = 1,
+        mvnaVNP_Port2 = 2,
+        mvnaVNP_Port3 = 4
+    } mvnaVNAPort;
+
+    typedef [uuid(FDB05D2D-85F4-47D8-B0EC-B1A650BBBD9E), version(1.0)]
+    enum {
+        mvnaWSS_Hidden = 0,
+        mvnaWSS_Minimized = 1,
+        mvnaWSS_Normal = 2,
+        mvnaWSS_Maximized = 3
+    } mvnaWindowShowState;
+
+    typedef [uuid(82941918-3385-4A2D-8BF8-3426B3DC3D77), version(1.0)]
+    enum {
+        mvnaCOL_None = 0,
+        mvnaCOL_Red = 1,
+        mvnaCOL_Green = 2,
+        mvnaCOL_Blue = 4,
+        mvnaCOL_All = 7
+    } mvnaColor;
+
+    typedef [uuid(BCC289B1-04F3-49B0-8379-AFDD60D398EB), version(1.0)]
+    enum {
+        mvnaLED_Off = 0,
+        mvnaLED_On = 1,
+        mvnaLED_Blink = 2,
+        mvnaLED_BlinkFast = 3
+    } mvnaLedState;
+};
