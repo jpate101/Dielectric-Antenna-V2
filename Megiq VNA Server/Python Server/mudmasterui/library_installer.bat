@@ -1,6 +1,13 @@
-py -m pip install --upgrade numpy
-py -m pip install --upgrade flask
-py -m pip install --upgrade requests
-py -m pip install --upgrade pyserial
-py -m pip install --upgrade psutil
-py -m pip install --upgrade scikit-rf
+echo Installing Python libraries...
+
+pip install numpy
+pip install scipy
+pip install scikit-rf
+pip install flask
+pip install pyserial
+pip install psutil
+pip install requests
+pip install matplotlib
+
+echo Installation complete.
+pause
