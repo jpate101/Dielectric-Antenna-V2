@@ -7,7 +7,7 @@ class Config(object):
     SECRET_KEY = '7f2GCO8mOE6EaSgNt2MSrkBIqdya3j-BW7MInjh75B1H5GRJtnT6dkDXaN39KalMjE1f2nhxT6w2IH-5Hm0adwlXY5eF6rx4A8wy'
     VERSION = '0.1.0'
 
-    MACHINE_DIRECTORY = r'C:\Users\JoshuaPaterson\OneDrive - Phibion Pty Ltd\Documents\GitHub\Dielectric-Antenna-V2\Megiq VNA Server\movedTouchstoneFilesLocation'
+    MACHINE_DIRECTORY = r'C:\Users\JoshuaPaterson\OneDrive - Phibion Pty Ltd\Documents\GitHub\Megiq VNA Server\testData\Josh Device 1'
     CONFIG_DIRECTORY = os.path.join(basedir, 'configFiles')
     CONFIG_DIRECTORY_VNA_CAL = os.path.join(CONFIG_DIRECTORY, 'vna_cal')
 
