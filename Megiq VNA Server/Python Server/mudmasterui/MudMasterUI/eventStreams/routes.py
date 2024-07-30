@@ -75,7 +75,8 @@ def systemStatusIndicators():
             'errorTeltonika': 0,
             'CurrentlyRetracting' : 0,
             'CurrentlyExtending' : 0,
-            'CurrentlyReadingVNA' : 0
+            'CurrentlyCalibrating' : 0,
+            'CurrentlyLogging' : 0
             }
 
         yield 'data: ' + json.dumps(previousVal) + '\n\n'
@@ -93,7 +94,8 @@ def systemStatusIndicators():
                 'errorTeltonika':  bool_to_int(globalErrorVar.ErrorFromTeltonika),
                 'CurrentlyRetracting' : bool_to_int(globalErrorVar.CurrentlyRetracting),
                 'CurrentlyExtending' : bool_to_int(globalErrorVar.CurrentlyExtending),
-                'CurrentlyReadingVNA' : bool_to_int(globalErrorVar.CurrentlyReadingVNA)
+                'CurrentlyCalibrating' : bool_to_int(globalErrorVar.CurrentlyCalibrating),
+                'CurrentlyLogging' : bool_to_int(globalErrorVar.CurrentlyLogging)
                 }
 
             if(newVal != previousVal):

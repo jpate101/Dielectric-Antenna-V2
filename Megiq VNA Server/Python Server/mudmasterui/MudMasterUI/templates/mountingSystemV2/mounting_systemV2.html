@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<div clas="mb-3">
+<div class="mb-3">
     <h1>{{ config.CONFIG_MACHINE.machineNumber}}</h1>
     <hr>
 </div>
@@ -39,19 +39,13 @@
                         title=""></span></div>
             </div>
             <div class="" style="display: flex;">
-                <p>Reading / Calibrating Sensor</p>
-                <div class="nav-item my-auto"><span class="fas fa-power-off mx-1 text-center align-middle"
-                        style="vertical-align: middle; text-align: center; color: gray" id="ReadingSensor"
-                        title=""></span></div>
-            </div>
-            <div class="" style="display: flex;">
                 <div class="nav-item my-auto"><span class="fas fa-map-marker-alt mx-1 text-center align-middle"
                         style="vertical-align: middle; text-align: center; color: gray" id="teltonikaErrorIndicator"
                         title=""></span></div>
                 <div class="nav-item my-auto"><span class="fas fa-clock mx-1 text-center align-middle"
                         style="vertical-align: middle; text-align: center; color: gray"
                         id="vnaReadTimeoutErrorIndicator" title=""></span></div>
-                <div class="nav-item my-auto"><span class="fas fa-file-alt mx-1 text-center align-middle"
+                <div class="nav-item my-auto"><span class="fas fa-pen mx-1 text-center align-middle"
                         style="vertical-align: middle; text-align: center; color: gray"
                         id="ActuatorReadWriteErrorIndicator" title=""></span></div>
             </div>
@@ -64,13 +58,24 @@
                     <div class="d-grid gap-4">
                         <button id="calibrate-button" class="btn btn-primary btn-lg"
                             data-distance="-{{ config.CONFIG_SYSTEM.mountingSystem.retract_distance }}"
-                            type="button">Calibrate</button>
+                            type="button">Calibrate
+                            <div class="nav-item my-auto"><span class="fas fa-power-off mx-1 text-center align-middle"
+                                style="vertical-align: middle; text-align: center; color: gray" id="CalibrateButtonIndicator"
+                                title=""></span></div>
+                        </button>
                         <button id="run-measurements-button" class="btn btn-primary btn-lg"
                             data-distance="{{ config.CONFIG_SYSTEM.mountingSystem.extend_distance }}"
-                            type="button">Run/Stop
-                            Measurements</button>
+                            type="button">Run/Stop Measurements
+                            <div class="nav-item my-auto"><span class="fas fa-power-off mx-1 text-center align-middle"
+                                style="vertical-align: middle; text-align: center; color: gray" id="RunningMesurementsButtonIndicator"
+                                title=""></span></div>
+                        </button>
                         <button id="retract-button" class="btn btn-danger btn-lg" type="button">Retract and Cancel
-                            Measurements</button>
+                            Measurements
+                            <div class="nav-item my-auto"><span class="fas fa-power-off mx-1 text-center align-middle"
+                                style="vertical-align: middle; text-align: center; color: gray" id="RetractButtonIndicator"
+                                title=""></span></div>
+                        </button>
 
                     </div>
                 </div>
@@ -307,25 +312,6 @@
                     }
                 });
             });
-
-
-
-            /*$(window).on('beforeunload', function () {
-                // Send an AJAX request or perform any action before the user leaves the page
-                $.ajax({
-                    url: '/mounting-system-v2/Leave', // Replace with your endpoint URL
-                    type: 'GET', // Use POST or GET as appropriate
-                    async: false, // Synchronous request to ensure it completes before page unload
-                    success: function (response) {
-                        console.log('Unload request sent successfully');
-                    },
-                    error: function (error) {
-                        console.error('Error sending unload request:', error);
-                    }
-                });
-            });*/
-
-
         });
 
         var source_status_indicators = new EventSource("{{ url_for('eventStreams.systemStatusIndicators')}}");
@@ -363,12 +349,16 @@
             if (data.CurrentlyRetracting == 0) {
                 $("#RetractingActuator").css("color", "gray");
                 $("#RetractingActuator").attr('title', "not Currently Retracting");
+                $("#RetractButtonIndicator").css("color", "gray");
+                $("#RetractButtonIndicator").attr('title', "not Currently Retracting");
                 $("#calibrate-button").prop('disabled', false);
                 $("#run-measurements-button").prop('disabled', false);
                 $("#retract-button").prop('disabled', false);
             } else {
                 $("#RetractingActuator").css("color", "limegreen");
                 $("#RetractingActuator").attr('title', "Currently Retracting");
+                $("#RetractButtonIndicator").css("color", "limegreen");
+                $("#RetractButtonIndicator").attr('title', "Currently Retracting");
                 $("#calibrate-button").prop('disabled', true);
                 $("#run-measurements-button").prop('disabled', true);
                 $("#retract-button").prop('disabled', true);
@@ -388,14 +378,21 @@
                 $("#retract-button").prop('disabled', true);
             }
 
-            if (data.CurrentlyReadingVNA == 0) {
-                $("#ReadingSensor").css("color", "gray");
-                $("#ReadingSensor").attr('title', "not Currently ReadingVNA");
+            if (data.CurrentlyExtending == 0 && data.CurrentlyCalibrating == 0) {
+                $("#CalibrateButtonIndicator").css("color", "gray");
+                $("#CalibrateButtonIndicator").attr('title', "not Currently Calibrating");
             } else {
-                $("#ReadingSensor").css("color", "limegreen");
-                $("#ReadingSensor").attr('title', "Currently ReadingVNA");
+                $("#CalibrateButtonIndicator").css("color", "limegreen");
+                $("#CalibrateButtonIndicator").attr('title', "Currently Calibrating and extending");
             }
 
+            if (data.CurrentlyLogging == 0) {
+                $("#RunningMesurementsButtonIndicator").css("color", "gray");
+                $("#RunningMesurementsButtonIndicator").attr('title', "not Currently Logging");
+            } else {
+                $("#RunningMesurementsButtonIndicator").css("color", "limegreen");
+                $("#RunningMesurementsButtonIndicator").attr('title', "Currently Logging");
+            }
 
         };
 

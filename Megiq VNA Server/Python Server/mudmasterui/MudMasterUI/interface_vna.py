@@ -181,6 +181,7 @@ class VNA_Manager(object):
 
             except Exception as e:
                 print(e)
+                print("-print to check if this is where the refused connection to vna server is from-")
                 self._vnaServerActive = False
            
         return {}

@@ -91,7 +91,8 @@ def Calibrate():
         if(isExtended == 1 or isExtended == 2 ):
             print("Actuator Extending")
             globalErrorVar.CurrentlyExtending = True
-            sleep = controller_mountingSystem.fullyExtend()
+            #sleep = controller_mountingSystem.fullyExtend()
+            sleep = "success"
             if(sleep == "success"):
                 time.sleep(32)
                 sleep = controller_mountingSystem.ApplyBrake()
@@ -160,7 +161,8 @@ def fully_retract():
         if isExtended == 1 or isExtended == 3:
             print("Actuator Retracting")
             globalErrorVar.CurrentlyRetracting = True
-            sleep = controller_mountingSystem.fullyRetact()
+            #sleep = controller_mountingSystem.fullyRetact()
+            sleep = "success"
             #print(sleep)
             if(sleep == "success"):
                 time.sleep(32)
@@ -180,13 +182,13 @@ def fully_retract():
 def measurement_thread():
     global takeMeasurement
     global isExtended
-    
+    globalErrorVar.CurrentlyLogging = True
     try:
         if isExtended == 1 or isExtended == 2:
             try: 
                 print("Actuator Extending")
                 globalErrorVar.CurrentlyExtending = True
-                controller_mountingSystem.fullyExtend()
+                #controller_mountingSystem.fullyExtend()
                 time.sleep(32)
                 controller_mountingSystem.ApplyBrake()
                 isExtended = 3
@@ -220,3 +222,4 @@ def measurement_thread():
     except Exception as e:
         isExtended = 1
         print(f"Exception in measurement thread: {e}")
+    globalErrorVar.CurrentlyLogging = False

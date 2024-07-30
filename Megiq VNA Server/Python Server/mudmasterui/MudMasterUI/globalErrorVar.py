@@ -22,7 +22,8 @@ ErrorFromTeltonika = False # error due to cant find teltonika on network or reci
 
 CurrentlyExtending = False
 CurrentlyRetracting = False
-CurrentlyReadingVNA = False 
+CurrentlyCalibrating = False 
+CurrentlyLogging = False 
 
 #will need errors for 
 # port permission error # may not need as actuator permissions are fixed 

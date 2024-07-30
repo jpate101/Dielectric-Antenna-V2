@@ -447,7 +447,7 @@ class Measurement_Manager(object):
 
     def calibration_state_MV2(self, testing=False):
         print('measurement system calibration at 210 mm MV2')
-        globalErrorVar.CurrentlyReadingVNA = True
+        globalErrorVar.CurrentlyCalibrating = True
 
         # Reset calibration status for all positions
         self._calibration_status = {position: 0 for position in self._calibration_status}
@@ -497,7 +497,7 @@ class Measurement_Manager(object):
 
         # Return actuator to 0 and transition to idle state (replace with actual implementation)
         # self._mounting_system.set_actuator(0)
-        globalErrorVar.CurrentlyReadingVNA = False
+        globalErrorVar.CurrentlyCalibrating = False
         self._current_state = 'idle'
         
     def measurement_state_MV2(self, testing=False):
@@ -512,7 +512,6 @@ class Measurement_Manager(object):
             if(now >= self._next_measurement_time):
                 
                 print("measurement_state_MV2")
-                globalErrorVar.CurrentlyReadingVNA = True
                 
                 self._next_measurement_time = now + self._app.config['CONFIG_RUN']['measurement_manager']['measurement_delay']#the reason it take 30second before nex measurement 
             
@@ -552,7 +551,6 @@ class Measurement_Manager(object):
                 vna_filename = self._app.config['CONFIG_SYSTEM']['dataLogger']['baseFileName_vna'].format(self._current_measurement_data['measurment_date'].replace(':', '-') + '_' + str(self._current_measurement_data['actuator_extension']))
                 save_s11_data(vna_filename, self._save_data_directory['vnaData'], self._current_measurement_data['vna_data'])
                 
-                globalErrorVar.CurrentlyReadingVNA = False
                 
                 self._current_measurement_data['vna_filename'] = vna_filename
                     # now save the remaining data as a csv file in the main directory
