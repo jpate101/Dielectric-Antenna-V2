@@ -72,7 +72,10 @@ def systemStatusIndicators():
             'mountingSystemConection': controller_mountingSystem.get_status(),
             'errorMeasureing': 0,
             'errorActuatorReadWrite': 0,
-            'errorTeltonika': 0
+            'errorTeltonika': 0,
+            'CurrentlyRetracting' : 0,
+            'CurrentlyExtending' : 0,
+            'CurrentlyReadingVNA' : 0
             }
 
         yield 'data: ' + json.dumps(previousVal) + '\n\n'
@@ -87,7 +90,10 @@ def systemStatusIndicators():
                 'teltonikaConnection': is_teltonika_connected(),
                 'errorMeasureing': bool_to_int(globalErrorVar.ErrorFromMeasurementManager),
                 'errorActuatorReadWrite': bool_to_int(globalErrorVar.ErrorFromActuatorReadWrite),
-                'errorTeltonika':  bool_to_int(globalErrorVar.ErrorFromTeltonika)
+                'errorTeltonika':  bool_to_int(globalErrorVar.ErrorFromTeltonika),
+                'CurrentlyRetracting' : bool_to_int(globalErrorVar.CurrentlyRetracting),
+                'CurrentlyExtending' : bool_to_int(globalErrorVar.CurrentlyExtending),
+                'CurrentlyReadingVNA' : bool_to_int(globalErrorVar.CurrentlyReadingVNA)
                 }
 
             if(newVal != previousVal):

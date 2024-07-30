@@ -21,7 +21,6 @@ from MudMasterUI import globalErrorVar
 *******************************************************************************
 """
 token = None
-#DEVICE_IP = "192.168.1.1" 
 DEVICE_IP = Config.CONFIG_SYSTEM['teltonika']['DEVICE_IP']
 
 """ Functions
@@ -36,8 +35,8 @@ def login_endpoint():
         'Content-Type': 'application/json'
     }
     data = {
-        'username': 'admin',
-        'password': 'MudM45t3r'
+        'username': Config.CONFIG_SYSTEM['teltonika']['username'],
+        'password': Config.CONFIG_SYSTEM['teltonika']['password']
     }
 
     try:
@@ -110,8 +109,12 @@ def get_GPS_data_endpoint():
                 stdout = result[1].get('stdout', '')
                 latitude, longitude = map(float, stdout.strip().split())
                 #print(f'Latitude: {latitude}, Longitude: {longitude}')
-                
+                if(latitude == 0 and longitude == 0):
+                    print("gps values are 0 and 0 likely no gps")
+                    globalErrorVar.ErrorFromTeltonika = True
+                    pass
                 # Return the GPS data as a dictionary
+                globalErrorVar.ErrorFromTeltonika = False
                 return {"latitude": latitude, "longitude": longitude}
             else:
                 globalErrorVar.ErrorFromTeltonika = True

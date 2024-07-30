@@ -197,56 +197,6 @@
 
         var current_position = 0;
 
-        $('.move-button').click(function () {
-            var distance = $(this).data('distance');
-            console.log(distance);
-            $.ajax({
-                url: "{{ url_for('mountingSystem.move') }}",
-                type: 'GET',
-                data: {
-                    'distance': distance
-                },
-                success: function (data) {
-                    console.log(data);
-                    current_position = data.current_position;
-                    $('#set_position').val(current_position);
-                }
-            });
-        });
-
-        $('.set-button').click(function () {
-            var position = $(this).data('position');
-            console.log(position);
-            $.ajax({
-                url: "{{ url_for('mountingSystem.position_set') }}",
-                type: 'GET',
-                data: {
-                    'position': position
-                },
-                success: function (data) {
-                    console.log(data);
-                    current_position = data.current_position;
-                    $('#set_position').val(current_position);
-                }
-            });
-        });
-
-        $('#set_position').change(function () {
-            var position = $(this).val();
-            console.log(position);
-            $.ajax({
-                url: "{{ url_for('mountingSystem.position_set') }}",
-                type: 'GET',
-                data: {
-                    'position': position
-                },
-                success: function (data) {
-                    console.log(data);
-                    current_position = data.current_position;
-                    $('#set_position').val(current_position);
-                }
-            });
-        });
     });
 </script>
 {% endblock %}

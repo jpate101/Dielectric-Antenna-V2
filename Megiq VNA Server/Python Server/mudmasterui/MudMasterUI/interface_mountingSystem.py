@@ -136,6 +136,20 @@ class MountingSystem_Manager(object):
         except Exception as e:
             print('Communication Error: permission. {}'.format(e))
             self._status = -1
+            
+    def closeSerial(self):
+        """ Closes the serial port if it is open. """
+        try:
+            if self._serialPort is not None:
+                if self._serialPort.is_open:
+                    self._serialPort.close()
+                    print('Serial port closed.')
+                self._serialPort = None
+                self._serialNo = None
+                self._status = None
+        except Exception as e:
+            print('Error closing serial port: {}'.format(e))
+            self._status = -1
     
 
     def sendReceive(self, command):
@@ -264,20 +278,21 @@ class MountingSystem_Manager(object):
 
             num = "1\n"
             value   = write_read(num)
-            print(value)
-            pass
+            globalErrorVar.ErrorFromActuatorReadWrite = False
+            return "success"
         except Exception as e:
             # Handle the exception and print the error message
             print(f"An error occurred: {e}")
             globalErrorVar.ErrorFromActuatorReadWrite = True
-            raise 
+            return "fail"
+            self.closeSerial()
+            self.openSerial()
+            
         
     def fullyRetact(self):
-        #print("interface fully retact")
         try:
             # Code that may raise an exception
             def write_read(x):
-                #print("in try from fully retact")
                 self._serialPort.write(bytes(x,   'utf-8'))
                 time.sleep(0.05)
                 data = self._serialPort.readline()
@@ -285,17 +300,21 @@ class MountingSystem_Manager(object):
 
             num = "2\n"
             value   = write_read(num)
-            print(value)
-            pass
+            globalErrorVar.ErrorFromActuatorReadWrite = False
+            return "success"
         except Exception as e:
             # Handle the exception and print the error message
-            print(f"An error occurred: {e}")
+            print(f"An error occurred at fullyRetact: {e}")
             globalErrorVar.ErrorFromActuatorReadWrite = True
+            self.closeSerial()
+            self.openSerial()
+            return "fail"
+
             
             
     def ApplyBrake(self):
-        #print("interface fully retact")
         try:
+            #self.openSerial()
             # Code that may raise an exception
             def write_read(x):
                 #print("in try from fully retact")
@@ -306,9 +325,13 @@ class MountingSystem_Manager(object):
 
             num = "3\n"
             value   = write_read(num)
-            print(value)
-            pass
+            #print(value)
+            globalErrorVar.ErrorFromActuatorReadWrite = False
+            return "success"
         except Exception as e:
             # Handle the exception and print the error message
             print(f"An error occurred: {e}")
             globalErrorVar.ErrorFromActuatorReadWrite = True
+            self.closeSerial()
+            self.openSerial()
+            return "fail"

@@ -51,18 +51,27 @@ isExtended = 1 #1 = dont know, 2 = retracted , 3 - extended
 """ Routes
 *******************************************************************************
 """
-@bp.route('/mounting-systemV2')
+@bp.route('/HomeV2')
 def mounting_system():
     """Renders the home page."""
     current_measurement_delay = 60  
+    sites = list(
+        {
+            'id': key,
+            'name': current_app.config['SITE_CONFIG'][key]['name'],
+            'country': current_app.config['SITE_CONFIG'][key]['country'],
+            'calibration_date': current_app.config['SITE_CONFIG'][key]['calibration_date']
+        } for key in current_app.config['SITE_CONFIG'].keys()
+    )
     return render_template(
         'mountingSystemV2/mounting_systemV2.html',
-        title='Mounting System',
+        title='Home V2',
         year=datetime.now().year,
         showFooter=True,
         current_actuator_position=controller_mountingSystem.get_actuator_target(),
         measurement_delays=current_app.config['CONFIG_SYSTEM']['measurement_manager']['measurement_delay_list'],
-        current_measurement_delay=current_app.config['CONFIG_RUN']['measurement_manager']['measurement_delay']
+        current_measurement_delay=current_app.config['CONFIG_RUN']['measurement_manager']['measurement_delay'],
+        sites = sites,
     )
 
 @bp.route('/mounting-system-v2/Leave', methods = ['GET'])
@@ -76,31 +85,33 @@ def Leave():
 def Calibrate():
     global takeMeasurement
     global isExtended
-    global ErrorFromMeasurementManager
     print("/mounting-system-v2/fullyExtend------------------")
     takeMeasurement = False
     try:
         if(isExtended == 1 or isExtended == 2 ):
             print("Actuator Extending")
-            controller_mountingSystem.fullyExtend()
-            time.sleep(32)
-            controller_mountingSystem.ApplyBrake()
-            isExtended = 3
-        print("Actuator Extended")
+            globalErrorVar.CurrentlyExtending = True
+            sleep = controller_mountingSystem.fullyExtend()
+            if(sleep == "success"):
+                time.sleep(32)
+                sleep = controller_mountingSystem.ApplyBrake()
+                isExtended = 3
+                globalErrorVar.CurrentlyExtending = False
+                print("Actuator Extended")
         measurement_manager.calibration_state_MV2()# used to be change variable to calibration but now 
-        print(globalErrorVar.ErrorFromMeasurementManager)
         if (globalErrorVar.ErrorFromMeasurementManager):
             globalErrorVar.ErrorFromMeasurementManager = False
-            print('-here from global error-')
-            return jsonify({"error": "Timeout occurred", "message": "Actuator extension timed out from route"})
+            return jsonify({"error": "Timeout occurred", "message": "VNA timed out"})
         print(globalErrorVar.ErrorFromMeasurementManager)
         print("Done Calibrating from mount-system-V2 route")
         isExtended = 3
         return jsonify({"message": "Calibrated"})  
     except TimeoutError as e:
+        isExtended = 1
         print(f"Timeout occurred during calibration: {e}")
-        return jsonify({"error": "Timeout occurred", "message": "Actuator extension timed out from route"})
+        return jsonify({"error": "Timeout occurred", "message": "VNA timed out"})
     except Exception as e:
+        isExtended = 1
         print(f"Exception during calibration: {e}")
         return jsonify({"error": "Error while calibrating", "message": "Unsuccessful"})
     
@@ -108,6 +119,7 @@ def Calibrate():
 @bp.route('/mounting-system-v2/Measure', methods = ['GET'])
 def Measure():
     global takeMeasurement
+    global isExtended
     print("/mounting-system-v2/Measure------------------")
     if takeMeasurement:
             takeMeasurement = False
@@ -124,6 +136,7 @@ def Measure():
         return jsonify({"message": "Measurement thread started. Will start running measurements"})
     
     except Exception as e:
+        isExtended = 1
         print(f"Exception while starting measurement: {e}")
         return jsonify({"error": "Error starting measurement", "message": "Unsuccessful"})
         
@@ -146,16 +159,21 @@ def fully_retract():
         
         if isExtended == 1 or isExtended == 3:
             print("Actuator Retracting")
-            controller_mountingSystem.fullyRetact()
-            time.sleep(32)
-            controller_mountingSystem.ApplyBrake()
-            isExtended = 2
-            print("Actuator Retracted")
+            globalErrorVar.CurrentlyRetracting = True
+            sleep = controller_mountingSystem.fullyRetact()
+            #print(sleep)
+            if(sleep == "success"):
+                time.sleep(32)
+                controller_mountingSystem.ApplyBrake()
+                isExtended = 2
+                globalErrorVar.CurrentlyRetracting = False
+                print("Actuator Retracted")
         
         return jsonify({"message": "Fully retracted"})
     
     except Exception as e:
         print(f"Exception during full retraction: {e}")
+        isExtended = 1
         return jsonify({"error": "Error while retracting", "message": "Unsuccessful"})
 
 
@@ -165,12 +183,18 @@ def measurement_thread():
     
     try:
         if isExtended == 1 or isExtended == 2:
-            print("Actuator Extending")
-            controller_mountingSystem.fullyExtend()
-            time.sleep(32)
-            controller_mountingSystem.ApplyBrake()
-            isExtended = 3
-            print("Actuator Extended")
+            try: 
+                print("Actuator Extending")
+                globalErrorVar.CurrentlyExtending = True
+                controller_mountingSystem.fullyExtend()
+                time.sleep(32)
+                controller_mountingSystem.ApplyBrake()
+                isExtended = 3
+                globalErrorVar.CurrentlyExtending = False
+                print("Actuator Extended")
+            except Exception as e:
+                isExtended = 1
+                pass
         
         measurement_manager.start_measurement()
         
@@ -194,4 +218,5 @@ def measurement_thread():
                 takeMeasurement = False
         print('-----exit from measurement_thread------------------------------------------------------------------------')
     except Exception as e:
+        isExtended = 1
         print(f"Exception in measurement thread: {e}")
