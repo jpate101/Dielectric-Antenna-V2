@@ -155,7 +155,7 @@ def fully_retract():
     
     takeMeasurement = False
     globalErrorVar.ErrorFromMeasurementManager = False
-    
+    print(isExtended)
     try:
         
         if isExtended == 1 or isExtended == 3:
@@ -163,14 +163,13 @@ def fully_retract():
             globalErrorVar.CurrentlyRetracting = True
             sleep = controller_mountingSystem.fullyRetact()
             #sleep = "success"
-            #print(sleep)
+            print(sleep)
             if(sleep == "success"):
                 time.sleep(32)
                 controller_mountingSystem.ApplyBrake()
                 isExtended = 2
-                globalErrorVar.CurrentlyRetracting = False
                 print("Actuator Retracted")
-        
+        globalErrorVar.CurrentlyRetracting = False
         return jsonify({"message": "Fully retracted"})
     
     except Exception as e:

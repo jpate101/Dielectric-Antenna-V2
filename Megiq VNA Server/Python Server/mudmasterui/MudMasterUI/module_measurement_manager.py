@@ -89,7 +89,7 @@ class Measurement_Manager(object):
             self.init_app(app)
 
 
-    def init_app(self, app, mounting_system, vna, dielectric_manager , teltonika_measurement):#added param teltonika_measurement
+    def init_app(self, app, mounting_system, vna, dielectric_manager):
         """ @brief  Initialises the VNA manager. 
             @param  app - the flask app object
             @retval None
@@ -97,7 +97,6 @@ class Measurement_Manager(object):
         """
         self._app = app
         self._mounting_system = mounting_system
-        self.teltonika_measurement = teltonika_measurement # added by me
         self._vna = vna
         self._dielectric_manager = dielectric_manager
         self._calibration_positions = list(range(self._app.config['CONFIG_SYSTEM']['mountingSystem']['actuator_min'], self._app.config['CONFIG_SYSTEM']['mountingSystem']['actuator_max'] + self._app.config['CONFIG_SYSTEM']['calibrationStep'], self._app.config['CONFIG_SYSTEM']['calibrationStep']))

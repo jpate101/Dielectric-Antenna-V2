@@ -20,18 +20,12 @@ ErrorFromMeasurementManager = False # error for timeout when reading VNA
 ErrorFromActuatorReadWrite = False # read write errors from sending actuator command 
 ErrorFromTeltonika = False # error due to cant find teltonika on network or recieved a none 200 response  
 
-CurrentlyExtending = False
-CurrentlyRetracting = False
-CurrentlyCalibrating = False 
-CurrentlyLogging = False 
+CurrentlyExtending = False # used to show on ui when actuator is extending 
+CurrentlyRetracting = False # used to show on ui when actuator is Retracting 
+CurrentlyCalibrating = False # used to show on ui when actuator is calibrating 
+CurrentlyLogging = False # # used to show on ui when actuator is Logging 
 
 #will need errors for 
-# port permission error # may not need as actuator permissions are fixed 
-# Failed to read GPS data 
 # VNA refused connection 
 # 
 # indicators for 
-# currently extending/retracting 
-# currently reading VNA 
-# 
-# #

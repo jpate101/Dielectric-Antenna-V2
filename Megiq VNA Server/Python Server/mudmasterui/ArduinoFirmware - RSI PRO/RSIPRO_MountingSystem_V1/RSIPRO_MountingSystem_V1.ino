@@ -38,6 +38,10 @@ void loop() {
     }else if (input == "3") {
       // Command to start Motor B to stop by app
       digitalWrite(MotorBrakePinB, HIGH); // Release brake if any//
+      Serial.println("Stopped"); // Echo back confirmation
+    }else if (input == "4") {
+      // Command to start Motor B to stop by app
+      Serial.println("check success"); // Echo back confirmation
     }
     
     delay(100); // Delay for stability

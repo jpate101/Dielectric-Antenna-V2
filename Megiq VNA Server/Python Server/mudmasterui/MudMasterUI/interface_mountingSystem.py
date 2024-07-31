@@ -146,72 +146,11 @@ class MountingSystem_Manager(object):
                     print('Serial port closed.')
                 self._serialPort = None
                 self._serialNo = None
-                self._status = None
+                self._status = -1
         except Exception as e:
             print('Error closing serial port: {}'.format(e))
-            self._status = -1
+            self._status = 1
     
-
-    def sendReceive(self, command):
-        """ 
-            @brief  Sends the provided command to the device and listens for a reply.
-            @param  command - string of commands to be processed by the Arduino.
-            @retval None
-
-        """
-        if not command.endswith('\n\r'):
-            command = command + '\n\r'
-
-        try:
-            if(self._serialPort == None):
-                self.openSerial()
-
-            if(self._serialPort != None):
-
-                self._serialPort.write(command.encode())
-
-                time.sleep(0.5)
-                reply = self._serialPort.read(self._serialPort.inWaiting()).decode("utf-8")
-
-                return reply
-
-        except Exception as e:
-            print('Communication Error: permission. {}'.format(e))
-            self._status = 1
-            self._serialPort.close()
-            self._serialPort = None  # reset to None to show that it isn't present
-            self._status = -1
-
-        return ''
-
-
-    def sendOnly(self, command):
-        """ 
-            @brief  Sends the provided command to the device.
-            @param  command - string of commands to be processed by the Arduino.
-            @retval None
-
-        """
-        if not command.endswith('\n\r'):
-            command = command + '\n\r'
-
-        try:
-            if(self._serialPort == None):
-                self.openSerial()
-
-            if(self._serialPort != None):
-                self._serialPort.write(command.encode())
-
-                time.sleep(0.5)
-
-        except Exception as e:
-            print('Communication Error: permission. {}'.format(e))
-            self._status = 1
-            self._serialPort.close()
-            self._serialPort = None  # reset to None to show that it isn't present
-            self._status = -1
-
-
 
     """ General Control Functions
     ***********************************************************************
@@ -234,17 +173,13 @@ class MountingSystem_Manager(object):
         """ @brief  Gets the current actuator position.
             @param  None
             @retval Current actuator position
+            
+            was used for previous actuator only need 210mm position so just hard coded 
 
         """
-        pass
-        #commandString = '{}'.format(self._config_commands['actuator']['get'])
 
-        #msg = self.sendReceive(commandString)
         try:
-            #print("here from actuator positon")
-            #print(msg)
-            #print("--------")
-            #return float(msg.split(',')[0])
+
             return 210
 
         except Exception as e:
@@ -260,6 +195,7 @@ class MountingSystem_Manager(object):
             @retval Current status
 
         """
+        self.ConnectionCheck()
         return self._status
     
 
@@ -276,7 +212,8 @@ class MountingSystem_Manager(object):
                 data = self._serialPort.readline()
                 return   data
 
-            num = "1\n"
+            num = self._config_commands['RSI PRO Extend']
+            print(num)
             value   = write_read(num)
             globalErrorVar.ErrorFromActuatorReadWrite = False
             return "success"
@@ -298,7 +235,7 @@ class MountingSystem_Manager(object):
                 data = self._serialPort.readline()
                 return   data
 
-            num = "2\n"
+            num = self._config_commands['RSI PRO Retract']
             value   = write_read(num)
             globalErrorVar.ErrorFromActuatorReadWrite = False
             return "success"
@@ -322,8 +259,7 @@ class MountingSystem_Manager(object):
                 time.sleep(0.05)
                 data = self._serialPort.readline()
                 return   data
-
-            num = "3\n"
+            num = self._config_commands['RSI PRO Stop']
             value   = write_read(num)
             #print(value)
             globalErrorVar.ErrorFromActuatorReadWrite = False
@@ -334,4 +270,29 @@ class MountingSystem_Manager(object):
             globalErrorVar.ErrorFromActuatorReadWrite = True
             self.closeSerial()
             self.openSerial()
+            return "fail"
+        
+    def ConnectionCheck(self):
+        try:
+            #self.openSerial()
+            # Code that may raise an exception
+            def write_read(x):
+                #print("in try from fully retact")
+                self._serialPort.write(bytes(x,   'utf-8'))
+                time.sleep(0.05)
+                data = self._serialPort.readline()
+                return   data
+            num = self._config_commands['RSI PRO Connection Check']
+            value   = write_read(num)
+            #print(value)
+            globalErrorVar.ErrorFromActuatorReadWrite = False
+            self._status = 0
+            return "success"
+        except Exception as e:
+            # Handle the exception and print the error message
+            print(f"An error occurred: {e}")
+            globalErrorVar.ErrorFromActuatorReadWrite = True
+            self.closeSerial()
+            self.openSerial()
+            
             return "fail"

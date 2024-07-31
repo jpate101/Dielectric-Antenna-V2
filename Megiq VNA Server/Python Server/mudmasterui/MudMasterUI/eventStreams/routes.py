@@ -70,6 +70,7 @@ def systemStatusIndicators():
             'errorIndicator': 0,
             'vnaConnection': vna_status,
             'mountingSystemConection': controller_mountingSystem.get_status(),
+            'teltonikaConnection': 0,
             'errorMeasureing': 0,
             'errorActuatorReadWrite': 0,
             'errorTeltonika': 0,

@@ -15,14 +15,11 @@ from MudMasterUI.interface_mountingSystem import MountingSystem_Manager
 from MudMasterUI.module_dielectricCalibration import VNA_Cal
 from MudMasterUI.module_measurement_manager import Measurement_Manager
 
-from MudMasterUI.teltonikaSupportFunctions import Teltonika_Measurement_Manager# added by me 
-
 controller_vna = VNA_Manager()
 controller_mountingSystem = MountingSystem_Manager()
 module_dielectric_manager = VNA_Cal()
 measurement_manager = Measurement_Manager()
 
-teltonika_measurement = Teltonika_Measurement_Manager()
 
 
 def createApp(config_main=Config, config_machine=Config_Machine, site_config=Site_Config):
@@ -41,10 +38,7 @@ def createApp(config_main=Config, config_machine=Config_Machine, site_config=Sit
     controller_mountingSystem.init_app(app)
     module_dielectric_manager.init_app(app)
     
-    teltonika_measurement.init_app(app, controller_vna)# added by me 
-    
-    
-    measurement_manager.init_app(app, controller_mountingSystem, controller_vna, module_dielectric_manager, teltonika_measurement)# added param teltonika_measurement_thread
+    measurement_manager.init_app(app, controller_mountingSystem, controller_vna, module_dielectric_manager)
     
 
     from MudMasterUI.main import bp as bp_main

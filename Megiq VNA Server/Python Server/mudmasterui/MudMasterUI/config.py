@@ -7,7 +7,7 @@ class Config(object):
     SECRET_KEY = '7f2GCO8mOE6EaSgNt2MSrkBIqdya3j-BW7MInjh75B1H5GRJtnT6dkDXaN39KalMjE1f2nhxT6w2IH-5Hm0adwlXY5eF6rx4A8wy'
     VERSION = '0.1.0'
 
-    MACHINE_DIRECTORY = r'C:\Users\JoshuaPaterson\OneDrive - Phibion Pty Ltd\Documents\GitHub\Megiq VNA Server\testData\Josh Device 1'
+    MACHINE_DIRECTORY = r'C:\Users\JoshuaPaterson\OneDrive - Phibion Pty Ltd\Documents\GitHub\Dielectric-Antenna-V2\Megiq VNA Server\testData\Josh Device 1'
     CONFIG_DIRECTORY = os.path.join(basedir, 'configFiles')
     CONFIG_DIRECTORY_VNA_CAL = os.path.join(CONFIG_DIRECTORY, 'vna_cal')
 
@@ -83,36 +83,11 @@ class Config(object):
         'calibrationUpdateInterval': 1,
         'calibrationStep': 10,  # mm
         'measurementUpdateInterval': 1,
-        'mountingSystemCommands': {
-            'height': {
-                'get': 'h',
-                'set': 'H',
-                # height feedback is used when the height is calculated using the Python script
-                'feedback': 'F'
-            },
-            'actuator': {
-                'get': 'p',
-                'out_10': 'A',
-                'in_10': 'a',
-                'set': 'P',
-            },
-            'mode': {
-                'get': 'm',
-                'set': 'M',
-                'modes': {
-                    'idle': 0,
-                    'cal': 1,
-                    'active': 2
-                }
-            },
-            'temperature': {
-                'get': 't',
-                'set': None
-            },
-            'vibration': {
-                'get': 'v',
-                'set': None
-            },
+        'mountingSystemCommands': { # currently older version will need to update for RSI PRO
+            'RSI PRO Extend' : "1\n",
+            'RSI PRO Retract' : "2\n",
+            'RSI PRO Stop' : "3\n",
+            'RSI PRO Connection Check' : "4\n",
         },
         'mountingSystem': {
             'actuator_max': 220, # mm - actual length is 140 mm, but limiting by 10 mm to avoid overextension # change by me to 220 for testing

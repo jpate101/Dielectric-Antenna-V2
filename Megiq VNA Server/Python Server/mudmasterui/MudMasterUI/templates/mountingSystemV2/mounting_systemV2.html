@@ -19,12 +19,12 @@
             </p>
 
             <p>
-                Check that the 3 right side indicators at the top right are green.
+                Check the indicators at the top right are green.
                 If not reconnect Sensor and Actuator to Computer.
             </p>
             <p>
                 Note that leaving page will not stop measurments from being taken
-                click the red Retract and Cancel Measurements button to stop Readings from being taken
+                click the red Retract and Cancel Measurements or reclick the take measurement button again to stop Readings from being taken
             </p>
             <div class="" style="display: flex;">
                 <p>Extending Actuator</p>
@@ -38,7 +38,9 @@
                         style="vertical-align: middle; text-align: center; color: gray" id="RetractingActuator"
                         title=""></span></div>
             </div>
+            
             <div class="" style="display: flex;">
+                <p>Known Error Indicators (are used for tgroubleshooting if program runs into know issues.)</p>
                 <div class="nav-item my-auto"><span class="fas fa-map-marker-alt mx-1 text-center align-middle"
                         style="vertical-align: middle; text-align: center; color: gray" id="teltonikaErrorIndicator"
                         title=""></span></div>
@@ -49,7 +51,6 @@
                         style="vertical-align: middle; text-align: center; color: gray"
                         id="ActuatorReadWriteErrorIndicator" title=""></span></div>
             </div>
-
             <div class="form-group">
                 <label for="measurement-delay-select">Select Measurement Delay:</label>
                 <select id="measurement-delay-select" class="form-control">
@@ -202,28 +203,19 @@
 
         // Event listeners for button clicks
         $('#calibrate-button').click(function () {
-            var button = this; // Store the reference to the button element
 
-            button.disabled = true; // Disable the button immediately
             calibrateButtonAction(); // Call the function to extend the mounting system
 
         });
 
         $('#run-measurements-button').click(function () {
-            var button = this; // Store the reference to the button element
 
-            button.disabled = true; // Disable the button immediately
             runMeasurementAction(); // Call the function to retract the mounting system
-            setTimeout(function () {
-                // Enable the button after the action completes
-                button.disabled = false;
-            }, 6000); // Adjust the delay as needed
+
         });
 
         $('#retract-button').click(function () {
-            var button = this; // Store the reference to the button element
 
-            button.disabled = true; // Disable the button immediately
             fullyRetract(); // Call the function to retract the mounting system
 
         });
@@ -283,6 +275,7 @@
                 $("#vnaReadTimeoutErrorIndicator").css("color", "red");
                 $("#vnaReadTimeoutErrorIndicator").attr('title', "When Red Tineout occured while reading VNA data");
                 $("#current_action").text("Error While Running Measurements Measureing Stopped (likely issues reading VNA Data - timed out) - Check Connections and refresh page and restart Measureing");
+
             }
             if (data.errorActuatorReadWrite == 0) {
                 $("#ActuatorReadWriteErrorIndicator").css("color", "limegreen");
@@ -292,6 +285,7 @@
                 $("#ActuatorReadWriteErrorIndicator").css("color", "red");
                 $("#ActuatorReadWriteErrorIndicator").attr('title', "When Red ReadWrite error occurend when communicating with actuator");
                 $("#current_action").text("Error communicating to Actuator Measureing Stopped - Check Connections and refresh page if issues persist restart server (measuring thread sometimes break on error)");
+
             }
             if (data.errorTeltonika == 0) {
                 $("#teltonikaErrorIndicator").css("color", "limegreen");
@@ -300,6 +294,7 @@
                 $("#current_action").text("Error communicating to Teltonika Measureing Stopped - Check Connections and refresh page if issues persist restart server (measuring thread sometimes break on error)");
                 $("#teltonikaErrorIndicator").css("color", "red");
                 $("#teltonikaErrorIndicator").attr('title', "Error with GPS");
+
             }
 
             if (data.CurrentlyRetracting == 0) {
@@ -307,36 +302,29 @@
                 $("#RetractingActuator").attr('title', "not Currently Retracting");
                 $("#RetractButtonIndicator").css("color", "gray");
                 $("#RetractButtonIndicator").attr('title', "not Currently Retracting");
-                $("#calibrate-button").prop('disabled', false);
-                $("#run-measurements-button").prop('disabled', false);
-                $("#retract-button").prop('disabled', false);
+
             } else {
                 $("#RetractingActuator").css("color", "limegreen");
                 $("#RetractingActuator").attr('title', "Currently Retracting");
                 $("#RetractButtonIndicator").css("color", "limegreen");
                 $("#RetractButtonIndicator").attr('title', "Currently Retracting");
-                $("#calibrate-button").prop('disabled', true);
-                $("#run-measurements-button").prop('disabled', true);
-                $("#retract-button").prop('disabled', true);
+
             }
 
             if (data.CurrentlyExtending == 0) {
                 $("#ExtendingActuator").css("color", "gray");
                 $("#ExtendingActuator").attr('title', "not Currently Extending");
-                $("#calibrate-button").prop('disabled', false);
-                $("#run-measurements-button").prop('disabled', false);
-                $("#retract-button").prop('disabled', false);
+
             } else {
                 $("#ExtendingActuator").css("color", "limegreen");
                 $("#ExtendingActuator").attr('title', "Currently Extending");
-                $("#calibrate-button").prop('disabled', true);
-                $("#run-measurements-button").prop('disabled', true);
-                $("#retract-button").prop('disabled', true);
+
             }
 
             if (data.CurrentlyExtending == 0 && data.CurrentlyCalibrating == 0) {
                 $("#CalibrateButtonIndicator").css("color", "gray");
                 $("#CalibrateButtonIndicator").attr('title', "not Currently Calibrating");
+
             } else {
                 $("#CalibrateButtonIndicator").css("color", "limegreen");
                 $("#CalibrateButtonIndicator").attr('title', "Currently Calibrating and extending");
