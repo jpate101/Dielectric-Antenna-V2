@@ -14,26 +14,56 @@
 <body class="d-flex flex-column h-100">
     <header>
         <nav class="navbar navbar-expand-sm navbar-dark bg-dark fixed-top px-4">
-            <a class="navbar-brand" style="min-width: 110px" href="{{ url_for('mountingSystemV2.mounting_system')}}">Home V2</a>
-            <a class="navbar-brand" style="min-width: 110px" href="{{ url_for('vna.vna')}}">Live VNA Interface</a>
-            <a class="navbar-brand" style="min-width: 110px" href="{{ url_for('main.measure')}}">Live Tailings Measurement</a>
-
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <!-- Toggler Button -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <!-- Navbar Brand Links for Larger Screens -->
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <!-- Left Side Links for Larger Screens -->
+                <ul class="navbar-nav mx-auto d-none d-sm-flex">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('mountingSystemV2.mounting_system')}}">Home V2</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('vna.vna')}}">Live VNA Interface</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.measure')}}">Live Tailings Measurement</a>
+                    </li>
+                </ul>
 
-                <div class="navbar-nav mx-auto text-white">
-                    <h4 class="my-auto d-none d-md-block">{{ title }}</h4>
+                <!-- Dropdown Menu for Smaller Screens -->
+                <ul class="navbar-nav mx-auto d-sm-none">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Menu
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="{{ url_for('mountingSystemV2.mounting_system')}}">Home V2</a>
+                            <a class="dropdown-item" href="{{ url_for('vna.vna')}}">Live VNA Interface</a>
+                            <a class="dropdown-item" href="{{ url_for('main.measure')}}">Live Tailings Measurement</a>
+                        </div>
+                    </li>
+                </ul>
+
+                <!-- Centered Title for Larger Screens -->
+                <div class="navbar-nav mx-auto text-white d-none d-md-block">
+                    <h4 class="my-auto">{{ title }}</h4>
                 </div>
 
-                <!--Right-hand side navbar-->
+                <!-- Right-hand Side Icons -->
                 <div class="navbar-nav" style="min-width: 110px">
-                    <li class="nav-item my-auto"><span class="fas fa-exclamation-triangle mx-1 text-center align-middle" style="vertical-align: middle; text-align: center; color:gray" id="errorIndicator" title=""></span></li>
-                    <li class="nav-item my-auto"><span class="fas fa-chart-line mx-1 text-center align-middle" style="vertical-align: middle; text-align: center; color: gray" id="vnaConnection" title=""></span></li>
-                    <li class="nav-item my-auto"><span class="fas fa-cog mx-1 text-center align-middle" style="vertical-align: middle; text-align: center; color: gray" id="mountingSystemConection" title=""></span></li>
-                    <li class="nav-item my-auto"><span class="fas fa-map-marker-alt mx-1 text-center align-middle" style="vertical-align: middle; text-align: center; color: gray" id="teltonikaConnection" title=""></span></li>
+                    <li class="nav-item my-auto">
+                        <span class="fas fa-chart-line mx-1 text-center align-middle" style="vertical-align: middle; text-align: center; color: gray" id="vnaConnection" title=""></span>
+                    </li>
+                    <li class="nav-item my-auto">
+                        <span class="fas fa-cog mx-1 text-center align-middle" style="vertical-align: middle; text-align: center; color: gray" id="mountingSystemConection" title=""></span>
+                    </li>
+                    <li class="nav-item my-auto">
+                        <span class="fas fa-map-marker-alt mx-1 text-center align-middle" style="vertical-align: middle; text-align: center; color: gray" id="teltonikaConnection" title=""></span>
+                    </li>
                 </div>
             </div>
         </nav>

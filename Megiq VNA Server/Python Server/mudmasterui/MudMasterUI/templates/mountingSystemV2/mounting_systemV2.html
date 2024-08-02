@@ -10,12 +10,10 @@
 <div id="mount_controls" class="row">
     <div class="col-md-6 mb-4">
         <div class="h-100 p-5 text-white bg-dark rounded-3 position-relative">
-            <h2>Actuator Position</h2>
+            <h2>VNA Sensor Controls</h2>
+        <br></br>
             <p>
-                <span id="current_position">xx</span> mm
-            </p>
-            <p>
-                <span id="current_action" style="color: red;">not currently performing action</span>
+                <span id="current_action" style="color: red;">Not currently performing action</span>
             </p>
 
             <p>
@@ -26,7 +24,7 @@
                 Note that leaving page will not stop measurments from being taken
                 click the red Retract and Cancel Measurements or reclick the take measurement button again to stop Readings from being taken
             </p>
-            <div class="" style="display: flex;">
+            <!--<div class="" style="display: flex;">
                 <p>Extending Actuator</p>
                 <div class="nav-item my-auto"><span class="fas fa-power-off mx-1 text-center align-middle"
                         style="vertical-align: middle; text-align: center; color: gray" id="ExtendingActuator"
@@ -37,10 +35,10 @@
                 <div class="nav-item my-auto"><span class="fas fa-power-off mx-1 text-center align-middle"
                         style="vertical-align: middle; text-align: center; color: gray" id="RetractingActuator"
                         title=""></span></div>
-            </div>
-            
+            </div>-->
+            <p>Known Error Indicators (are used for troubleshooting if program runs into know issues.)</p>
             <div class="" style="display: flex;">
-                <p>Known Error Indicators (are used for tgroubleshooting if program runs into know issues.)</p>
+                
                 <div class="nav-item my-auto"><span class="fas fa-map-marker-alt mx-1 text-center align-middle"
                         style="vertical-align: middle; text-align: center; color: gray" id="teltonikaErrorIndicator"
                         title=""></span></div>
@@ -131,23 +129,23 @@
 
         // Function to send AJAX request to fullyExtend endpoint
         function calibrateButtonAction() {
-            $("#current_action").text("Extending actuator then Calibrating");
+            $("#current_action").html("Extending actuator then Calibrating <br> Do not Press another button");
             $.ajax({
                 url: '/mounting-system-v2/Calibrate',
                 type: 'GET',
                 success: function (response) {
                     if (response.error) {
                         console.error('Error:', response.error);
-                        $("#current_action").text(response.error); // Display the error message
+                        $("#current_action").html(response.error); // Display the error message
                     } else {
                         console.log('Fully extended:', response);
-                        $("#current_action").text("Done Calibrating"); // Show "Done Calibrating" message
+                        $("#current_action").html("Done Calibrating <br> Ready for next Command"); // Show "Done Calibrating" message
                         // Optionally update UI or perform other actions upon success
                     }
                 },
                 error: function (error) {
                     console.error('Error while extending:', error);
-                    $("#current_action").text("Error While Calibrating likely timed out while getting vna data");
+                    $("#current_action").html("Error While Calibrating likely timed out while getting vna data");
                     // Handle error cases
                 }
             });
@@ -155,23 +153,23 @@
 
         // Function to send AJAX request to fullyRetract endpoint
         function runMeasurementAction() {
-            $("#current_action").text("Extending actuator then Running Measurements");
+            $("#current_action").html("Extending actuator then Running Measurements <br> Press Same button to Stop measurements From logging");
             $.ajax({
                 url: '/mounting-system-v2/Measure',
                 type: 'GET',
                 success: function (response) {
                     if (response.error) {
                         console.error('Error:', response.error);
-                        $("#current_action").text(response.error); // Display the error message
+                        $("#current_action").html(response.error); // Display the error message
                     } else {
                         console.log('Measurements completed:', response);
-                        $("#current_action").text(response.message); // Show "Measurements Completed" message
+                        $("#current_action").html(response.message); // Show "Measurements Completed" message
                         // Optionally update UI or perform other actions upon success
                     }
                 },
                 error: function (error) {
                     console.error('Error while running measurements:', error);
-                    $("#current_action").text("Error While Running Measurements");
+                    $("#current_action").html("Error While Running Measurements");
                     // Handle error cases
                 }
             });
@@ -179,23 +177,23 @@
 
         // Function to send AJAX request to fullyRetract endpoint
         function fullyRetract() {
-            $("#current_action").text("Retracting Actuator And Canceling Measurements");
+            $("#current_action").html("Retracting Actuator And Canceling Measurements <br> Do not Press another button");
             $.ajax({
                 url: '/mounting-system-v2/fullyRetract',
                 type: 'GET',
                 success: function (response) {
                     if (response.error) {
                         console.error('Error:', response.error);
-                        $("#current_action").text(response.error); // Display the error message
+                        $("#current_action").html(response.error); // Display the error message
                     } else {
                         console.log('Fully retracted:', response);
-                        $("#current_action").text("Actuator Fully Retracted"); // Show "Actuator Fully Retracted" message
+                        $("#current_action").html("Actuator Fully Retracted <br> Ready for next Command"); // Show "Actuator Fully Retracted" message
                         // Optionally update UI or perform other actions upon success
                     }
                 },
                 error: function (error) {
                     console.error('Error while retracting:', error);
-                    $("#current_action").text("Error while Retracting");
+                    $("#current_action").html("Error while Retracting ");
                     // Handle error cases
                 }
             });

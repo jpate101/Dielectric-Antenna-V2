@@ -51,6 +51,7 @@ isExtended = 1 #1 = dont know, 2 = retracted , 3 - extended
 """ Routes
 *******************************************************************************
 """
+@bp.route('/')
 @bp.route('/HomeV2')
 def mounting_system():
     """Renders the home page."""

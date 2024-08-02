@@ -36,7 +36,7 @@ from MudMasterUI import controller_vna, controller_mountingSystem, module_dielec
 """ Routes
 *******************************************************************************
 """
-@bp.route('/')
+
 @bp.route('/home')
 def home():
     """Renders the home page."""
