@@ -160,14 +160,6 @@ class MountingSystem_Manager(object):
     """ General Query Functions
     ***********************************************************************
     """
-    def get_actuator_target(self):
-        """ @brief  Gets the current actuator target.
-            @param  None
-            @retval Current height
-
-        """
-        return self._current_actuator
-
 
     def get_actuator_position(self):# change for testing 
         """ @brief  Gets the current actuator position.

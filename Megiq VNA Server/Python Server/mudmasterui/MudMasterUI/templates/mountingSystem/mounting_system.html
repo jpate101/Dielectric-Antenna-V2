@@ -1,0 +1,108 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div clas="mb-3">
+    <h1>{{ config.CONFIG_MACHINE.machineNumber}}</h1>
+    <hr>
+</div>
+
+<div id="mount_controls" class="row">
+    <div class="col-md-6 mb-4">
+        <div class="h-100 p-5 text-white bg-dark rounded-3 position-relative">
+            <h2>Actuator Position</h2>
+            <p>
+                <span id="current_position">xx</span> mm
+            </p>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="h-100 py-3 rounded-3 position-relative">
+            <div class="row">
+                <div class="col-8">
+                    <div class="d-grid gap-4">
+                        <button class="btn btn-primary btn-lg move-button" data-distance="{{ config.CONFIG_SYSTEM.mountingSystem.extend_distance }}" type="button">Extend {{ config.CONFIG_SYSTEM.mountingSystem.extend_distance }} mm</button>
+                        <button class="btn btn-primary btn-lg move-button" data-distance="-{{ config.CONFIG_SYSTEM.mountingSystem.retract_distance }}" type="button">Retract {{ config.CONFIG_SYSTEM.mountingSystem.retract_distance }} mm</button>
+                        <input type="number" class="form-control" id="set_position" min="{{ config.CONFIG_SYSTEM.mountingSystem.actuator_min }}" max="{{ config.CONFIG_SYSTEM.mountingSystem.actuator_max }}" placeholder="mm" value="{{ current_actuator_position }}">
+                    </div>
+                </div>
+                <div class="col-4">
+                    <button class="btn btn-primary btn-lg set-button" data-position="0" type="button"><i class="fas fa-home fa-2x"></i></button>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        var source_actuator = new EventSource("{{ url_for('eventStreams.mountingSystem_actuator_position')}}");
+
+        source_actuator.onmessage = function (event) {
+            // split the message data
+            var data = JSON.parse(event.data);
+            console.log(data);
+            // update the current position
+            $("#current_position").text(data.position);
+        };
+
+
+        var current_position = 0;
+
+        $('.move-button').click(function () {
+            var distance = $(this).data('distance');
+            console.log(distance);
+            $.ajax({
+                url: "{{ url_for('mountingSystem.move') }}",
+                type: 'GET',
+                data: {
+                    'distance': distance
+                },
+                success: function (data) {
+                    console.log(data);
+                    current_position = data.current_position;
+                    $('#set_position').val(current_position);
+                }
+            });
+        });
+
+        $('.set-button').click(function () {
+            var position = $(this).data('position');
+            console.log(position);
+            $.ajax({
+                url: "{{ url_for('mountingSystem.position_set') }}",
+                type: 'GET',
+                data: {
+                    'position': position
+                },
+                success: function (data) {
+                    console.log(data);
+                    current_position = data.current_position;
+                    $('#set_position').val(current_position);
+                }
+            });
+        });
+
+        $('#set_position').change(function () {
+            var position = $(this).val();
+            console.log(position);
+            $.ajax({
+                url: "{{ url_for('mountingSystem.position_set') }}",
+                type: 'GET',
+                data: {
+                    'position': position
+                },
+                success: function (data) {
+                    console.log(data);
+                    current_position = data.current_position;
+                    $('#set_position').val(current_position);
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

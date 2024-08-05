@@ -69,7 +69,6 @@ def mounting_system():
         title='Home V2',
         year=datetime.now().year,
         showFooter=True,
-        current_actuator_position=controller_mountingSystem.get_actuator_target(),
         measurement_delays=current_app.config['CONFIG_SYSTEM']['measurement_manager']['measurement_delay_list'],
         current_measurement_delay=current_app.config['CONFIG_RUN']['measurement_manager']['measurement_delay'],
         sites = sites,
