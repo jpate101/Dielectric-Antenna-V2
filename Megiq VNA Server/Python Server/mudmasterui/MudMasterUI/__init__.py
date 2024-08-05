@@ -50,12 +50,8 @@ def createApp(config_main=Config, config_machine=Config_Machine, site_config=Sit
     from MudMasterUI.vna import bp as bp_vna
     app.register_blueprint(bp_vna)
 
-    #added be me 
+    #added be Joshua 
     from MudMasterUI.mountingSystemV2 import bp as bp_mountingSystemV2
     app.register_blueprint(bp_mountingSystemV2)
     
-    #added be me 
-    from MudMasterUI.Teltonika import bp as bp_Teltonika
-    app.register_blueprint(bp_Teltonika)
-
     return app

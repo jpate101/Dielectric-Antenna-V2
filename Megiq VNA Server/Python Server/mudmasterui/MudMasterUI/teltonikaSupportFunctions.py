@@ -133,19 +133,5 @@ def get_GPS_data_endpoint():
     return {"Error from teltonika"}  # Return None if request fails
 
 
-class Teltonika_Measurement_Manager(object):
-
-    def init_app(self, app, vna):
-        """ Initializes the Continuous_Measurement_Manager.
-        
-        Args:
-            app (Flask): The Flask app object.
-            vna: The object representing the VNA.
-
-        Returns:
-            None
-        """
-        self._app = app
-        self._vna = vna
 
 

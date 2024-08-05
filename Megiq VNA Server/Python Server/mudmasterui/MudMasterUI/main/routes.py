@@ -37,41 +37,6 @@ from MudMasterUI import controller_vna, controller_mountingSystem, module_dielec
 *******************************************************************************
 """
 
-@bp.route('/home')
-def home():
-    """Renders the home page."""
-    measurement_manager.set_idle()
-    return render_template(
-        'main/index.html',
-        title='Home Page',
-        year=datetime.now().year,
-        showFooter = True
-    )
-
-
-@bp.route('/settings', methods=['GET'])
-def settings():
-    """Renders the settings page."""
-    # generate a list of sites from the site config
-    sites = list(
-        {
-            'id': key,
-            'name': current_app.config['SITE_CONFIG'][key]['name'],
-            'country': current_app.config['SITE_CONFIG'][key]['country'],
-            'calibration_date': current_app.config['SITE_CONFIG'][key]['calibration_date']
-        } for key in current_app.config['SITE_CONFIG'].keys()
-    )
-
-    return render_template(
-        'main/settings.html',
-        title='Settings',
-        year=datetime.now().year,
-        showFooter = True,
-        sites = sites,
-        measurement_delays = current_app.config['CONFIG_SYSTEM']['measurement_manager']['measurement_delay_list'],
-    )
-
-
 @bp.route('/settings', methods=['POST'])
 def settings_post():
     # receive the settings updates that have been sent as post requests
@@ -99,15 +64,3 @@ def settings_post():
 
     return jsonify({'success': True})
 
-
-
-
-@bp.route('/run-menu')
-def run_menu():
-    """Renders the run menu page."""
-    return render_template(
-        'main/run_menu.html',
-        title='Run Menu',
-        year=datetime.now().year,
-        showFooter = True
-    )
