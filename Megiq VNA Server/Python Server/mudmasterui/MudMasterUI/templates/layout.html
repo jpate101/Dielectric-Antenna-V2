@@ -8,23 +8,29 @@
     <link rel="stylesheet" type="text/css" href="/static/content/site.css" />
     <link rel="stylesheet" type="text/css" href="/static/content/all.css" />
     <link rel="stylesheet" type="text/css" href="/static/content/Chart.css" />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <script src="/static/scripts/modernizr-2.6.2.js"></script>
 </head>
 
 <body class="d-flex flex-column h-100">
     <header>
         <nav class="navbar navbar-expand-sm navbar-dark bg-dark fixed-top px-4">
-            <!-- Toggler Button -->
+            <!-- Centered Title for Larger Screens -->
+            <div class="text-white d-none d-sm-block">
+                <h4 class="mb-0">{{ title }}</h4>
+            </div>
+
+            <!-- Navbar Toggler for Mobile -->
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <!-- Navbar Brand Links for Larger Screens -->
+            <!-- Navbar Content -->
             <div class="collapse navbar-collapse" id="navbarContent">
-                <!-- Left Side Links for Larger Screens -->
+                <!-- Desktop Menu -->
                 <ul class="navbar-nav mx-auto d-none d-sm-flex">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('mountingSystemV2.mounting_system')}}">Home V2</a>
+                        <a class="nav-link" href="{{ url_for('mountingSystemV2.mounting_system')}}">Home</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('vna.vna')}}">Live VNA Interface</a>
@@ -34,51 +40,45 @@
                     </li>
                 </ul>
 
-                <!-- Dropdown Menu for Smaller Screens -->
+                <!-- Dropdown Menu for Mobile -->
                 <ul class="navbar-nav mx-auto d-sm-none">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Menu
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="{{ url_for('mountingSystemV2.mounting_system')}}">Home V2</a>
+                            <a class="dropdown-item" href="{{ url_for('mountingSystemV2.mounting_system')}}">Home</a>
                             <a class="dropdown-item" href="{{ url_for('vna.vna')}}">Live VNA Interface</a>
                             <a class="dropdown-item" href="{{ url_for('main.measure')}}">Live Tailings Measurement</a>
                         </div>
                     </li>
                 </ul>
 
-                <!-- Centered Title for Larger Screens -->
-                <div class="navbar-nav mx-auto text-white d-none d-md-block">
-                    <h4 class="my-auto">{{ title }}</h4>
-                </div>
-
                 <!-- Right-hand Side Icons -->
-                <div class="navbar-nav" style="min-width: 110px">
+                <div class="navbar-nav d-none d-sm-flex" style="min-width: 110px">
                     <li class="nav-item my-auto">
-                        <span class="fas fa-chart-line mx-1 text-center align-middle" style="vertical-align: middle; text-align: center; color: gray" id="vnaConnection" title=""></span>
+                        <span class="fas fa-chart-line mx-1 text-center align-middle" style="color: gray" id="vnaConnection" title=""></span>
                     </li>
                     <li class="nav-item my-auto">
-                        <span class="fas fa-cog mx-1 text-center align-middle" style="vertical-align: middle; text-align: center; color: gray" id="mountingSystemConection" title=""></span>
+                        <span class="fas fa-cog mx-1 text-center align-middle" style="color: gray" id="mountingSystemConection" title=""></span>
                     </li>
                     <li class="nav-item my-auto">
-                        <span class="fas fa-map-marker-alt mx-1 text-center align-middle" style="vertical-align: middle; text-align: center; color: gray" id="teltonikaConnection" title=""></span>
+                        <span class="fas fa-map-marker-alt mx-1 text-center align-middle" style="color: gray" id="teltonikaConnection" title=""></span>
                     </li>
                 </div>
             </div>
         </nav>
     </header>
-    
 
     <main class="flex-shrink-0 mt-3">
         <div class="container">
             {% block content %}{% endblock %}
         </div>
     </main>
-        
+
     <footer class="footer fixed-bottom py-3 bg-light">
         <div class="container">
-            <div class="text-muted">Mudmaster  UI - Version: {{ config.VERSION }} | Machine: {{ config.CONFIG_MACHINE.machineNumber }}</div>
+            <div class="text-muted">Mudmaster UI - Version: {{ config.VERSION }} | Machine: {{ config.CONFIG_MACHINE.machineNumber }}</div>
         </div>
     </footer>
 
@@ -91,46 +91,27 @@
             var source_status_indicators = new EventSource("{{ url_for('eventStreams.systemStatusIndicators')}}");
 
             source_status_indicators.onmessage = function (event) {
-                // split the message data
                 var data = JSON.parse(event.data);
 
-                if (data.errorIndicator == 0) {
-                    $("#errorIndicator").css('color', "#343a40");
-                    $("#errorIndicator").attr('title', "No Errors");
+                // Update UI based on received data
+                $("#errorIndicator").css('color', data.errorIndicator == 0 ? "#343a40" : "red")
+                                    .attr('title', data.errorIndicator == 0 ? "No Errors" : "Error");
 
-                } else {
-                    $("#errorIndicator").css('color', "red");
-                    $("#errorIndicator").attr('title', "Error");
-                }
+                $("#vnaConnection").css('color', data.vnaConnection == 0 ? "darkorange" : "limegreen")
+                                   .attr('title', data.vnaConnection == 0 ? "VNA not connected" : "VNA connected");
 
-                if (data.vnaConnection == 0) {
-                    $("#vnaConnection").css('color', "darkorange");
-                    $("#vnaConnection").attr('title', "VNA not connected");
-
-                } else {
-                    $("#vnaConnection").css('color', "limegreen");
-                    $("#vnaConnection").attr('title', "VNA connected");
-                }
-
-                if (data.teltonikaConnection == 0) {
-                    $("#teltonikaConnection").css('color', "darkorange");
-                    $("#teltonikaConnection").attr('title', "Error Cant find Teltonika");
-
-                } else {
-                    $("#teltonikaConnection").css('color', "limegreen");
-                    $("#teltonikaConnection").attr('title', "Teltonika Connected");
-                }
+                $("#teltonikaConnection").css('color', data.teltonikaConnection == 0 ? "darkorange" : "limegreen")
+                                         .attr('title', data.teltonikaConnection == 0 ? "Error Cant find Teltonika" : "Teltonika Connected");
 
                 if (data.mountingSystemConection == -1) {
-                    $("#mountingSystemConection").css('color', "darkorange");
-                    $("#mountingSystemConection").attr('title', "Mounting system not connected");
-
+                    $("#mountingSystemConection").css('color', "darkorange")
+                                                  .attr('title', "Mounting system not connected");
                 } else if (data.mountingSystemConection == 1) {
-                    $("#mountingSystemConection").css('color', "red");
-                    $("#mountingSystemConection").attr('title', "Mounting system error");
+                    $("#mountingSystemConection").css('color', "red")
+                                                  .attr('title', "Mounting system error");
                 } else {
-                    $("#mountingSystemConection").css('color', "limegreen");
-                    $("#mountingSystemConection").attr('title', "Mounting system connected");
+                    $("#mountingSystemConection").css('color', "limegreen")
+                                                  .attr('title', "Mounting system connected");
                 }
             };
         });

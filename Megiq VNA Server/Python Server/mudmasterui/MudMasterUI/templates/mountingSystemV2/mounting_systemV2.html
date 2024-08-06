@@ -11,44 +11,25 @@
     <div class="col-md-6 mb-4">
         <div class="h-100 p-5 text-white bg-dark rounded-3 position-relative">
             <h2>VNA Sensor Controls</h2>
-        <br></br>
-            <p>
-                <span id="current_action" style="color: red;">Not currently performing action</span>
+            <p style="margin: 10px; ">
+                <span id="current_action" style="
+                    color: black;
+                    font-weight: bold; 
+                    background-color: white; 
+                    padding: 5px; 
+                    border-radius: 4px; 
+                    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); 
+                    margin: 10px; 
+                ">Not currently performing action</span>
             </p>
 
+            <div id="indicator-check-text">
             <p>
                 Check the indicators at the top right are green.
-                If not reconnect Sensor and Actuator to Computer.
+                If not reconnect Sensor and Actuator to Computer. Then refresh the page.
             </p>
-            <p>
-                Note that leaving page will not stop measurments from being taken
-                click the red Retract and Cancel Measurements or reclick the take measurement button again to stop Readings from being taken
-            </p>
-            <!--<div class="" style="display: flex;">
-                <p>Extending Actuator</p>
-                <div class="nav-item my-auto"><span class="fas fa-power-off mx-1 text-center align-middle"
-                        style="vertical-align: middle; text-align: center; color: gray" id="ExtendingActuator"
-                        title=""></span></div>
             </div>
-            <div class="" style="display: flex;">
-                <p>Retracting Actuator</p>
-                <div class="nav-item my-auto"><span class="fas fa-power-off mx-1 text-center align-middle"
-                        style="vertical-align: middle; text-align: center; color: gray" id="RetractingActuator"
-                        title=""></span></div>
-            </div>-->
-            <p>Known Error Indicators (are used for troubleshooting if program runs into know issues.)</p>
-            <div class="" style="display: flex;">
-                
-                <div class="nav-item my-auto"><span class="fas fa-map-marker-alt mx-1 text-center align-middle"
-                        style="vertical-align: middle; text-align: center; color: gray" id="teltonikaErrorIndicator"
-                        title=""></span></div>
-                <div class="nav-item my-auto"><span class="fas fa-clock mx-1 text-center align-middle"
-                        style="vertical-align: middle; text-align: center; color: gray"
-                        id="vnaReadTimeoutErrorIndicator" title=""></span></div>
-                <div class="nav-item my-auto"><span class="fas fa-pen mx-1 text-center align-middle"
-                        style="vertical-align: middle; text-align: center; color: gray"
-                        id="ActuatorReadWriteErrorIndicator" title=""></span></div>
-            </div>
+            <h5>Settings</h5> 
             <div class="form-group">
                 <label for="measurement-delay-select">Select Measurement Delay:</label>
                 <select id="measurement-delay-select" class="form-control">
@@ -71,6 +52,24 @@
                 </select>
             </div>
 
+            <br></br>
+
+            <h5>Known Error Indicators</h5> 
+            <p>Used for troubleshooting if program runs into know issues.</p>
+            <div class="" style="display: flex;">
+                
+                <div class="nav-item my-auto"><span class="fas fa-map-marker-alt mx-1 text-center align-middle"
+                        style="vertical-align: middle; text-align: center; color: gray" id="teltonikaErrorIndicator"
+                        title=""></span></div>
+                <div class="nav-item my-auto"><span class="fas fa-clock mx-1 text-center align-middle"
+                        style="vertical-align: middle; text-align: center; color: gray"
+                        id="vnaReadTimeoutErrorIndicator" title=""></span></div>
+                <div class="nav-item my-auto"><span class="fas fa-pen mx-1 text-center align-middle"
+                        style="vertical-align: middle; text-align: center; color: gray"
+                        id="ActuatorReadWriteErrorIndicator" title=""></span></div>
+            </div>
+            
+
 
 
 
@@ -79,7 +78,7 @@
     <div class="col-md-6 mb-4">
         <div class="h-100 py-3 rounded-3 position-relative">
             <div class="row">
-                <div class="col-8">
+                <div class="col-10">
                     <div class="d-grid gap-4">
                         <button id="calibrate-button" class="btn btn-primary btn-lg"
                             data-distance="-{{ config.CONFIG_SYSTEM.mountingSystem.retract_distance }}"
@@ -334,6 +333,15 @@
             } else {
                 $("#RunningMesurementsButtonIndicator").css("color", "limegreen");
                 $("#RunningMesurementsButtonIndicator").attr('title', "Currently Logging");
+            }
+
+            if(data.vnaConnection == 2 && data.mountingSystemConection == 0 && data.teltonikaConnection == 1 ){
+                $("#indicator-check-text").css("color", "limegreen");
+            }else{
+                $("#indicator-check-text").css('color', "darkorange");
+                console.log(data.vnaConnection);
+                console.log(data.mountingSystemConection);
+                console.log(data.teltonikaConnection);
             }
 
         };

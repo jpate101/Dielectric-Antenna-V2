@@ -66,7 +66,7 @@ def mounting_system():
     )
     return render_template(
         'mountingSystemV2/mounting_systemV2.html',
-        title='Home V2',
+        title='Home',
         year=datetime.now().year,
         showFooter=True,
         measurement_delays=current_app.config['CONFIG_SYSTEM']['measurement_manager']['measurement_delay_list'],
