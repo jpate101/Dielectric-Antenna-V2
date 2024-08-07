@@ -64,6 +64,9 @@ def mounting_system():
             'calibration_date': current_app.config['SITE_CONFIG'][key]['calibration_date']
         } for key in current_app.config['SITE_CONFIG'].keys()
     )
+    
+    measurement_manager._current_state = 'idle'
+    
     return render_template(
         'mountingSystemV2/mounting_systemV2.html',
         title='Home',
@@ -91,8 +94,8 @@ def Calibrate():
         if(isExtended == 1 or isExtended == 2 ):
             print("Actuator Extending")
             globalErrorVar.CurrentlyExtending = True
-            sleep = controller_mountingSystem.fullyExtend()
-            #sleep = "success"
+            #sleep = controller_mountingSystem.fullyExtend()
+            sleep = "success"
             if(sleep == "success"):
                 time.sleep(32)
                 sleep = controller_mountingSystem.ApplyBrake()
@@ -101,8 +104,9 @@ def Calibrate():
                 print("Actuator Extended")
         measurement_manager.calibration_state_MV2()# used to be change variable to calibration but now 
         if (globalErrorVar.ErrorFromMeasurementManager):
-            globalErrorVar.ErrorFromMeasurementManager = False
+            #globalErrorVar.ErrorFromMeasurementManager = False
             return jsonify({"error": "Timeout occurred", "message": "VNA timed out"})
+        globalErrorVar.ErrorFromMeasurementManager = False
         print(globalErrorVar.ErrorFromMeasurementManager)
         print("Done Calibrating from mount-system-V2 route")
         isExtended = 3

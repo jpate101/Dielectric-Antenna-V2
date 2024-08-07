@@ -76,14 +76,14 @@ class Config(object):
             'power': -10,
             'averaging': 1,
         },
-        'vnaUpdateInterval': 5,
+        'vnaUpdateInterval': 10,# was 5
         'vnaUpdateInterval_display': 5,
         'vnaStatusInterval': 10,
         'mountingSystemUpdateInterval': 1,
         'calibrationUpdateInterval': 1,
         'calibrationStep': 10,  # mm
         'measurementUpdateInterval': 1,
-        'mountingSystemCommands': { # currently older version will need to update for RSI PRO
+        'mountingSystemCommands': { 
             'RSI PRO Extend' : "1\n",
             'RSI PRO Retract' : "2\n",
             'RSI PRO Stop' : "3\n",

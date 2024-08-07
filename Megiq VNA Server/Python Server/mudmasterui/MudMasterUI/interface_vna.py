@@ -34,6 +34,9 @@ import time
 import psutil
 from MudMasterUI import globalErrorVar
 
+import ctypes
+import subprocess
+
 """ Defines
 *******************************************************************************
 """
@@ -116,6 +119,9 @@ class VNA_Manager(object):
                     p.terminate()
 
             os.startfile(self._app.config['CONFIG_MACHINE'].get('vnaServerProcessPath'))
+            
+            # Run the server executable as administrator
+            #self._run_as_admin(self._app.config['CONFIG_MACHINE'].get('vnaServerProcessPath'))
 
             # now wait until the server and vna program have both started
             foundProgram = False
@@ -256,7 +262,7 @@ class VNA_Manager(object):
             #time.sleep(0.1)
             
         start_time = time.time()
-        timeout = 10  # 10 seconds timeout
+        timeout = 20  # 10 seconds timeout
 
         while (startingMeasurement == self._currentData['measurementCount'] and
            time.time() - start_time < timeout):
@@ -553,6 +559,19 @@ class VNA_Manager(object):
                 # check the status again
                 self._vnaStatus = self.vna_webRequest('get_status')
                 time.sleep(5)
+     
+     
+     
+    def _run_as_admin(self, exe_path):
+        try:
+            if not ctypes.windll.shell32.IsUserAnAdmin():
+                ctypes.windll.shell32.ShellExecuteW(None, "runas", exe_path, None, None, 1)
+            else:
+
+                subprocess.run([exe_path], check=True)
+        except Exception as e:
+            print(f"Failed to start {exe_path} as admin: {e}")           
+                
 
 
 
