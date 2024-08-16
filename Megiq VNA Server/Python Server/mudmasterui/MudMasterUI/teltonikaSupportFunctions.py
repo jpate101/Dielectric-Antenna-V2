@@ -1,19 +1,17 @@
-
+"""
+*******************************************************************************
+@file   teltonikaSupportFunctions.py
+@author Joshua Paterson
+@date   16 8 2024
+@brief  Support functions for getting gps data from teltonika
+"""
 import json
 import time
-#import os
 import threading
 
 import requests
 import json 
 
-#import random
-#import numpy as np
-
-#from datetime import datetime
-#from copy import deepcopy
-#from flask import render_template, flash, redirect, url_for, request, send_from_directory, jsonify, make_response, abort, Blueprint, current_app, session, Response
-#from copy import deepcopy
 from MudMasterUI.config import Config
 from MudMasterUI import globalErrorVar
 
@@ -29,6 +27,7 @@ DEVICE_IP = Config.CONFIG_SYSTEM['teltonika']['DEVICE_IP']
 
 
 def login_endpoint():
+    """Logs in to the Teltonika device and retrieves an authentication token."""
     global token
     url = f'http://{DEVICE_IP}/api/login'
     headers = {
@@ -70,6 +69,7 @@ def login_endpoint():
     return None  # Return None if request fails
 
 def get_GPS_data_endpoint():
+    """Retrieves GPS data from the Teltonika device using the provided token."""
     global token
     url = f'http://{DEVICE_IP}/ubus'  # Adjust the URL as per your device's API endpoint
     headers = {

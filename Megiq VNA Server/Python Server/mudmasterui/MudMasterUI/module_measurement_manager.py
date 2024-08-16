@@ -1,7 +1,7 @@
 """
 *******************************************************************************
 @file   module_measurement_manager.py
-@author Scott Thomason
+@author Scott Thomason, Joshua Paterson 
 @date   03 May 2022
 @brief  Module used to manage the measurement process. This will interface with 
         the VNA manager to get the data and then process it. Also uses a finite 
@@ -445,6 +445,11 @@ class Measurement_Manager(object):
 
 
     def calibration_state_MV2(self, testing=False):
+        """ @brief  This state is used to take a a calibration reading at 210mm.
+            @param  None
+            @retval None
+
+        """
         print('measurement system calibration at 210 mm MV2')
         globalErrorVar.CurrentlyCalibrating = True
 
@@ -500,7 +505,7 @@ class Measurement_Manager(object):
         self._current_state = 'idle'
         
     def measurement_state_MV2(self, testing=False):
-        """ @brief  This state is used to take a measurement from the VNA.
+        """ @brief  This state is used to take a measurement from the VNA when using the button from the home page.
             @param  None
             @retval None
 

@@ -1,7 +1,7 @@
 """
 *******************************************************************************
 @file   interface_MountingSystem.py
-@author Scott Thomason
+@author Scott Thomason, Joshua Paterson
 @date   30 Sep 2021
 @brief  Interface for the mounting system. This controls the actuator that 
         adjusts the height. It keeps track of the current system height and 
@@ -12,7 +12,8 @@ REFERENCE:
 *******************************************************************************
     Functions
 *******************************************************************************
-
+    Currently, there are no additional functions defined beyond those already
+    documented.
 *******************************************************************************
 """
 
@@ -34,18 +35,17 @@ from MudMasterUI import globalErrorVar
 """
 deviceDescriptions = ['Arduino']
 
-
-
-
 """ Functions
 *******************************************************************************
 """
 
 def findSerialPorts():
-    """ @brief  Finds all serial devices connected to the system and makes a list of 
-                the ports.
-        @param  None
-        @retval List of serial ports
+    """
+    Finds all serial devices connected to the system and makes a list of the ports.
+
+    @param  None
+    @retval List of serial ports - A list of available serial ports that match the 
+            descriptions in `deviceDescriptions`.
 
     """
     portList = []
@@ -57,21 +57,23 @@ def findSerialPorts():
 
     return portList
 
-
 """ Classes
 *******************************************************************************
 """
 
 class MountingSystem_Manager(object):
     def __init__(self, app=None):
-        """ @brief  Initialisation function for the mounting system manager.
-            @param  None
-            @retval None - Initialisation function.
+        """
+        Initialization function for the mounting system manager.
+
+        @param app: Reference to the application (optional). If provided, initializes 
+                    the application.
+        @retval None - Initialization function.
 
         """
         self._app = None
         self._serialPort = None
-        self._status = -1 # 0 = good, 1 = bad, -1 = not connected
+        self._status = -1  # 0 = good, 1 = bad, -1 = not connected
         self._calibrated = False
         self._currentHeight = None
         self._lastMessageTime = None
@@ -84,53 +86,57 @@ class MountingSystem_Manager(object):
 
         self._managementThreadRun = False
         
-        self._lock = threading.Lock() # lock used to protect data when it is being changed.
-        # start the management thread
-        
-        if(app != None):
+        self._lock = threading.Lock()  # Lock used to protect data when it is being changed.
+        # Start the management thread
+        if app is not None:
             self.init_app(app)
-        
 
     def init_app(self, app):
-        """ @brief  App initialiser used for application factory structure.
-            @param  app - reference to the application
-            @retval None
+        """
+        Initializes the application with configuration settings.
 
+        @param app: Reference to the application to initialize.
+        @retval None - Initializes the application and loads configuration settings.
+        
+        This function sets the application and configuration commands, and 
+        opens the serial port if it is not already open.
         """
         self._app = app
         self._config_commands = self._app.config['CONFIG_SYSTEM'].get('mountingSystemCommands', {})
         self._config_limits = self._app.config['CONFIG_SYSTEM'].get('mountingSystem', {'actuator_max': 210, 'actuator_min': 0})  # defaults to 130 if there is no config
         
-
-        if(self._serialPort == None):
+        if self._serialPort is None:
             self.openSerial()
-
 
     """ Serial Communications
     ***********************************************************************
     """
     def openSerial(self):
-        """ @brief  Attempts to find and open the serial port.
-            @param  None
-            @retval None
+        """
+        Attempts to find and open the serial port.
 
+        @param  None
+        @retval None - Opens the serial port if available and sets the port status.
+        
+        This function searches for available serial ports, connects to the first 
+        matching port, and updates the connection status.
         """
         try:
-            if(self._serialPort == None):
+            if self._serialPort is None:
                 availablePorts = findSerialPorts()
-                if(len(availablePorts) >= 1):
-                    # found the arduino
+                if len(availablePorts) >= 1:
+                    # Found the Arduino
                     print('Found Arduino')
                     print(availablePorts)
-                    self._serialPort = serial.Serial(port = availablePorts[0].device, 
-                                                    baudrate = 9600, 
-                                                    timeout = 1.0, 
-                                                    bytesize = serial.EIGHTBITS)
+                    self._serialPort = serial.Serial(port=availablePorts[0].device, 
+                                                    baudrate=9600, 
+                                                    timeout=1.0, 
+                                                    bytesize=serial.EIGHTBITS)
 
                     self._serialNo = availablePorts[0].serial_number
 
                     print('Serial No.:', self._serialNo)
-                    print('connected')
+                    print('Connected')
                     self._status = 0
 
         except Exception as e:
@@ -138,7 +144,15 @@ class MountingSystem_Manager(object):
             self._status = -1
             
     def closeSerial(self):
-        """ Closes the serial port if it is open. """
+        """
+        Closes the serial port if it is open.
+
+        @param  None
+        @retval None - Closes the serial port and updates the port status.
+        
+        This function safely closes the serial port if it is open and updates
+        the connection status.
+        """
         try:
             if self._serialPort is not None:
                 if self._serialPort.is_open:
@@ -151,113 +165,124 @@ class MountingSystem_Manager(object):
             print('Error closing serial port: {}'.format(e))
             self._status = 1
     
-
     """ General Control Functions
     ***********************************************************************
     """
-
 
     """ General Query Functions
     ***********************************************************************
     """
 
-    def get_actuator_position(self):# change for testing 
-        """ @brief  Gets the current actuator position.
-            @param  None
-            @retval Current actuator position
-            
-            was used for previous actuator only need 210mm position so just hard coded 
-
+    def get_actuator_position(self):
         """
+        Gets the current actuator position.
 
+        @param  None
+        @retval Current actuator position - Returns the actuator position (hardcoded to 210 mm).
+
+        This function provides the current position of the actuator. For testing purposes, 
+        it returns a hardcoded value of 210 mm.
+        """
         try:
-
             return 210
-
         except Exception as e:
             print(e)
-            #print(msg)
-            #return None
             return 210
 
-
     def get_status(self):
-        """ @brief  Gets the current status of the mounting system.
-            @param  None
-            @retval Current status
+        """
+        Gets the current status of the mounting system.
 
+        @param  None
+        @retval Current status - Returns the current status of the mounting system.
+        
+        This function checks the connection and returns the status of the mounting system.
         """
         self.ConnectionCheck()
         return self._status
     
-
     """ Functions added by Joshua Paterson for new actuator 
     ***********************************************************************
     """
     def fullyExtend(self):
+        """
+        Extends the actuator to its full extent.
 
+        @param  None
+        @retval str - Returns "success" if the extension is successful; otherwise, returns "fail".
+        
+        This function sends a command to fully extend the actuator and handles any 
+        exceptions that occur during the operation.
+        """
         try:
-            # Code that may raise an exception
             def write_read(x):
-                self._serialPort.write(bytes(x,   'utf-8'))
+                self._serialPort.write(bytes(x, 'utf-8'))
                 time.sleep(0.05)
                 data = self._serialPort.readline()
-                return   data
+                return data
 
             num = self._config_commands['RSI PRO Extend']
             print(num)
-            value   = write_read(num)
+            value = write_read(num)
             globalErrorVar.ErrorFromActuatorReadWrite = False
             return "success"
         except Exception as e:
-            # Handle the exception and print the error message
             print(f"An error occurred: {e}")
             globalErrorVar.ErrorFromActuatorReadWrite = True
             return "fail"
             self.closeSerial()
             self.openSerial()
-            
-        
+
     def fullyRetact(self):
+        """
+        Retracts the actuator to its initial position.
+
+        @param  None
+        @retval str - Returns "success" if the retraction is successful; otherwise, returns "fail".
+        
+        This function sends a command to fully retract the actuator and handles any 
+        exceptions that occur during the operation.
+        """
         try:
-            # Code that may raise an exception
             def write_read(x):
-                self._serialPort.write(bytes(x,   'utf-8'))
+                self._serialPort.write(bytes(x, 'utf-8'))
                 time.sleep(0.05)
                 data = self._serialPort.readline()
-                return   data
+                return data
 
             num = self._config_commands['RSI PRO Retract']
-            value   = write_read(num)
+            value = write_read(num)
             globalErrorVar.ErrorFromActuatorReadWrite = False
             return "success"
         except Exception as e:
-            # Handle the exception and print the error message
             print(f"An error occurred at fullyRetact: {e}")
             globalErrorVar.ErrorFromActuatorReadWrite = True
             self.closeSerial()
             self.openSerial()
             return "fail"
 
-            
-            
     def ApplyBrake(self):
+        """
+        Applies the brake to the actuator.
+
+        @param  None
+        @retval str - Returns "success" if the brake is applied successfully; otherwise, returns "fail".
+        
+        This function sends a command to apply the brake to the actuator and handles 
+        any exceptions that occur during the operation.
+        """
         try:
-            #self.openSerial()
-            # Code that may raise an exception
             def write_read(x):
-                #print("in try from fully retact")
-                self._serialPort.write(bytes(x,   'utf-8'))
+                self._serialPort.write(bytes(x, 'utf-8'))
                 time.sleep(0.05)
                 data = self._serialPort.readline()
-                return   data
+                return data
+
             num = self._config_commands['RSI PRO Stop']
-            value   = write_read(num)
-            #print(value)
+            value = write_read(num)
             globalErrorVar.ErrorFromActuatorReadWrite = False
             return "success"
         except Exception as e:
-            # Handle the exception and print the error message
             print(f"An error occurred: {e}")
             globalErrorVar.ErrorFromActuatorReadWrite = True
             self.closeSerial()
@@ -265,26 +290,30 @@ class MountingSystem_Manager(object):
             return "fail"
         
     def ConnectionCheck(self):
+        """
+        Checks the connection to the actuator.
+
+        @param  None
+        @retval str - Returns "success" if the connection check is successful; otherwise, returns "fail".
+        
+        This function sends a command to check the connection to the actuator and 
+        handles any exceptions that occur during the operation.
+        """
         try:
-            #self.openSerial()
-            # Code that may raise an exception
             def write_read(x):
-                #print("in try from fully retact")
-                self._serialPort.write(bytes(x,   'utf-8'))
+                self._serialPort.write(bytes(x, 'utf-8'))
                 time.sleep(0.05)
                 data = self._serialPort.readline()
-                return   data
+                return data
+
             num = self._config_commands['RSI PRO Connection Check']
-            value   = write_read(num)
-            #print(value)
+            value = write_read(num)
             globalErrorVar.ErrorFromActuatorReadWrite = False
             self._status = 0
             return "success"
         except Exception as e:
-            # Handle the exception and print the error message
             print(f"An error occurred: {e}")
             globalErrorVar.ErrorFromActuatorReadWrite = True
             self.closeSerial()
             self.openSerial()
-            
             return "fail"

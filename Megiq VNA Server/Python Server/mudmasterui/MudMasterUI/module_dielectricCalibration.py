@@ -113,27 +113,9 @@ def predict(Theta1, Theta2, X):
 
     """
     m = X.shape[0]
-
     p = np.zeros((m, 1))
-    #print("Predict 1 ")
-
-    #print(Theta1.shape)
-    #print(Theta2.shape)
-    #print(X.shape) 
-    # is input data as a shap of (1,90) however will need to be (1,276) to be multiplied with theta1. So wrong input shape. 
-    # x is from get_nextData function from interface vna but goes through nn_data_formatter function first 
-    # deviceManagementThread(self): -> _currentData (variable is being continuiosly written to, in interface_vna) - > get_nextData - > nn_data_formatter - > X
-    #(25, 277)
-    #(1, 26)
-    #(1,90) most of the time but did get (1, 178) before but nearly always (1,90)
-
-    #if X.shape[1] + 1 != Theta1.shape[0]:
-    #    raise ValueError("Dimensions of X and Theta1.T are not compatible for multiplication")
-    #print("Predict 1.1")
     h1 = sigmoid(np.hstack((np.ones((m, 1)), X)) @ Theta1.conj().T)
-    #print("Predict 2 ")
     p = sigmoid(np.hstack((np.ones((m, 1)), h1)) @ Theta2.conj().T)
-    #print("Predict 3 ")
 
     return p
 

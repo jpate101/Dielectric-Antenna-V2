@@ -40,18 +40,6 @@
                     {% endfor %}
                 </select>
             </div>
-
-            <div class="form-group">
-                <label for="site-select">Select Site:</label>
-                <select id="site-select" class="form-control">
-                    {% for site in sites %}
-                    <option value="{{ site.id }}" {% if site.id==current_site %}selected{% endif %}>
-                        {{ site.name }} - {{ site.country }}
-                    </option>
-                    {% endfor %}
-                </select>
-            </div>
-
             <br></br>
 
             <h5>Known Error Indicators</h5> 

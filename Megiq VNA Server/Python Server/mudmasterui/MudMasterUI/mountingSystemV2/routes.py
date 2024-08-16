@@ -53,6 +53,7 @@ isExtended = 1 #1 = dont know, 2 = retracted , 3 - extended
 """
 @bp.route('/')
 @bp.route('/HomeV2')
+@bp.route('/Home')
 def mounting_system():
     """Renders the home page."""
     current_measurement_delay = 60  
@@ -94,8 +95,8 @@ def Calibrate():
         if(isExtended == 1 or isExtended == 2 ):
             print("Actuator Extending")
             globalErrorVar.CurrentlyExtending = True
-            #sleep = controller_mountingSystem.fullyExtend()
-            sleep = "success"
+            sleep = controller_mountingSystem.fullyExtend()
+            #sleep = "success"
             if(sleep == "success"):
                 time.sleep(32)
                 sleep = controller_mountingSystem.ApplyBrake()
