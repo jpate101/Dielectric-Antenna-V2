@@ -24,9 +24,9 @@ import os
 from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request, send_from_directory, jsonify, make_response, abort, Blueprint, current_app, session
 
-from MudMasterUI.main import bp
-from MudMasterUI.supportFunctions import save_run_config
-from MudMasterUI import controller_vna, controller_mountingSystem, module_dielectric_manager, measurement_manager
+from MudMasterUI.main import bp  # Import the Blueprint instance named 'bp' from MudMasterUI.main
+from MudMasterUI.supportFunctions import save_run_config  # Import function to save run configuration
+from MudMasterUI import controller_vna, controller_mountingSystem, module_dielectric_manager, measurement_manager  # Import various controllers and managers
 
 """ Defines
 *******************************************************************************
@@ -39,28 +39,36 @@ from MudMasterUI import controller_vna, controller_mountingSystem, module_dielec
 
 @bp.route('/settings', methods=['POST'])
 def settings_post():
-    # receive the settings updates that have been sent as post requests
-    print(request)
+    """
+    Route to handle POST requests for updating settings. Receives updates and 
+    saves them to the configuration file.
+
+    The route updates the site and measurement delay settings if provided in 
+    the request. It also saves the updated configuration.
+    """
+    # Receive and decode the settings updates sent as POST requests
     received_data = json.loads(request.get_data().decode())
 
-    print(received_data)
-
-    # update the settings in the config file
-    if('site' in received_data):
+    # Update the settings in the config file if provided
+    if 'site' in received_data:
+        # Check if the site is valid
         if received_data['site'] in current_app.config['SITE_CONFIG'].keys():
+            # Update the site in the current run configuration
             current_app.config['CONFIG_RUN']['site'] = received_data['site']
             
-            # save run config
+            # Save the updated run configuration
             save_run_config(current_app)
 
-            # update the site in the measurement manager
+            # Update the site in the measurement manager
             measurement_manager.set_site(current_app.config['CONFIG_RUN']['site'])
 
     if 'measurement_delay' in received_data:
+        # Update the measurement delay setting
         current_app.config['CONFIG_RUN']['measurement_manager']['measurement_delay'] = int(received_data.get('measurement_delay', 60))
 
-        # save run config
+        # Save the updated run configuration
         save_run_config(current_app)
 
+    # Return a JSON response indicating success
     return jsonify({'success': True})
 

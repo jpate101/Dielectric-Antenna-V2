@@ -2,16 +2,19 @@
 
 {% block content %}
 
+<!-- Container for machine number and section divider -->
 <div class="mb-3">
-    <h1>{{ config.CONFIG_MACHINE.machineNumber}}</h1>
+    <h1>{{ config.CONFIG_MACHINE.machineNumber }}</h1>
     <hr>
 </div>
 
+<!-- Container for mounting system controls -->
 <div id="mount_controls" class="row">
+    <!-- Left column: Sensor Controls and Error Indicators -->
     <div class="col-md-6 mb-4">
         <div class="h-100 p-5 text-white bg-dark rounded-3 position-relative">
             <h2>VNA Sensor Controls</h2>
-            <p style="margin: 10px; ">
+            <p style="margin: 10px;">
                 <span id="current_action" style="
                     color: black;
                     font-weight: bold; 
@@ -19,323 +22,263 @@
                     padding: 5px; 
                     border-radius: 4px; 
                     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); 
-                    margin: 10px; 
+                    margin: 10px;
                 ">Not currently performing action</span>
             </p>
 
             <div id="indicator-check-text">
-            <p>
-                Check the indicators at the top right are green.
-                If not reconnect Sensor and Actuator to Computer. Then refresh the page.
-            </p>
+                <p>
+                    Check the indicators at the top right are green.
+                    If not reconnect Sensor and Actuator to Computer. Then refresh the page.
+                </p>
             </div>
-            <h5>Settings</h5> 
+
+            <h5>Settings</h5>
             <div class="form-group">
                 <label for="measurement-delay-select">Select Measurement Delay:</label>
                 <select id="measurement-delay-select" class="form-control">
+                    <!-- Populate measurement delay options dynamically -->
                     {% for delay in measurement_delays %}
-                    <option value="{{ delay }}" {% if delay==current_measurement_delay %}selected{% endif %}>
+                    <option value="{{ delay }}" {% if delay == current_measurement_delay %}selected{% endif %}>
                         {{ delay }} Seconds
                     </option>
                     {% endfor %}
                 </select>
             </div>
-            <br></br>
+            <br>
 
-            <h5>Known Error Indicators</h5> 
-            <p>Used for troubleshooting if program runs into know issues.</p>
-            <div class="" style="display: flex;">
-                
-                <div class="nav-item my-auto"><span class="fas fa-map-marker-alt mx-1 text-center align-middle"
-                        style="vertical-align: middle; text-align: center; color: gray" id="teltonikaErrorIndicator"
-                        title=""></span></div>
-                <div class="nav-item my-auto"><span class="fas fa-clock mx-1 text-center align-middle"
+            <h5>Known Error Indicators</h5>
+            <p>Used for troubleshooting if program runs into known issues.</p>
+            <div style="display: flex;">
+                <!-- Error indicators for troubleshooting -->
+                <div class="nav-item my-auto">
+                    <span class="fas fa-map-marker-alt mx-1 text-center align-middle"
                         style="vertical-align: middle; text-align: center; color: gray"
-                        id="vnaReadTimeoutErrorIndicator" title=""></span></div>
-                <div class="nav-item my-auto"><span class="fas fa-pen mx-1 text-center align-middle"
+                        id="teltonikaErrorIndicator" title=""></span>
+                </div>
+                <div class="nav-item my-auto">
+                    <span class="fas fa-clock mx-1 text-center align-middle"
                         style="vertical-align: middle; text-align: center; color: gray"
-                        id="ActuatorReadWriteErrorIndicator" title=""></span></div>
+                        id="vnaReadTimeoutErrorIndicator" title=""></span>
+                </div>
+                <div class="nav-item my-auto">
+                    <span class="fas fa-pen mx-1 text-center align-middle"
+                        style="vertical-align: middle; text-align: center; color: gray"
+                        id="ActuatorReadWriteErrorIndicator" title=""></span>
+                </div>
             </div>
-            
-
-
-
-
         </div>
     </div>
+
+    <!-- Right column: Control Buttons -->
     <div class="col-md-6 mb-4">
         <div class="h-100 py-3 rounded-3 position-relative">
             <div class="row">
                 <div class="col-10">
                     <div class="d-grid gap-4">
+                        <!-- Button to calibrate the system -->
                         <button id="calibrate-button" class="btn btn-primary btn-lg"
                             data-distance="-{{ config.CONFIG_SYSTEM.mountingSystem.retract_distance }}"
                             type="button">Calibrate
-                            <div class="nav-item my-auto"><span class="fas fa-power-off mx-1 text-center align-middle"
+                            <div class="nav-item my-auto">
+                                <span class="fas fa-power-off mx-1 text-center align-middle"
                                     style="vertical-align: middle; text-align: center; color: gray"
-                                    id="CalibrateButtonIndicator" title=""></span></div>
+                                    id="CalibrateButtonIndicator" title=""></span>
+                            </div>
                         </button>
+
+                        <!-- Button to start/stop measurements -->
                         <button id="run-measurements-button" class="btn btn-primary btn-lg"
                             data-distance="{{ config.CONFIG_SYSTEM.mountingSystem.extend_distance }}"
                             type="button">Run/Stop Measurements
-                            <div class="nav-item my-auto"><span class="fas fa-power-off mx-1 text-center align-middle"
+                            <div class="nav-item my-auto">
+                                <span class="fas fa-power-off mx-1 text-center align-middle"
                                     style="vertical-align: middle; text-align: center; color: gray"
-                                    id="RunningMesurementsButtonIndicator" title=""></span></div>
+                                    id="RunningMesurementsButtonIndicator" title=""></span>
+                            </div>
                         </button>
+
+                        <!-- Button to retract and cancel measurements -->
                         <button id="retract-button" class="btn btn-danger btn-lg" type="button">Retract and Cancel
                             Measurements
-                            <div class="nav-item my-auto"><span class="fas fa-power-off mx-1 text-center align-middle"
+                            <div class="nav-item my-auto">
+                                <span class="fas fa-power-off mx-1 text-center align-middle"
                                     style="vertical-align: middle; text-align: center; color: gray"
-                                    id="RetractButtonIndicator" title=""></span></div>
+                                    id="RetractButtonIndicator" title=""></span>
+                            </div>
                         </button>
-
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
 
+</div>
 
+{% endblock %}
 
+{% block scripts %}
+<script type="text/javascript">
+    // Create an EventSource instance to receive actuator position updates
+    var source_actuator = new EventSource("{{ url_for('eventStreams.mountingSystem_actuator_position') }}");
 
-    {% endblock %}
+    // Handle incoming messages from the EventSource
+    source_actuator.onmessage = function (event) {
+        var data = JSON.parse(event.data);
+        console.log(data);
+        // Update the displayed actuator position
+        $("#current_position").text(data.position);
+    };
 
-    {% block scripts %}
-    <script type="text/javascript">
+    // Function to calibrate the system
+    function calibrateButtonAction() {
+        $("#current_action").html("Extending actuator then Calibrating <br> Do not Press another button");
+        $.ajax({
+            url: '/mounting-system-v2/Calibrate',
+            type: 'GET',
+            success: function (response) {
+                if (response.error) {
+                    console.error('Error:', response.error);
+                    $("#current_action").html(response.error); // Display error message
+                } else {
+                    console.log('Fully extended:', response);
+                    $("#current_action").html("Done Calibrating <br> Ready for next Command"); // Success message
+                }
+            },
+            error: function (error) {
+                console.error('Error while extending:', error);
+                $("#current_action").html("Error While Calibrating likely timed out while getting vna data");
+            }
+        });
+    }
 
-        var source_actuator = new EventSource("{{ url_for('eventStreams.mountingSystem_actuator_position')}}");
+    // Function to start or stop measurements
+    function runMeasurementAction() {
+        $("#current_action").html("Extending actuator then Running Measurements <br> Press Same button to Stop measurements From logging");
+        $.ajax({
+            url: '/mounting-system-v2/Measure',
+            type: 'GET',
+            success: function (response) {
+                if (response.error) {
+                    console.error('Error:', response.error);
+                    $("#current_action").html(response.error); // Display error message
+                } else {
+                    console.log('Measurements completed:', response);
+                    $("#current_action").html(response.message); // Success message
+                }
+            },
+            error: function (error) {
+                console.error('Error while running measurements:', error);
+                $("#current_action").html("Error While Running Measurements");
+            }
+        });
+    }
 
-        source_actuator.onmessage = function (event) {
-            // split the message data
-            var data = JSON.parse(event.data);
-            console.log(data);
-            // update the current position
-            $("#current_position").text(data.position);
-        };
+    // Function to fully retract the actuator
+    function fullyRetract() {
+        $("#current_action").html("Retracting Actuator And Canceling Measurements <br> Do not Press another button");
+        $.ajax({
+            url: '/mounting-system-v2/fullyRetract',
+            type: 'GET',
+            success: function (response) {
+                if (response.error) {
+                    console.error('Error:', response.error);
+                    $("#current_action").html(response.error); // Display error message
+                } else {
+                    console.log('Fully retracted:', response);
+                    $("#current_action").html("Actuator Fully Retracted <br> Ready for next Command"); // Success message
+                }
+            },
+            error: function (error) {
+                console.error('Error while retracting:', error);
+                $("#current_action").html("Error while Retracting");
+            }
+        });
+    }
 
-        // Function to send AJAX request to fullyExtend endpoint
-        function calibrateButtonAction() {
-            $("#current_action").html("Extending actuator then Calibrating <br> Do not Press another button");
+    // Event listeners for button clicks
+    $('#calibrate-button').click(function () {
+        calibrateButtonAction(); // Call the function to calibrate
+    });
+
+    $('#run-measurements-button').click(function () {
+        runMeasurementAction(); // Call the function to start/stop measurements
+    });
+
+    $('#retract-button').click(function () {
+        fullyRetract(); // Call the function to fully retract
+    });
+
+    $(document).ready(function () {
+        // Convert server-side variables to JavaScript
+        var measurement_delay_list = JSON.parse('{{ measurement_delays | tojson | safe }}');
+        var current_measurement_delay = '{{ config.CONFIG_RUN.measurement_manager.measurement_delay }}';
+        var site_list = JSON.parse('{{ sites | tojson | safe }}');
+        var current_site = '{{ config.CONFIG_RUN.site }}';
+
+        // Event listener for site selection change
+        $('#site-select').change(function () {
+            var selectedSite = $(this).val();
             $.ajax({
-                url: '/mounting-system-v2/Calibrate',
-                type: 'GET',
-                success: function (response) {
-                    if (response.error) {
-                        console.error('Error:', response.error);
-                        $("#current_action").html(response.error); // Display the error message
-                    } else {
-                        console.log('Fully extended:', response);
-                        $("#current_action").html("Done Calibrating <br> Ready for next Command"); // Show "Done Calibrating" message
-                        // Optionally update UI or perform other actions upon success
-                    }
+                url: '{{ url_for("main.settings_post") }}',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ site: selectedSite }),
+                success: function () {
+                    location.reload();
                 },
-                error: function (error) {
-                    console.error('Error while extending:', error);
-                    $("#current_action").html("Error While Calibrating likely timed out while getting vna data");
-                    // Handle error cases
+                error: function () {
+                    alert("Failed to update site selection.");
                 }
             });
-        }
+        });
 
-        // Function to send AJAX request to fullyRetract endpoint
-        function runMeasurementAction() {
-            $("#current_action").html("Extending actuator then Running Measurements <br> Press Same button to Stop measurements From logging");
+        // Event listener for measurement delay dropdown change
+        $('#measurement-delay-select').change(function () {
+            var selectedDelay = $(this).val();
             $.ajax({
-                url: '/mounting-system-v2/Measure',
-                type: 'GET',
-                success: function (response) {
-                    if (response.error) {
-                        console.error('Error:', response.error);
-                        $("#current_action").html(response.error); // Display the error message
-                    } else {
-                        console.log('Measurements completed:', response);
-                        $("#current_action").html(response.message); // Show "Measurements Completed" message
-                        // Optionally update UI or perform other actions upon success
-                    }
+                url: '{{ url_for("main.settings_post") }}',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ measurement_delay: selectedDelay }),
+                success: function () {
+                    location.reload();
                 },
-                error: function (error) {
-                    console.error('Error while running measurements:', error);
-                    $("#current_action").html("Error While Running Measurements");
-                    // Handle error cases
+                error: function () {
+                    alert("Failed to update measurement delay.");
                 }
             });
-        }
-
-        // Function to send AJAX request to fullyRetract endpoint
-        function fullyRetract() {
-            $("#current_action").html("Retracting Actuator And Canceling Measurements <br> Do not Press another button");
-            $.ajax({
-                url: '/mounting-system-v2/fullyRetract',
-                type: 'GET',
-                success: function (response) {
-                    if (response.error) {
-                        console.error('Error:', response.error);
-                        $("#current_action").html(response.error); // Display the error message
-                    } else {
-                        console.log('Fully retracted:', response);
-                        $("#current_action").html("Actuator Fully Retracted <br> Ready for next Command"); // Show "Actuator Fully Retracted" message
-                        // Optionally update UI or perform other actions upon success
-                    }
-                },
-                error: function (error) {
-                    console.error('Error while retracting:', error);
-                    $("#current_action").html("Error while Retracting ");
-                    // Handle error cases
-                }
-            });
-        }
-
-        // Event listeners for button clicks
-        $('#calibrate-button').click(function () {
-
-            calibrateButtonAction(); // Call the function to extend the mounting system
-
         });
+    });
 
-        $('#run-measurements-button').click(function () {
+    // Create an EventSource instance to receive system status updates
+    var source_status_indicators = new EventSource("{{ url_for('eventStreams.systemStatusIndicators') }}");
 
-            runMeasurementAction(); // Call the function to retract the mounting system
+    // Handle incoming messages from the EventSource
+    source_status_indicators.onmessage = function (event) {
+        var data = JSON.parse(event.data);
+        console.log(data);
 
-        });
+        // Update status indicators based on received data
+        $("#vnaReadTimeoutErrorIndicator").css("color", data.errorMeasureing == 0 ? "limegreen" : "red")
+            .attr('title', data.errorMeasureing == 0 ? "When Red Timeout occurred while reading VNA data" : "Error occurred while reading VNA data");
 
-        $('#retract-button').click(function () {
+        $("#ActuatorReadWriteErrorIndicator").css("color", data.errorActuatorReadWrite == 0 ? "limegreen" : "red")
+            .attr('title', data.errorActuatorReadWrite == 0 ? "When Red ReadWrite error occurred when communicating with actuator" : "Error communicating with actuator");
 
-            fullyRetract(); // Call the function to retract the mounting system
+        $("#teltonikaErrorIndicator").css("color", data.errorTeltonika == 0 ? "limegreen" : "red")
+            .attr('title', data.errorTeltonika == 0 ? "GPS is good" : "Error with GPS");
 
-        });
+        $("#RetractingActuator").css("color", data.CurrentlyRetracting == 0 ? "gray" : "limegreen")
+            .attr('title', data.CurrentlyRetracting == 0 ? "not Currently Retracting" : "Currently Retracting");
 
-        $(document).ready(function () {
+        $("#CalibrateButtonIndicator").css("color", data.CurrentlyExtending == 0 && data.CurrentlyCalibrating == 0 ? "gray" : "limegreen")
+            .attr('title', data.CurrentlyExtending == 0 && data.CurrentlyCalibrating == 0 ? "not Currently Calibrating" : "Currently Calibrating and extending");
 
-            var measurement_delay_list = JSON.parse('{{ measurement_delays | tojson | safe }}');
-            var current_measurement_delay = '{{ config.CONFIG_RUN.measurement_manager.measurement_delay }}';
-            var site_list = JSON.parse('{{ sites | tojson | safe }}');
-            var current_site = '{{ config.CONFIG_RUN.site }}';
+        $("#RunningMesurementsButtonIndicator").css("color", data.CurrentlyLogging == 0 ? "gray" : "limegreen")
+            .attr('title', data.CurrentlyLogging == 0 ? "not Currently Logging" : "Currently Logging");
 
-            $('#site-select').change(function () {
-                var selectedSite = $(this).val();
-                $.ajax({
-                    url: '{{ url_for("main.settings_post") }}',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ site: selectedSite }),
-                    success: function () {
-                        location.reload();
-                    },
-                    error: function () {
-                        alert("Failed to update site selection.");
-                    }
-                });
-            });
-
-
-            // Handle measurement delay dropdown change
-            $('#measurement-delay-select').change(function () {
-                var selectedDelay = $(this).val();
-                $.ajax({
-                    url: '{{ url_for("main.settings_post") }}',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ measurement_delay: selectedDelay }),
-                    success: function () {
-                        location.reload();
-                    },
-                    error: function () {
-                        alert("Failed to update measurement delay.");
-                    }
-                });
-            });
-        });
-
-        var source_status_indicators = new EventSource("{{ url_for('eventStreams.systemStatusIndicators')}}");
-
-        source_status_indicators.onmessage = function (event) {
-            var data = JSON.parse(event.data);
-            console.log(data)
-            if (data.errorMeasureing == 0) {
-                $("#vnaReadTimeoutErrorIndicator").css("color", "limegreen");
-                $("#vnaReadTimeoutErrorIndicator").attr('title', "When Red Tineout occured while reading VNA data");
-
-            } else {
-                $("#vnaReadTimeoutErrorIndicator").css("color", "red");
-                $("#vnaReadTimeoutErrorIndicator").attr('title', "When Red Tineout occured while reading VNA data");
-                $("#current_action").text("Error While Running Measurements Measureing Stopped (likely issues reading VNA Data - timed out) - Check Connections and refresh page and restart Measureing");
-
-            }
-            if (data.errorActuatorReadWrite == 0) {
-                $("#ActuatorReadWriteErrorIndicator").css("color", "limegreen");
-                $("#ActuatorReadWriteErrorIndicator").attr('title', "When Red ReadWrite error occurend when communicating with actuator");
-
-            } else {
-                $("#ActuatorReadWriteErrorIndicator").css("color", "red");
-                $("#ActuatorReadWriteErrorIndicator").attr('title', "When Red ReadWrite error occurend when communicating with actuator");
-                $("#current_action").text("Error communicating to Actuator Measureing Stopped - Check Connections and refresh page if issues persist restart server (measuring thread sometimes break on error)");
-
-            }
-            if (data.errorTeltonika == 0) {
-                $("#teltonikaErrorIndicator").css("color", "limegreen");
-                $("#teltonikaErrorIndicator").attr('title', "GPS is good");
-            } else {
-                $("#current_action").text("Error communicating to Teltonika Measureing Stopped - Check Connections and refresh page if issues persist restart server (measuring thread sometimes break on error)");
-                $("#teltonikaErrorIndicator").css("color", "red");
-                $("#teltonikaErrorIndicator").attr('title', "Error with GPS");
-
-            }
-
-            if (data.CurrentlyRetracting == 0) {
-                $("#RetractingActuator").css("color", "gray");
-                $("#RetractingActuator").attr('title', "not Currently Retracting");
-                $("#RetractButtonIndicator").css("color", "gray");
-                $("#RetractButtonIndicator").attr('title', "not Currently Retracting");
-
-            } else {
-                $("#RetractingActuator").css("color", "limegreen");
-                $("#RetractingActuator").attr('title', "Currently Retracting");
-                $("#RetractButtonIndicator").css("color", "limegreen");
-                $("#RetractButtonIndicator").attr('title', "Currently Retracting");
-
-            }
-
-            if (data.CurrentlyExtending == 0) {
-                $("#ExtendingActuator").css("color", "gray");
-                $("#ExtendingActuator").attr('title', "not Currently Extending");
-
-            } else {
-                $("#ExtendingActuator").css("color", "limegreen");
-                $("#ExtendingActuator").attr('title', "Currently Extending");
-
-            }
-
-            if (data.CurrentlyExtending == 0 && data.CurrentlyCalibrating == 0) {
-                $("#CalibrateButtonIndicator").css("color", "gray");
-                $("#CalibrateButtonIndicator").attr('title', "not Currently Calibrating");
-
-            } else {
-                $("#CalibrateButtonIndicator").css("color", "limegreen");
-                $("#CalibrateButtonIndicator").attr('title', "Currently Calibrating and extending");
-            }
-
-            if (data.CurrentlyLogging == 0) {
-                $("#RunningMesurementsButtonIndicator").css("color", "gray");
-                $("#RunningMesurementsButtonIndicator").attr('title', "not Currently Logging");
-            } else {
-                $("#RunningMesurementsButtonIndicator").css("color", "limegreen");
-                $("#RunningMesurementsButtonIndicator").attr('title', "Currently Logging");
-            }
-
-            if(data.vnaConnection == 2 && data.mountingSystemConection == 0 && data.teltonikaConnection == 1 ){
-                $("#indicator-check-text").css("color", "limegreen");
-            }else{
-                $("#indicator-check-text").css('color', "darkorange");
-                console.log(data.vnaConnection);
-                console.log(data.mountingSystemConection);
-                console.log(data.teltonikaConnection);
-            }
-
-        };
-
-
-
-
-    </script>
-    {% endblock %}
+        $("#indicator-check-text").css('color', data.vnaConnection == 2 && data.mountingSystemConection == 0 && data.teltonikaConnection == 1 ? "limegreen" : "darkorange");
+    };
+</script>
+{% endblock %}

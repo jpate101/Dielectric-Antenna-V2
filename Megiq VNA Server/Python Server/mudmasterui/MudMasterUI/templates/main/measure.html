@@ -2,46 +2,54 @@
 
 {% block content %}
 
-
+<!-- Container for displaying site and measurement details -->
 <div class="row">
+    <!-- Card displaying the current site -->
     <div class="col-md-4 mb-4 card-group">
         <div class="card bg-dark mb-3 shadow flex-fill text-white">
             <div class="card-body my-2">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5>Current Site</h5>
+                    <!-- Display current site dynamically -->
                     <div id="display_site"></div>
                 </div>
             </div>
         </div>
     </div>
+    <!-- Card displaying the last measurement date -->
     <div class="col-md-4 mb-4 card-group">
         <div class="card bg-dark mb-3 shadow flex-fill text-white">
             <div class="card-body my-2">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5>Last Measurement</h5>
+                    <!-- Display last measurement date dynamically -->
                     <div id="display_date"></div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Container for displaying gauges -->
 <div id="gauge_container" class="row">
+    <!-- Gauge for water percentage -->
     <div class="col-4 chart-container">
         <canvas id="gauge_water"></canvas>
     </div>
+    <!-- Gauge for density -->
     <div class="col-4 chart-container">
         <canvas id="gauge_density"></canvas>
     </div>
+    <!-- Gauge for relative permittivity -->
     <div class="col-4 chart-container">
         <canvas id="gauage_permittivity"></canvas>
     </div>
 </div>
+
+<!-- Alert box for displaying status messages -->
 <div class="d-flex">
     <div id="display_status" class="alert flex-fill alert-primary" role="alert"></div>
 </div>
-
-
-
 
 {% endblock %}
 
@@ -49,43 +57,48 @@
 <script src="{{ url_for('static', filename='scripts/plotting/gauges.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function () {
+        // Create EventSource instance to receive measurement progress updates
         var source_progress = new EventSource("{{ url_for('eventStreams.measurement_progress')}}");
 
-        var gauge_water_percentage = new Gauge('gauge_water', 'Water Percentage', 0, 100, 0, '%')
-        var gauge_density = new Gauge('gauge_density', 'Density', 0, 20, 0, ' g/cm³')
-        var gauage_permittivity = new Gauge('gauage_permittivity', 'Relative Permittivity', "{{ config.CONFIG_SYSTEM.nn.permittivity_scale.min }}", "{{ config.CONFIG_SYSTEM.nn.permittivity_scale.max }}", 0, '')
+        // Initialize gauges for water percentage, density, and permittivity
+        var gauge_water_percentage = new Gauge('gauge_water', 'Water Percentage', 0, 100, 0, '%');
+        var gauge_density = new Gauge('gauge_density', 'Density', 0, 20, 0, ' g/cm³');
+        var gauage_permittivity = new Gauge('gauage_permittivity', 'Relative Permittivity', "{{ config.CONFIG_SYSTEM.nn.permittivity_scale.min }}", "{{ config.CONFIG_SYSTEM.nn.permittivity_scale.max }}", 0, '');
 
+        // Handle incoming messages from the EventSource
         source_progress.onmessage = function (event) {
-            // split the message data
+            // Parse the incoming JSON data
             var data = JSON.parse(event.data);
             console.log(data);
             
+            // Update the display for site and measurement date
             $('#display_site').html(data.site);
             $('#display_date').html(new Date(data.measurement_date).toString().split(' GMT')[0]);
             $('#display_actuator').html(data.actuator_extension);
             $("#current_position").text(data.actuator_extension);
 
+            // Update gauge values with new data
             gauge_water_percentage.setValue(data.water_percentage.toFixed(2));
             gauge_density.setValue(data.density.toFixed(1));
             gauage_permittivity.setValue(data.permittivity.toFixed(1));
 
+            // Update status display based on measurement status
             if (data.status == 0) {
-                if(data.next_measurement_seconds > 1) {
-                    $('#display_status').html(`Next measurment starting in ${data.next_measurement_seconds} seconds.`);
-                } else {
-                    $('#display_status').html(`Next measurment starting in ${data.next_measurement_seconds} second.`);
-                }
+                // If measurement is idle, display countdown to the next measurement
+                $('#display_status').html(data.next_measurement_seconds > 1 ? 
+                    `Next measurement starting in ${data.next_measurement_seconds} seconds.` :
+                    `Next measurement starting in ${data.next_measurement_seconds} second.`);
                 $('#display_status').removeClass('alert-success');
                 $('#display_status').addClass('alert-primary');
             } else if (data.status == 1) {
+                // If measurement is in progress, update status to "Measuring..."
                 $('#display_status').html('Measuring...');
                 $('#display_status').removeClass('alert-primary');
                 $('#display_status').addClass('alert-success');
             }
-
         };
 
-
+        // Initialize variable for current position (unused in this code snippet)
         var current_position = 0;
 
     });

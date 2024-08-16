@@ -1,33 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <!-- Charset and viewport settings for responsive design -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Title of the page, using a variable for dynamic content -->
     <title>{{ title }} - Mudmaster UI</title>
+
+    <!-- Stylesheets for different UI components -->
     <link rel="stylesheet" type="text/css" href="/static/content/bootstrap.css" />
     <link rel="stylesheet" type="text/css" href="/static/content/site.css" />
     <link rel="stylesheet" type="text/css" href="/static/content/all.css" />
     <link rel="stylesheet" type="text/css" href="/static/content/Chart.css" />
+
+    <!-- Bootstrap CDN for additional styling -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- JavaScript file for modernizr (feature detection) -->
     <script src="/static/scripts/modernizr-2.6.2.js"></script>
 </head>
 
 <body class="d-flex flex-column h-100">
     <header>
         <nav class="navbar navbar-expand-sm navbar-dark bg-dark fixed-top px-4">
-            <!-- Centered Title for Larger Screens -->
+            <!-- Title centered for larger screens -->
             <div class="text-white d-none d-sm-block">
                 <h4 class="mb-0">{{ title }}</h4>
             </div>
 
-            <!-- Navbar Toggler for Mobile -->
+            <!-- Navbar toggler button for mobile views -->
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <!-- Navbar Content -->
+            <!-- Navbar content that collapses on mobile -->
             <div class="collapse navbar-collapse" id="navbarContent">
-                <!-- Desktop Menu -->
+                <!-- Desktop menu items -->
                 <ul class="navbar-nav mx-auto d-none d-sm-flex">
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('mountingSystemV2.mounting_system')}}">Home</a>
@@ -40,7 +49,7 @@
                     </li>
                 </ul>
 
-                <!-- Dropdown Menu for Mobile -->
+                <!-- Dropdown menu for mobile views -->
                 <ul class="navbar-nav mx-auto d-sm-none">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -54,15 +63,18 @@
                     </li>
                 </ul>
 
-                <!-- Right-hand Side Icons -->
+                <!-- Right-hand side icons for status indicators -->
                 <div class="navbar-nav d-none d-sm-flex" style="min-width: 110px">
                     <li class="nav-item my-auto">
+                        <!-- VNA connection status icon -->
                         <span class="fas fa-chart-line mx-1 text-center align-middle" style="color: gray" id="vnaConnection" title=""></span>
                     </li>
                     <li class="nav-item my-auto">
+                        <!-- Mounting system connection status icon -->
                         <span class="fas fa-cog mx-1 text-center align-middle" style="color: gray" id="mountingSystemConection" title=""></span>
                     </li>
                     <li class="nav-item my-auto">
+                        <!-- Teltonika connection status icon -->
                         <span class="fas fa-map-marker-alt mx-1 text-center align-middle" style="color: gray" id="teltonikaConnection" title=""></span>
                     </li>
                 </div>
@@ -72,22 +84,27 @@
 
     <main class="flex-shrink-0 mt-3">
         <div class="container">
+            <!-- Placeholder for dynamic content -->
             {% block content %}{% endblock %}
         </div>
     </main>
 
     <footer class="footer fixed-bottom py-3 bg-light">
         <div class="container">
+            <!-- Footer text showing version and machine number -->
             <div class="text-muted">Mudmaster UI - Version: {{ config.VERSION }} | Machine: {{ config.CONFIG_MACHINE.machineNumber }}</div>
         </div>
     </footer>
 
+    <!-- JavaScript files for various functionalities -->
     <script src="/static/scripts/jquery-3.6.0.min.js"></script>
     <script src="/static/scripts/bootstrap.js"></script>
     <script src="/static/scripts/respond.js"></script>
     <script src="/static/scripts/Chart.js"></script>
+
     <script type="text/javascript">
         $(document).ready(function () {
+            // Setup EventSource to listen for system status updates
             var source_status_indicators = new EventSource("{{ url_for('eventStreams.systemStatusIndicators')}}");
 
             source_status_indicators.onmessage = function (event) {
@@ -116,6 +133,8 @@
             };
         });
     </script>
+
+    <!-- Setup AJAX with CSRF token for security -->
     <script type="text/javascript">
         $.ajaxSetup({
             headers: {
@@ -123,6 +142,8 @@
             }
         });
     </script>
+
+    <!-- Placeholder for additional scripts -->
     {% block scripts %}{% endblock %}
 
 </body>
