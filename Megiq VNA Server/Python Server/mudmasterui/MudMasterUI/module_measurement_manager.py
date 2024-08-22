@@ -62,7 +62,6 @@ class Measurement_Manager(object):
         """
         self._current_state = 'idle'
         self._current_measurement_data = {
-            'site': None,
             'measurment_date': None,
             'vna_data': None, 
             'actuator_extension': None,
@@ -178,7 +177,6 @@ class Measurement_Manager(object):
 
         """
         data_dict = {}
-        data_dict['site'] = self._app.config['SITE_CONFIG'][self._current_measurement_data['site']]['name']
         data_dict['measurement_date'] = self._current_measurement_data['measurment_date']
         data_dict['actuator_extension'] = self._current_measurement_data['actuator_extension'] or 0
         data_dict['permittivity'] = self._current_measurement_data['permittivity'] or 0

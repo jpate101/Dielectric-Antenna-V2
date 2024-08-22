@@ -15,6 +15,8 @@ from MudMasterUI.interface_mountingSystem import MountingSystem_Manager # import
 from MudMasterUI.module_dielectricCalibration import VNA_Cal # import  neural network predictor class 
 from MudMasterUI.module_measurement_manager import Measurement_Manager # import measurement controller class 
 
+from MudMasterUI.fileTransfer import File_Transfer # import File Transfer class 
+
 #initaliseing and creating 4 controller objects
 controller_vna = VNA_Manager()
 controller_mountingSystem = MountingSystem_Manager()
@@ -58,6 +60,7 @@ def createApp(config_main=Config, config_machine=Config_Machine, site_config=Sit
     controller_mountingSystem.init_app(app)  # Initialize mounting system controller
     module_dielectric_manager.init_app(app)  # Initialize dielectric manager module
     
+    
     # Initialize the measurement manager with the Flask app instance and controllers
     measurement_manager.init_app(
         app,
@@ -65,6 +68,8 @@ def createApp(config_main=Config, config_machine=Config_Machine, site_config=Sit
         controller_vna,
         module_dielectric_manager
     )
+    #create File_transfer opject that will transer files from one folder to another 
+    File_Transfer(app)
 
     # Register blueprints for different parts of the application / basically sets up webpages at certain web addresses 
     from MudMasterUI.main import bp as bp_main

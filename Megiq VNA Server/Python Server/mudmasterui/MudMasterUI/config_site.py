@@ -66,21 +66,5 @@ class Site_Config(object):
                 gamma_w=9.81,  # m/s^2
                 S=1.0,  # saturation (0 - 1)
             ),
-        },
-        'port_of_brisbane': {
-            'name': 'Port of Brisbane',
-            'country': 'Australia',
-            'calibration_date': '20 July 2020',
-            'model_water': partial(  # needs permittivity as an input parameter
-                model_water_percentage,
-                gradient_value=0.16601,
-                intercept_value=36.1093
-            ),
-            'model_density': partial(  # needs water percentage (0 - 100) as an input parameter
-                model_density,
-                G=2.57,
-                gamma_w=9.81,
-                S=1.0,
-            ),
-        },
+        }
     }
