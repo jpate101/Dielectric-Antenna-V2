@@ -85,4 +85,13 @@ def createApp(config_main=Config, config_machine=Config_Machine, site_config=Sit
     from MudMasterUI.mountingSystemV2 import bp as bp_mountingSystemV2
     app.register_blueprint(bp_mountingSystemV2)  # Register updated mounting system blueprint
     
+    from MudMasterUI.NN_Data_Collection import bp as bp_nnDataCollect
+    app.register_blueprint(bp_nnDataCollect)
+    
+    try:
+        module_dielectric_manager.load_model()#load DNN into memory 
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    
+    
     return app

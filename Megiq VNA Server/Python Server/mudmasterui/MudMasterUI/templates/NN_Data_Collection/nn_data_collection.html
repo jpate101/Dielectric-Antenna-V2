@@ -1,0 +1,94 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <h1>Data Collection</h1>
+    
+    <div class="form-group">
+        <label for="command-input">Enter Label (will need value to proceed):</label>
+        <input type="text" id="command-input" class="form-control" placeholder="Enter Label Value" required>
+    </div>
+    
+    <div class="form-group">
+        <label for="shear-vain-20cm">Shear Vain 20cm Label:</label>
+        <input type="text" id="shear-vain-20cm" class="form-control" placeholder="Enter Shear Vain 20cm Value">
+    </div>
+    
+    <div class="form-group">
+        <label for="shear-vain-50cm">Shear Vain 50cm Label:</label>
+        <input type="text" id="shear-vain-50cm" class="form-control" placeholder="Enter Shear Vain 50cm Value">
+    </div>
+
+    <div class="form-group">
+        <label for="shear-vain-80cm">Shear Vain 80cm Label:</label>
+        <input type="text" id="shear-vain-80cm" class="form-control" placeholder="Enter Shear Vain 80cm Value">
+    </div>
+    
+    <div class="form-group">
+        <label for="surface-label">Surface Label:</label>
+        <input type="text" id="surface-label" class="form-control" placeholder="Enter Surface Value">
+    </div>
+
+    <div class="form-group"></div>
+        <label for="surface-label">height (CM):</label>
+        <input type="text" id="height-label" class="form-control" placeholder="Enter Surface Value">
+    </div>
+    
+    <button id="submit-command-button" class="btn btn-primary">Submit Labels And Take Reading</button>
+    
+    <div id="loading" class="mt-3" style="display: none;">
+        <img src="loading-icon.gif" alt="Loading..." />
+        <span>Waiting for server response...</span>
+    </div>
+    
+    <div id="output" class="mt-3"></div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+    document.getElementById('submit-command-button').addEventListener('click', function() {
+        var inputValue = document.getElementById('command-input').value;
+        var shearVain20cm = document.getElementById('shear-vain-20cm').value;
+        var shearVain50cm = document.getElementById('shear-vain-50cm').value;
+        var shearVain80cm = document.getElementById('shear-vain-80cm').value;
+        var surfaceLabel = document.getElementById('surface-label').value;
+        var heightLabel = document.getElementById('height-label').value;
+
+        if (!inputValue) {
+            alert("Please enter a value in the 'Enter Label' field.");
+            return;
+        }
+
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('output').innerText = '';
+
+        fetch('/submit_label_v2', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                label: inputValue,
+                shearVain20cm: shearVain20cm, 
+                shearVain50cm: shearVain50cm,
+                shearVain80cm: shearVain80cm,
+                surfaceLabel: surfaceLabel, 
+                heightLabel: heightLabel
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('output').innerText = data.message;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('output').innerText = "An error occurred.";
+        });
+    });
+</script>
+{% endblock %}

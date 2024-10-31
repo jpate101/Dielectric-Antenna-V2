@@ -31,6 +31,7 @@ from flask import render_template, flash, redirect, url_for, request, send_from_
 from MudMasterUI.mountingSystemV2 import bp  # Import Blueprint for mountingSystemV2
 from MudMasterUI import controller_mountingSystem  # Import controller for mounting system operations
 from MudMasterUI import measurement_manager  # Import measurement manager
+from MudMasterUI import module_dielectric_manager
 from MudMasterUI import globalErrorVar  # Import global error tracking
 
 """ Defines
@@ -129,6 +130,11 @@ def Measure():
     if takeMeasurement:
         takeMeasurement = False
         return jsonify({"message": "Measurement thread stopped. No longer logging Measurements"})
+    
+    try:
+        module_dielectric_manager.load_model()
+    except Exception as e:
+        print(f"An error occurred: {e}")
     
     try:
         # Start the measurement thread if it's not already running

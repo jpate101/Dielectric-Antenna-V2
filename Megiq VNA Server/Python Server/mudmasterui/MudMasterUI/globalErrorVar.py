@@ -29,5 +29,7 @@ CurrentlyRetracting = False  # Indicates whether the actuator is currently retra
 CurrentlyCalibrating = False  # Indicates whether the actuator is currently calibrating; used for UI updates
 CurrentlyLogging = False  # Indicates whether the actuator is currently logging data; used for UI updates
 
+NN_Data_Collection_File_path = ""  # Indicates whether the actuator is currently logging data; used for UI updates
+
 # TODO: Add additional error indicators and status flags as needed
 # For example, an error for VNA connection refusal might be added

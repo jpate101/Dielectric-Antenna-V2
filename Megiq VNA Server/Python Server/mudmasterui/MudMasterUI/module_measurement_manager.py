@@ -36,6 +36,8 @@ from MudMasterUI.supportFunctions import *
 from MudMasterUI.teltonikaSupportFunctions import *
 from MudMasterUI import globalErrorVar
 
+import tensorflow as tf
+
 
 import random
 
@@ -69,6 +71,9 @@ class Measurement_Manager(object):
             'water_percentage': None, 
             'density': None,
             'vna_filename': None,
+            'shear_vain_20cm': None,
+            'shear_vain_50cm': None,
+            'shear_vain_80cm': None,
             }
 
         self._next_measurement_time = 0
@@ -174,16 +179,22 @@ class Measurement_Manager(object):
         """ @brief  This function will return the current measurement display data.
             @param  None
             @retval None
-
         """
         data_dict = {}
-        data_dict['measurement_date'] = self._current_measurement_data['measurment_date']
+        data_dict['measurment_date'] = self._current_measurement_data['measurment_date']
         data_dict['actuator_extension'] = self._current_measurement_data['actuator_extension'] or 0
         data_dict['permittivity'] = self._current_measurement_data['permittivity'] or 0
         data_dict['water_percentage'] = self._current_measurement_data['water_percentage'] or 0
         data_dict['density'] = self._current_measurement_data['density'] or 0
         data_dict['status'] = self._current_measurement_status
-        data_dict['next_measurement_seconds'] = round(self._next_measurement_time - time.monotonic())  # no. of seconds until the next measurement
+        data_dict['next_measurement_seconds'] = round(self._next_measurement_time - time.monotonic())  # seconds until the next measurement
+
+        # Add shear vain data
+        data_dict['shear_vain_20cm'] = self._current_measurement_data['shear_vain_20cm'] or 0
+        data_dict['shear_vain_50cm'] = self._current_measurement_data['shear_vain_50cm'] or 0
+        data_dict['shear_vain_80cm'] = self._current_measurement_data['shear_vain_80cm'] or 0
+        
+        #print(data_dict['shear_vain_80cm'])
 
         return data_dict
 
@@ -370,10 +381,6 @@ class Measurement_Manager(object):
                 self._current_measurement_data['vna_data'] = self._vna.get_nextData(forNN=True)
                 self._current_measurement_data['actuator_extension'] = self._mounting_system.get_actuator_position() # here is the string to float issue/error log 
 
-                #print("here 2")
-                # use the calibration module to convert the S11 data to permittivity
-                self._current_measurement_data['permittivity'] = self._dielectric_manager.convert_to_permittivity(self._current_measurement_data['vna_data'], self._current_measurement_data['actuator_extension'])
-                #print("here 2.1")
                 # now calculate the water percentage and density using the site config and current site
                 # check if the current site is in the list of sites, otherwise use the default site
                 if self._current_measurement_data['site'] in self._app.config['SITE_CONFIG']:
@@ -381,17 +388,28 @@ class Measurement_Manager(object):
                 else:
                     site_config = self._app.config['SITE_CONFIG']['default']
 
-                self._current_measurement_data['water_percentage'] = site_config['model_water'](self._current_measurement_data['permittivity'])
-                self._current_measurement_data['density'] = site_config['model_density'](self._current_measurement_data['water_percentage'])
+                data_dict = self._current_measurement_data['vna_data']
+                # Run the model on live data
+                DNN = self._dielectric_manager.run_model_on_live_data(data_dict)
                 
+                self._current_measurement_data['DNN'] = DNN
+                #self._current_measurement_data['DNN'] = 0
+                
+                #shear vain data test 
+                self._current_measurement_data['shear_vain_20cm'] = random.randrange(0, 100)
+                self._current_measurement_data['shear_vain_50cm'] = random.randrange(0, 100)
+                self._current_measurement_data['shear_vain_80cm'] = random.randrange(0, 100)
                 #added teltonika readings 
-                login_endpoint()
-                latLong = get_GPS_data_endpoint()
+                #login_endpoint()
+                #latLong = get_GPS_data_endpoint()
                 #print("\n")
-                print(latLong)
+                #print(latLong)
                 #print("\n")
-                self._current_measurement_data['latitude'] = latLong['latitude']
-                self._current_measurement_data['longitude'] = latLong['longitude']
+                #self._current_measurement_data['latitude'] = latLong['latitude']
+                #self._current_measurement_data['longitude'] = latLong['longitude']
+                
+                self._current_measurement_data['latitude'] = 0
+                self._current_measurement_data['longitude'] = 0
 
                 # set the current datetime for the measurement
                 self._current_measurement_data['measurment_date'] = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")  # current universal coordinated time
@@ -407,7 +425,6 @@ class Measurement_Manager(object):
 
                 self._current_measurement_data['vna_filename'] = vna_filename
                 # now save the remaining data as a csv file in the main directory
-                #measurement_data_filename = self._app.config['CONFIG_SYSTEM']['dataLogger']['baseFileName_measurement'].format(self._current_measurement_data['measurment_date'].replace(':', '-') + '_' + str(self._current_measurement_data['actuator_extension']))
                 save_measurement_data(self._measurement_file, self._current_measurement_data, self._app.config['CONFIG_SYSTEM']['dataLogger']['headings_measurement'])
 
 
@@ -422,16 +439,22 @@ class Measurement_Manager(object):
                 self._current_measurement_data['density'] = random.randrange(0, 20)
                 self._current_measurement_data['actuator_extension'] = self._mounting_system.get_actuator_position()
                 
-                login_endpoint()
-                latLong = get_GPS_data_endpoint()
-                print("\n")
-                print(latLong)
-                print("\n")
-                self._current_measurement_data['latitude'] = latLong['latitude']
-                self._current_measurement_data['longitude'] = latLong['longitude']
+                #login_endpoint()
+                #latLong = get_GPS_data_endpoint()
+                #print("\n")
+                #print(latLong)
+                #print("\n")
+                #self._current_measurement_data['latitude'] = latLong['latitude']
+                #self._current_measurement_data['longitude'] = latLong['longitude']
+                self._current_measurement_data['latitude'] =0
+                self._current_measurement_data['longitude'] = 0
+                
+                self._current_measurement_data['shear_vain_20cm'] = random.randrange(0, 100)
+                self._current_measurement_data['shear_vain_50cm'] = random.randrange(0, 100)
+                self._current_measurement_data['shear_vain_80cm'] = random.randrange(0, 100)
                 
                 # make the filename for the vnaData, this needs the current datetime, actuator extension and vnaData in the name
-                save_measurement_data(self._measurement_file, self._current_measurement_data, self._app.config['CONFIG_SYSTEM']['dataLogger']['headings_measurement'])
+                #save_measurement_data(self._measurement_file, self._current_measurement_data, self._app.config['CONFIG_SYSTEM']['dataLogger']['headings_measurement'])
 
                 self._current_measurement_status = 0
 
@@ -521,26 +544,31 @@ class Measurement_Manager(object):
                 # get the measurement from the VNA
                 self._current_measurement_data['vna_data'] = self._vna.get_nextData(forNN=True)
                 self._current_measurement_data['actuator_extension'] = self._mounting_system.get_actuator_position() # here is the string to float issue/error log 
-
-                #print("here 2")
-                    # use the calibration module to convert the S11 data to permittivity
-                self._current_measurement_data['permittivity'] = self._dielectric_manager.convert_to_permittivity(self._current_measurement_data['vna_data'], self._current_measurement_data['actuator_extension'])
-                #print("here 2.1")
+                
+                print("--__--__--__--__")
+                # Access the first (and only) dictionary in the list
+                data_dict = self._current_measurement_data['vna_data']#work with data_dict in nn formatter
+                
+                # Run the model on live data
+                DNN = self._dielectric_manager.run_model_on_live_data(data_dict)
+                
+                self._current_measurement_data['DNN'] = DNN
+                #self._current_measurement_data['DNN'] = 0
                     # now calculate the water percentage and density using the site config and current site
                     # check if the current site is in the list of sites, otherwise use the default site
                 if self._current_measurement_data['site'] in self._app.config['SITE_CONFIG']:
                     site_config = self._app.config['SITE_CONFIG'][self._current_measurement_data['site']]
                 else:
                     site_config = self._app.config['SITE_CONFIG']['default']
-
-                self._current_measurement_data['water_percentage'] = site_config['model_water'](self._current_measurement_data['permittivity'])
-                self._current_measurement_data['density'] = site_config['model_density'](self._current_measurement_data['water_percentage'])
                     
                     #added teltonika readings 
-                login_endpoint()
-                latLong = get_GPS_data_endpoint()
-                self._current_measurement_data['latitude'] = latLong['latitude']
-                self._current_measurement_data['longitude'] = latLong['longitude']
+                #login_endpoint()
+                #latLong = get_GPS_data_endpoint()
+                #self._current_measurement_data['latitude'] = latLong['latitude']
+                #self._current_measurement_data['longitude'] = latLong['longitude']
+                
+                self._current_measurement_data['latitude'] = 0
+                self._current_measurement_data['longitude'] = 0
 
                     # set the current datetime for the measurement
                 self._current_measurement_data['measurment_date'] = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")  # current universal coordinated time
@@ -553,13 +581,55 @@ class Measurement_Manager(object):
                 vna_filename = self._app.config['CONFIG_SYSTEM']['dataLogger']['baseFileName_vna'].format(self._current_measurement_data['measurment_date'].replace(':', '-') + '_' + str(self._current_measurement_data['actuator_extension']))
                 save_s11_data(vna_filename, self._save_data_directory['vnaData'], self._current_measurement_data['vna_data'])
                 
-                
                 self._current_measurement_data['vna_filename'] = vna_filename
                     # now save the remaining data as a csv file in the main directory
                     #measurement_data_filename = self._app.config['CONFIG_SYSTEM']['dataLogger']['baseFileName_measurement'].format(self._current_measurement_data['measurment_date'].replace(':', '-') + '_' + str(self._current_measurement_data['actuator_extension']))
                 save_measurement_data(self._measurement_file, self._current_measurement_data, self._app.config['CONFIG_SYSTEM']['dataLogger']['headings_measurement'])
                 
                 print('---------Measurements taken---------')
+            time.sleep(1)
+        except Exception as e:
+            # Handle other exceptions
+            print(f"An error occurred: {e}")
+            
+            
+            
+    def measurement_state_MV3(self, testing=False):
+        """ @brief  This state is used to take a measurement from the VNA when using the button from the nn collection page.
+            @param  None
+            @retval None
+
+        """
+        try:
+            #now = time.monotonic()
+            print("measurement_state_MV3")    
+            #self._next_measurement_time = now + self._app.config['CONFIG_RUN']['measurement_manager']['measurement_delay']#the reason it take 30second before nex measurement 
+            # get the measurement from the VNA
+            self._current_measurement_data['vna_data'] = self._vna.get_nextData(forNN=True)
+            self._current_measurement_data['actuator_extension'] = self._mounting_system.get_actuator_position() # here is the string to float issue/error log 
+            
+
+            #print("here 2")
+            # use the calibration module to convert the S11 data to permittivity
+            #self._current_measurement_data['permittivity'] = self._dielectric_manager.convert_to_permittivity(self._current_measurement_data['vna_data'], self._current_measurement_data['actuator_extension'])
+            #print("here 2.1")
+            # now calculate the water percentage and density using the site config and current site
+            # check if the current site is in the list of sites, otherwise use the default site
+            #site_config = self._app.config['SITE_CONFIG']['default']
+
+            # set the current datetime for the measurement
+            self._current_measurement_data['measurment_date'] = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")  # current universal coordinated time
+
+            # save the measurement 
+            # vna data needs to be saved as a touchstone file
+            # everything else should be saved as a csv file
+
+            vna_filename = self._app.config['CONFIG_SYSTEM']['dataLogger']['baseFileName_vna'].format(self._current_measurement_data['measurment_date'].replace(':', '-') + '_' + str(self._current_measurement_data['actuator_extension']))
+            save_s11_data(vna_filename, globalErrorVar.NN_Data_Collection_File_path, self._current_measurement_data['vna_data'])
+            
+            self.start_measurement()
+            
+            print('---------Measurements taken MV3---------')
             time.sleep(1)
         except Exception as e:
             # Handle other exceptions

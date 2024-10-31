@@ -9,6 +9,7 @@ class Config(object):
 
     MACHINE_DIRECTORY = r'C:\Users\JoshuaPaterson\Downloads\Testing1'
     TRANSFER_DIRECTORY = r'C:\Users\JoshuaPaterson\Downloads\Testing2'
+    DNN_MODEL_LOCATION = r'C:\Users\JoshuaPaterson\OneDrive - Phibion Pty Ltd\Documents\GitHub\Dielectric-Antenna-V2\Megiq VNA Server\Python Server\mudmasterui\MudMasterUI\nnData\trained_model_T8_AND_T7.h5'
     TRANSFER_DELAY = 30
     CONFIG_DIRECTORY = os.path.join(basedir, 'configFiles')
     CONFIG_DIRECTORY_VNA_CAL = os.path.join(CONFIG_DIRECTORY, 'vna_cal')
@@ -102,7 +103,7 @@ class Config(object):
             'baseFileName_measurement': '{}_measurementData.csv',
             'baseFileName_vna': '{}_vnaData.s1p',  # saved as a s1p touchstone file - using the skrf library
             'baseDirectory_cal_data': '{}_cal_data',
-            'headings_measurement': [ 'measurment_date', 'actuator_extension', 'permittivity', 'water_percentage', 'density', 'vna_filename','latitude','longitude'],#added 'latitude','longitude'
+            'headings_measurement': [ 'measurment_date', 'actuator_extension', 'vna_filename','latitude','longitude','DNN'],#added 'latitude','longitude'
         },
         'measurement_manager': {
             'measurement_delay_list': [10, 20, 30, 60, 120, 300]
@@ -114,8 +115,8 @@ class Config(object):
                 'max': 60.0,
                 },
             'frequency_scale': {# may need to change this 
-                'min': 0.9e9, # orginally 0.9e9  # when i add more frequencys then permittity stays at 50ish  
-                'max': 3.67e9, # orginally 1.8e9
+                'min': 0.9e9, # orginally 0.9e9  # when i add more frequencys then permittity stays at 50ish 
+                'max': 3.67e9, # orginally 1.8e9 / i set to 3.67e9
             },
         },
         'teltonika':{
