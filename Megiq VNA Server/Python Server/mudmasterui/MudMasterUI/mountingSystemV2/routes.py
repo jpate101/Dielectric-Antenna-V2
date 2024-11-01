@@ -131,10 +131,10 @@ def Measure():
         takeMeasurement = False
         return jsonify({"message": "Measurement thread stopped. No longer logging Measurements"})
     
-    try:
-        module_dielectric_manager.load_model()
-    except Exception as e:
-        print(f"An error occurred: {e}")
+    #try:
+    #    module_dielectric_manager.load_model()
+    #except Exception as e:
+    #    print(f"An error occurred: {e}")
     
     try:
         # Start the measurement thread if it's not already running

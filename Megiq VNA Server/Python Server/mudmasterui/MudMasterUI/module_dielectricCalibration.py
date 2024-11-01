@@ -38,6 +38,7 @@ from tensorflow.keras.models import load_model
 *******************************************************************************
 """
 DNN_Model = None
+graph = tf.Graph()
 
 """ NN Functions
 *******************************************************************************
@@ -278,10 +279,19 @@ class VNA_Cal(object):
     
     def load_model(self):
         global DNN_Model
-        DNN_Model = tf.keras.models.load_model(self._app.config['DNN_MODEL_LOCATION'], compile=False)
-        pass
+        if DNN_Model is None:
+            try:
+                DNN_Model = tf.keras.models.load_model(self._app.config['DNN_MODEL_LOCATION'], compile=False)
+                print("Model loaded successfully.")
+            except Exception as e:
+                print(f"An error occurred while loading the model: {e}")
+        else:
+            print("Model is already loaded, skipping load.")
+
     
-    
+    def Get_Model(self):
+        global DNN_Model
+        return DNN_Model
     def prepare_live_data( self, data_dict):
         """Prepare live data for model input, including magnitude and phase."""
         s11_real = data_dict['S11R']
@@ -295,22 +305,20 @@ class VNA_Cal(object):
         formatted_data = np.concatenate([s11_real, s11_imag, magnitudes, phases]).reshape(1, -1)  # Reshape for single prediction
         return formatted_data
 
-    def run_model_on_live_data(self, data_dict):
+    def run_model_on_live_data(self, model, data_dict):
         """Run the model on live data and print the predictions."""
-        global DNN_Model
         formatted_data = VNA_Cal.prepare_live_data(self, data_dict)
         
         # Reshape for LSTM input
         formatted_data_reshaped = formatted_data.reshape((formatted_data.shape[0], 1, formatted_data.shape[1]))
         
         # Make prediction
-        prediction = DNN_Model.predict(formatted_data_reshaped)
+        prediction = model.predict(formatted_data_reshaped)
         
         # Print the prediction
         print(f"Predicted value for DNN Model: {prediction[0][0]}")
         
         return prediction[0][0]
 
-    
     
     

@@ -9,7 +9,7 @@ class Config(object):
 
     MACHINE_DIRECTORY = r'C:\Users\JoshuaPaterson\Downloads\Testing1'
     TRANSFER_DIRECTORY = r'C:\Users\JoshuaPaterson\Downloads\Testing2'
-    DNN_MODEL_LOCATION = r'C:\Users\JoshuaPaterson\OneDrive - Phibion Pty Ltd\Documents\GitHub\Dielectric-Antenna-V2\Megiq VNA Server\Python Server\mudmasterui\MudMasterUI\nnData\trained_model_T8_AND_T7.h5'
+    DNN_MODEL_LOCATION = r'C:\Users\JoshuaPaterson\OneDrive - Phibion Pty Ltd\Documents\GitHub\Dielectric-Antenna-V2\Megiq VNA Server\Python Server\mudmasterui\MudMasterUI\nnData\trained_model_T10_rmsprop_T112.keras'
     TRANSFER_DELAY = 30
     CONFIG_DIRECTORY = os.path.join(basedir, 'configFiles')
     CONFIG_DIRECTORY_VNA_CAL = os.path.join(CONFIG_DIRECTORY, 'vna_cal')

@@ -390,7 +390,9 @@ class Measurement_Manager(object):
 
                 data_dict = self._current_measurement_data['vna_data']
                 # Run the model on live data
-                DNN = self._dielectric_manager.run_model_on_live_data(data_dict)
+                self._dielectric_manager.load_model()
+                # Run the model on live data
+                DNN = self._dielectric_manager.run_model_on_live_data(self._dielectric_manager.Get_Model(), data_dict)
                 
                 self._current_measurement_data['DNN'] = DNN
                 #self._current_measurement_data['DNN'] = 0
@@ -400,16 +402,16 @@ class Measurement_Manager(object):
                 self._current_measurement_data['shear_vain_50cm'] = random.randrange(0, 100)
                 self._current_measurement_data['shear_vain_80cm'] = random.randrange(0, 100)
                 #added teltonika readings 
-                #login_endpoint()
-                #latLong = get_GPS_data_endpoint()
+                login_endpoint()
+                latLong = get_GPS_data_endpoint()
                 #print("\n")
                 #print(latLong)
                 #print("\n")
-                #self._current_measurement_data['latitude'] = latLong['latitude']
-                #self._current_measurement_data['longitude'] = latLong['longitude']
+                self._current_measurement_data['latitude'] = latLong['latitude']
+                self._current_measurement_data['longitude'] = latLong['longitude']
                 
-                self._current_measurement_data['latitude'] = 0
-                self._current_measurement_data['longitude'] = 0
+                #self._current_measurement_data['latitude'] = 0
+                #self._current_measurement_data['longitude'] = 0
 
                 # set the current datetime for the measurement
                 self._current_measurement_data['measurment_date'] = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")  # current universal coordinated time
@@ -549,8 +551,11 @@ class Measurement_Manager(object):
                 # Access the first (and only) dictionary in the list
                 data_dict = self._current_measurement_data['vna_data']#work with data_dict in nn formatter
                 
+               # Load the trained model
+                print("before load")
+                self._dielectric_manager.load_model()
                 # Run the model on live data
-                DNN = self._dielectric_manager.run_model_on_live_data(data_dict)
+                DNN = self._dielectric_manager.run_model_on_live_data(self._dielectric_manager.Get_Model(), data_dict)
                 
                 self._current_measurement_data['DNN'] = DNN
                 #self._current_measurement_data['DNN'] = 0
@@ -562,13 +567,13 @@ class Measurement_Manager(object):
                     site_config = self._app.config['SITE_CONFIG']['default']
                     
                     #added teltonika readings 
-                #login_endpoint()
-                #latLong = get_GPS_data_endpoint()
-                #self._current_measurement_data['latitude'] = latLong['latitude']
-                #self._current_measurement_data['longitude'] = latLong['longitude']
+                login_endpoint()
+                latLong = get_GPS_data_endpoint()
+                self._current_measurement_data['latitude'] = latLong['latitude']
+                self._current_measurement_data['longitude'] = latLong['longitude']
                 
-                self._current_measurement_data['latitude'] = 0
-                self._current_measurement_data['longitude'] = 0
+                #self._current_measurement_data['latitude'] = 0
+                #self._current_measurement_data['longitude'] = 0
 
                     # set the current datetime for the measurement
                 self._current_measurement_data['measurment_date'] = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")  # current universal coordinated time

@@ -17,6 +17,8 @@ from MudMasterUI.module_measurement_manager import Measurement_Manager # import 
 
 from MudMasterUI.fileTransfer import File_Transfer # import File Transfer class 
 
+import tensorflow as tf
+
 #initaliseing and creating 4 controller objects
 controller_vna = VNA_Manager()
 controller_mountingSystem = MountingSystem_Manager()
@@ -88,10 +90,11 @@ def createApp(config_main=Config, config_machine=Config_Machine, site_config=Sit
     from MudMasterUI.NN_Data_Collection import bp as bp_nnDataCollect
     app.register_blueprint(bp_nnDataCollect)
     
-    try:
-        module_dielectric_manager.load_model()#load DNN into memory 
-    except Exception as e:
-        print(f"An error occurred: {e}")
+    #try:
+    #    module_dielectric_manager.load_model()#load DNN into memory 
+    #except Exception as e:
+    #    print(f"An error occurred: {e}")
+    #module_dielectric_manager.load_model()
     
     
     return app
