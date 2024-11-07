@@ -318,6 +318,13 @@ class VNA_Cal(object):
         # Print the prediction
         print(f"Predicted value for DNN Model: {prediction[0][0]}")
         
+        #print(f"Predicted values for DNN Model:")
+        #print(f"Output 1: {prediction[0][0]}")
+        #print(f"Output 2: {prediction[0][1]}")
+        #print(f"Output 3: {prediction[0][2]}")
+        
+        #return [prediction[0][0],prediction[0][1],prediction[0][2]]
+        
         return prediction[0][0]
 
     
