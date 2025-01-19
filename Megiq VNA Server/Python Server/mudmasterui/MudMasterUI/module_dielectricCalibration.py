@@ -33,11 +33,15 @@ from skrf.io import Touchstone
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 
+import joblib  # For loading the model and scaler
+
 
 """ Defines
 *******************************************************************************
 """
 DNN_Model = None
+ElasticNet_Model = None
+ElasticNet_Model_scaler = None
 graph = tf.Graph()
 
 """ NN Functions
@@ -279,6 +283,12 @@ class VNA_Cal(object):
     
     def load_model(self):
         global DNN_Model
+        global ElasticNet_Model
+        global ElasticNet_Model_scaler
+        #change to config if decide to use 
+        model_path = r'C:\Users\JoshuaPaterson\OneDrive - Phibion Pty Ltd\Documents\GitHub\Dielectric-Antenna-V2\Megiq VNA Server\Python Server\mudmasterui\MudMasterUI\nnData\50_EN_MT_WELD.pkl'  # Hard-coded model path
+        scaler_path = r'C:\Users\JoshuaPaterson\OneDrive - Phibion Pty Ltd\Documents\GitHub\Dielectric-Antenna-V2\Megiq VNA Server\Python Server\mudmasterui\MudMasterUI\nnData\50_EN_MT_WELD_scaler.pkl'  # Hard-coded scaler path
+        
         if DNN_Model is None:
             try:
                 DNN_Model = tf.keras.models.load_model(self._app.config['DNN_MODEL_LOCATION'], compile=False)
@@ -287,6 +297,24 @@ class VNA_Cal(object):
                 print(f"An error occurred while loading the model: {e}")
         else:
             print("Model is already loaded, skipping load.")
+            
+        if ElasticNet_Model is None:
+            try:
+                ElasticNet_Model = joblib.load(model_path)
+                print("ElasticNet_Model loaded successfully.")
+            except Exception as e:
+                print(f"An error occurred while loading the  ElasticNet_Model: {e}")
+        else:
+            print("ElasticNet_Model is already loaded, skipping load.")
+            
+        if ElasticNet_Model_scaler is None:
+            try:
+                ElasticNet_Model_scaler = joblib.load(scaler_path)
+                print("ElasticNet_Model_scaler loaded successfully.")
+            except Exception as e:
+                print(f"An error occurred while loading the ElasticNet_Model_scaler: {e}")
+        else:
+            print("ElasticNet_Model_scaler is already loaded, skipping load.")
 
     
     def Get_Model(self):
@@ -326,6 +354,41 @@ class VNA_Cal(object):
         #return [prediction[0][0],prediction[0][1],prediction[0][2]]
         
         return prediction[0][0]
+    
+    def run_model_on_live_data_elasticNet(self, data_dict):
+        """
+        Run the ElasticNet model on live data and print the prediction.
+        
+        Parameters:
+        model_path (str): Path to the trained ElasticNet model.
+        scaler_path (str): Path to the saved StandardScaler.
+        data_dict (dict): A dictionary containing live data to be processed.
+        """
+        
+        global ElasticNet_Model
+        global ElasticNet_Model_scaler
+        
+        #model_path = r'C:\Users\JoshuaPaterson\OneDrive - Phibion Pty Ltd\Documents\GitHub\DielectricSensorSmallScaleTestingData\DielectricSensorRawDataVis\VNA Sensor Raw Data Testing T10 and T11 combined\elasticnet_model_data_reduction_test.pkl'  # Hard-coded model path
+        #scaler_path = r'C:\Users\JoshuaPaterson\OneDrive - Phibion Pty Ltd\Documents\GitHub\DielectricSensorSmallScaleTestingData\DielectricSensorRawDataVis\VNA Sensor Raw Data Testing T10 and T11 combined\scalerdata_reduction_test.pkl'  # Hard-coded scaler path
+        
+        # Step 1: Prepare the live data (assuming prepare_live_data function is available)
+        formatted_data = VNA_Cal.prepare_live_data(self, data_dict)
+        
+        # Step 2: Load the trained model and scaler
+        #elasticnet_model = joblib.load(model_path)  # Load the trained ElasticNet model
+        #scaler = joblib.load(scaler_path)  # Load the scaler used for training
+        
+        # Step 3: Preprocess (normalize) the live data using the loaded scaler
+        formatted_data_normalized = ElasticNet_Model_scaler.transform(formatted_data)
+        
+        # Step 4: Make prediction using the trained ElasticNet model
+        prediction = ElasticNet_Model.predict(formatted_data_normalized)
+        
+        # Step 5: Print the prediction result
+        print(f"Predicted value for ElasticNet Model: {prediction[0]:.2f}")
+        
+        # Return the prediction
+        return prediction[0]
 
     
     

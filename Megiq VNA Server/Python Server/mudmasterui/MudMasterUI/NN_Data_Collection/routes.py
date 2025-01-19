@@ -120,7 +120,8 @@ def submit_label_v2():
     base_folder_path = r'C:\Users\JoshuaPaterson\Downloads\Testing3'  # Use raw string
 
     # Create a new folder with a timestamp or unique identifier
-    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    #timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    timestamp = datetime.utcnow().strftime('%Y%m%d_%H%M%S')
     new_folder_path = os.path.join(base_folder_path, f'data_{timestamp}')
 
     # Create the new folder
@@ -195,91 +196,6 @@ def submit_label_v2():
 
 
 
-# @bp.route('/submit_label_v2', methods=['POST'])
-# def submit_label_v2():
-#     data = request.get_json()
-#     label = data.get('label')
 
-#     # Check if the label can be converted to a float
-#     try:
-#         float_value = float(label)
-#     except ValueError:
-#         return jsonify(message="Invalid input: Please enter a valid float."), 400
-
-#     # Define the base folder path for saving data
-#     base_folder_path = r'C:\Users\JoshuaPaterson\Downloads\Testing3'  # Use raw string
-
-#     # Create a new folder with a timestamp or unique identifier
-#     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-#     new_folder_path = os.path.join(base_folder_path, f'data_{timestamp}')
-
-#     # Create the new folder
-#     os.makedirs(new_folder_path, exist_ok=True)
-
-#     # Define the path for the JSON file
-#     json_file_path = os.path.join(new_folder_path, 'data.json')
-#     globalErrorVar.NN_Data_Collection_File_path = new_folder_path
-    
-#     # Call the measurement state function
-#     try:
-#         measurement_manager.measurement_state_MV3()
-#     except ValueError:
-#         return jsonify(message="ERROR with VNA"), 400
-    
-#     if globalErrorVar.ErrorFromMeasurementManager:
-#         globalErrorVar.ErrorFromMeasurementManager = False
-#         return jsonify(message="ERROR with VNA"), 400
-
-#     # Write the float value to a JSON file
-#     with open(json_file_path, 'w') as json_file:
-#         json.dump({'label': float_value}, json_file)
-
-#     # Define the path to the VNA touchstones directory
-#     vna_touchstones_dir = r'C:\Users\JoshuaPaterson\Downloads\Testing1\vnaTouchstones'
-#     latest_folder_path = None
-#     latest_time = 0
-
-#     # Find the latest folder in the vnaTouchstones directory
-#     for folder in os.listdir(vna_touchstones_dir):
-#         folder_path = os.path.join(vna_touchstones_dir, folder)
-#         if os.path.isdir(folder_path):
-#             folder_time = os.path.getmtime(folder_path)
-#             if folder_time > latest_time:
-#                 latest_time = folder_time
-#                 latest_folder_path = folder_path
-
-#     if latest_folder_path is None:
-#         return jsonify(message="No folders found in the vnaTouchstones directory."), 400
-
-#     # Path to the calibration data folder
-#     calibration_data_folder = os.path.join(latest_folder_path, 'calData')
-
-#     # Print the calibration data folder path
-#     print("Calibration data folder:", calibration_data_folder)
-
-#     # Check for the existence of the calData folder
-#     if not os.path.exists(calibration_data_folder):
-#         return jsonify(message="Calibration data folder does not exist."), 400
-
-#     # Construct the S1P file path for the actuator position "210"
-#     s1p_file_path = os.path.join(calibration_data_folder, '210.s1p')
-
-#     # Print the S1P file path
-#     print("S1P file path:", s1p_file_path)
-
-#     # Check if the S1P file exists
-#     if not os.path.exists(s1p_file_path):
-#         return jsonify(message="S1P file for actuator position '210' not found."), 400
-
-#     # Define the new location for the copied S1P file in the new folder
-#     new_s1p_file_path = os.path.join(new_folder_path, 'Cal_data.s1p')
-
-#     # Copy the S1P file to the new location
-#     shutil.copy(s1p_file_path, new_s1p_file_path)
-
-#     # Print the new S1P file path after copying
-#     print("Copied S1P file to:", new_s1p_file_path)
-
-#     return jsonify(message=f"You entered a valid float: {float_value}. Data saved to {new_folder_path}")
     
  

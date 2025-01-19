@@ -393,12 +393,13 @@ class Measurement_Manager(object):
                 self._dielectric_manager.load_model()
                 # Run the model on live data
                 DNN = self._dielectric_manager.run_model_on_live_data(self._dielectric_manager.Get_Model(), data_dict)
+                #DNN = self._dielectric_manager.run_model_on_live_data_elasticNet(data_dict)
                 
                 self._current_measurement_data['DNN'] = DNN
                 #self._current_measurement_data['DNN'] = 0
                 
                 #shear vain data test 
-                self._current_measurement_data['shear_vain_20cm'] = random.randrange(0, 100)
+                self._current_measurement_data['shear_vain_20cm'] = self._current_measurement_data['DNN']
                 self._current_measurement_data['shear_vain_50cm'] = random.randrange(0, 100)
                 self._current_measurement_data['shear_vain_80cm'] = random.randrange(0, 100)
                 #added teltonika readings 
@@ -555,7 +556,12 @@ class Measurement_Manager(object):
                 print("before load")
                 self._dielectric_manager.load_model()
                 # Run the model on live data
-                DNN = self._dielectric_manager.run_model_on_live_data(self._dielectric_manager.Get_Model(), data_dict)
+                
+                
+                #DNN = self._dielectric_manager.run_model_on_live_data(self._dielectric_manager.Get_Model(), data_dict)
+                #print(f"DNN model output 20cm: {DNN}")  # Print the result of the DNN model
+                DNN = self._dielectric_manager.run_model_on_live_data_elasticNet(data_dict)
+                print(f"ElasticNet model output 50cm: {DNN}")  # Print the result of the ElasticNet model
                 
                 self._current_measurement_data['DNN'] = DNN
                 #self._current_measurement_data['DNN'] = 0
@@ -592,10 +598,12 @@ class Measurement_Manager(object):
                 save_measurement_data(self._measurement_file, self._current_measurement_data, self._app.config['CONFIG_SYSTEM']['dataLogger']['headings_measurement'])
                 
                 print('---------Measurements taken---------')
+                
+                
             time.sleep(1)
         except Exception as e:
             # Handle other exceptions
-            print(f"An error occurred: {e}")
+            print(f"An error occurred in MV2: {e}")
             
             
             
