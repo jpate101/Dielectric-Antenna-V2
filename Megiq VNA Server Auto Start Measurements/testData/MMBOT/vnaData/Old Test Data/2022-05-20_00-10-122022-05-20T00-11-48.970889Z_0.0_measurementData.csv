@@ -1,0 +1,2 @@
+site,measurment_date,actuator_extension,permittivity,water_percentage,dry_unit_weight,vna_filename
+default,2022-05-20T00:11:48.970889Z,0.0,48.645503477603235,75.51474897658719,8.573282197202058,2022-05-20T00-11-48.970889Z_0.0_vnaData.s1p
