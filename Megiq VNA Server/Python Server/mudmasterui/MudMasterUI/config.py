@@ -120,7 +120,7 @@ class Config(object):
             },
         },
         'teltonika':{
-            'DEVICE_IP' : '192.168.1.1',
+            'DEVICE_IP' : '192.168.10.1',
             'username' : 'admin',
             'password' : 'MudM45t3r'
             
