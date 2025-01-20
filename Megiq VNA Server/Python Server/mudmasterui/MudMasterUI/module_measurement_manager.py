@@ -74,6 +74,9 @@ class Measurement_Manager(object):
             'shear_vain_20cm': None,
             'shear_vain_50cm': None,
             'shear_vain_80cm': None,
+            'Shear Vain A': None,
+            'Shear Vain B': None,
+            'Shear Vain C': None,
             }
 
         self._next_measurement_time = 0
@@ -194,9 +197,9 @@ class Measurement_Manager(object):
         data_dict['shear_vain_50cm'] = self._current_measurement_data['shear_vain_50cm'] or 0
         data_dict['shear_vain_80cm'] = self._current_measurement_data['shear_vain_80cm'] or 0
         
-        data_dict['Shear Vain A'] = self._current_measurement_data['Shear Vain A'] or 0
-        data_dict['Shear Vain B'] = self._current_measurement_data['Shear Vain B'] or 0
-        data_dict['Shear Vain C'] = self._current_measurement_data['Shear Vain C'] or 0
+        data_dict['Shear_Vain_20'] = self._current_measurement_data['Shear_Vain_20'] or 0
+        data_dict['Shear_Vain_50'] = self._current_measurement_data['Shear_Vain_50'] or 0
+        data_dict['Shear_Vain_80'] = self._current_measurement_data['Shear_Vain_80'] or 0
         
         #print(data_dict['shear_vain_80cm'])
 
@@ -302,67 +305,6 @@ class Measurement_Manager(object):
         """
         time.sleep(self._app.config['CONFIG_RUN']['measurement_manager']['idle_sleep_time'])
 
-    
-    def calibration_state(self, testing=False):
-        """ @brief  This state is used to calibrate the system. This will 
-                    instruct the actuator to move to the next position in the 
-                    list. For each position, it will get a measurement from the 
-                    VNA and save that to the dielectric calibration module.
-            @param  None
-            @retval None
-
-        """
-        print('measurement system  calibration')
-        # reset all of the calibration status to 0
-        self._calibration_status = {position: 0 for position in self._calibration_status}
-
-        # iterate over the calibration positions, for each position, move the actuator, then get a measurement and pass it to the calibration module
-        for position in self._calibration_positions:
-            self._calibration_status[position] = 1
-            if testing == False:
-                try:
-                    self._mounting_system.set_actuator(position)
-                    # wait for the actuator to move to that position, checking the current position, relative to the expected
-                    time.sleep(0.5)
-                    break_out_count = 0
-                    while(abs(self._mounting_system.get_actuator_position() - position) > self._app.config['CONFIG_SYSTEM']['mountingSystem']['actuator_tolerance']):
-                        time.sleep(0.1)
-                        break_out_count += 1
-                        if(break_out_count > 1):
-                            print('measurement system  calibration error - actuator not moving')
-                            break
-
-                    calibration_position = self._mounting_system.get_actuator_position()
-                    print('measurement system  calibration position: ', calibration_position)
-
-                    # get the measurement from the VNA
-                    s11_data = self._vna.get_nextData(forNN=True)
-
-                    # add the calibration measurement to the calibration module - using the desired position as the input position
-                    self._dielectric_manager.add_calibration_measurement(position, s11_data)
-
-                except Exception as e:
-                    print('measurement system  calibration error - ', e)
-                    self._calibration_status[position] = 0
-                    calibration_position = position
-
-                self._current_calibration_position = calibration_position
-                self._calibration_status[position] = 2
-
-                time.sleep(0.1)
-
-            else:
-                time.sleep(2)
-                self._current_calibration_position = position
-                self._calibration_status[position] = 2
-
-        # now move the actuator back to 0 and return to the idle state
-        self._mounting_system.set_actuator(0)
-        self._current_state = 'idle'
-        
-    
-
-
     def measurement_state(self, testing=False):
         """ @brief  This state is used to take a measurement from the VNA.
             @param  None
@@ -403,6 +345,10 @@ class Measurement_Manager(object):
                 #self._current_measurement_data['DNN'] = 0
                 
                 #shear vain data test 
+                self._current_measurement_data['Shear_Vain_20'] = DNN[0]
+                self._current_measurement_data['Shear_Vain_50'] = DNN[1]
+                self._current_measurement_data['Shear_Vain_80'] = DNN[2]
+                
                 self._current_measurement_data['shear_vain_20cm'] = DNN[0]
                 self._current_measurement_data['shear_vain_50cm'] = DNN[1]
                 self._current_measurement_data['shear_vain_80cm'] = DNN[2]
@@ -467,68 +413,6 @@ class Measurement_Manager(object):
     """ Module Thread that joshua paterson added for RSI PRO mount 
     ***********************************************************************
     """
-
-
-    def calibration_state_MV2(self, testing=False):
-        """ @brief  This state is used to take a a calibration reading at 210mm.
-            @param  None
-            @retval None
-
-        """
-        print('measurement system calibration at 210 mm MV2')
-        globalErrorVar.CurrentlyCalibrating = True
-
-        # Reset calibration status for all positions
-        self._calibration_status = {position: 0 for position in self._calibration_status}
-
-        # Calibrate at 210 mm position
-        self._calibration_status[210] = 1
-
-        if not testing:
-            try:
-                # Simulate actuator movement to 210 mm position (replace with actual implementation)
-                time.sleep(0.5)
-                calibration_position = 210
-                print('measurement system calibration position:', calibration_position)
-
-                # Simulate getting measurement data from VNA (replace with actual implementation)
-                try:
-                    s11_data = self._vna.get_nextData(forNN=True)
-                except TimeoutError as e:
-                    print('measurement system calibration error:', e)
-                    self._calibration_status[210] = 0
-                    calibration_position = 210
-                    self._current_state = 'idle'
-                    globalErrorVar.ErrorFromMeasurementManager = True
-                    raise TimeoutError("Timeout occurred: 10 seconds elapsed while waiting for new data. from state_mv2")
-
-                print("get_nextData")
-
-                # Simulate adding calibration measurement to manager (replace with actual implementation)
-                self._dielectric_manager.add_calibration_measurement(210, s11_data)
-                print('Calibration done')
-
-            except Exception as e:
-                print('measurement system calibration error:', e)
-                self._calibration_status[210] = 0
-                calibration_position = 210
-
-            self._current_calibration_position = calibration_position
-            self._calibration_status[210] = 2
-
-            time.sleep(0.1)
-
-        else:
-            time.sleep(2)
-            self._current_calibration_position = 210
-            self._calibration_status[210] = 2
-            print('measurement system calibration position (Testing):', calibration_position)
-
-        # Return actuator to 0 and transition to idle state (replace with actual implementation)
-        # self._mounting_system.set_actuator(0)
-        globalErrorVar.CurrentlyCalibrating = False
-        self._current_state = 'idle'
-        
     def measurement_state_MV2(self, testing=False):
         """ @brief  This state is used to take a measurement from the VNA when using the button from the home page.
             @param  None
@@ -564,9 +448,9 @@ class Measurement_Manager(object):
                 DNN = self._dielectric_manager.run_model_on_live_data_elasticNet(data_dict)
                 #print(f"ElasticNet model output 50cm: {DNN[1]}")  # Print the result of the ElasticNet model
                 #print(DNN)
-                self._current_measurement_data['Shear Vain A'] = DNN[0]
-                self._current_measurement_data['Shear Vain B'] = DNN[1]
-                self._current_measurement_data['Shear Vain C'] = DNN[2]
+                self._current_measurement_data['Shear_Vain_20'] = DNN[0]
+                self._current_measurement_data['Shear_Vain_50'] = DNN[1]
+                self._current_measurement_data['Shear_Vain_80'] = DNN[2]
                 
                 #self._current_measurement_data['DNN'] = DNN[1]
                 #self._current_measurement_data['DNN'] = 0
@@ -679,7 +563,7 @@ class Measurement_Manager(object):
                 self.idle_state()
 
             elif(self._current_state == 'calibration'):
-                self.calibration_state(testing=testing)
+                #self.calibration_state(testing=testing)
                 time.sleep(0.1)
             elif(self._current_state == 'measurement_MV2'):#added by me //will prevent below if else statment from running and will also cause the measuremnt to dely on  self.measurement_state(testing=testing) as well  
                 self.measurement_state_MV2()

@@ -113,7 +113,7 @@ class Config(object):
             'baseFileName_measurement': '{}_measurementData.csv',
             'baseFileName_vna': '{}_vnaData.s1p',  # saved as a s1p touchstone file - using the skrf library
             'baseDirectory_cal_data': '{}_cal_data',
-            'headings_measurement': [ 'measurment_date', 'actuator_extension', 'vna_filename','latitude','longitude','Shear Vain A','Shear Vain B','Shear Vain C'],#added 'latitude','longitude'
+            'headings_measurement': [ 'measurment_date', 'actuator_extension', 'vna_filename','latitude','longitude','Shear_Vain_20','Shear_Vain_50','Shear_Vain_80'],#added 'latitude','longitude'
         },
         'measurement_manager': {
             'measurement_delay_list': [10, 20, 30, 60, 120, 300]

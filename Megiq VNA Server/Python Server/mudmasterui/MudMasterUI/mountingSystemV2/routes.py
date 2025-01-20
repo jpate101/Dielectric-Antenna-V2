@@ -92,35 +92,35 @@ def Leave():
     takeMeasurement = False
     return jsonify({"message": "Leave Successful"})  
 
-@bp.route('/mounting-system-v2/Calibrate', methods=['GET'])
-def Calibrate():
-    """Performs calibration by extending the actuator and starting calibration."""
-    global takeMeasurement
-    global isExtended
-    takeMeasurement = False
-    try:
-        if isExtended == 1 or isExtended == 2:
-            # Extend the actuator if it's not already extended
-            globalErrorVar.CurrentlyExtending = True
-            sleep = controller_mountingSystem.fullyExtend()
-            if sleep == "success":
-                time.sleep(32)  # Wait for the actuator to fully extend
-                sleep = controller_mountingSystem.ApplyBrake()
-                isExtended = 3
-                globalErrorVar.CurrentlyExtending = False
-        # Start calibration process
-        measurement_manager.calibration_state_MV2()
-        if globalErrorVar.ErrorFromMeasurementManager:
-            return jsonify({"error": "Timeout occurred", "message": "VNA timed out"})
-        globalErrorVar.ErrorFromMeasurementManager = False
-        isExtended = 3
-        return jsonify({"message": "Calibrated"})  
-    except TimeoutError as e:
-        isExtended = 1
-        return jsonify({"error": "Timeout occurred", "message": "VNA timed out"})
-    except Exception as e:
-        isExtended = 1
-        return jsonify({"error": "Error while calibrating", "message": "Unsuccessful"})
+# @bp.route('/mounting-system-v2/Calibrate', methods=['GET'])
+# def Calibrate():
+#     """Performs calibration by extending the actuator and starting calibration."""
+#     global takeMeasurement
+#     global isExtended
+#     takeMeasurement = False
+#     try:
+#         if isExtended == 1 or isExtended == 2:
+#             # Extend the actuator if it's not already extended
+#             globalErrorVar.CurrentlyExtending = True
+#             sleep = controller_mountingSystem.fullyExtend()
+#             if sleep == "success":
+#                 time.sleep(32)  # Wait for the actuator to fully extend
+#                 sleep = controller_mountingSystem.ApplyBrake()
+#                 isExtended = 3
+#                 globalErrorVar.CurrentlyExtending = False
+#         # Start calibration process
+#         measurement_manager.calibration_state_MV2()
+#         if globalErrorVar.ErrorFromMeasurementManager:
+#             return jsonify({"error": "Timeout occurred", "message": "VNA timed out"})
+#         globalErrorVar.ErrorFromMeasurementManager = False
+#         isExtended = 3
+#         return jsonify({"message": "Calibrated"})  
+#     except TimeoutError as e:
+#         isExtended = 1
+#         return jsonify({"error": "Timeout occurred", "message": "VNA timed out"})
+#     except Exception as e:
+#         isExtended = 1
+#         return jsonify({"error": "Error while calibrating", "message": "Unsuccessful"})
 
 @bp.route('/mounting-system-v2/Measure', methods=['GET'])
 def Measure():
