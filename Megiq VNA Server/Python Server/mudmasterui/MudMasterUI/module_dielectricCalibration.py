@@ -40,8 +40,12 @@ import joblib  # For loading the model and scaler
 *******************************************************************************
 """
 DNN_Model = None
-ElasticNet_Model = None
-ElasticNet_Model_scaler = None
+ElasticNet_Model_20CM = None
+ElasticNet_Model_scaler_20CM = None
+ElasticNet_Model_50CM = None
+ElasticNet_Model_scaler_50CM = None
+ElasticNet_Model_80CM = None
+ElasticNet_Model_scaler_80CM = None
 graph = tf.Graph()
 
 """ NN Functions
@@ -283,38 +287,84 @@ class VNA_Cal(object):
     
     def load_model(self):
         global DNN_Model
-        global ElasticNet_Model
-        global ElasticNet_Model_scaler
+        global ElasticNet_Model_50CM
+        global ElasticNet_Model_scaler_50CM
+        global ElasticNet_Model_20CM
+        global ElasticNet_Model_scaler_20CM
+        global ElasticNet_Model_80CM
+        global ElasticNet_Model_scaler_80CM
         #change to config if decide to use 
-        model_path = r'C:\Users\JoshuaPaterson\OneDrive - Phibion Pty Ltd\Documents\GitHub\Dielectric-Antenna-V2\Megiq VNA Server\Python Server\mudmasterui\MudMasterUI\nnData\50_EN_MT_WELD.pkl'  # Hard-coded model path
-        scaler_path = r'C:\Users\JoshuaPaterson\OneDrive - Phibion Pty Ltd\Documents\GitHub\Dielectric-Antenna-V2\Megiq VNA Server\Python Server\mudmasterui\MudMasterUI\nnData\50_EN_MT_WELD_scaler.pkl'  # Hard-coded scaler path
+        model_path_20 = self._app.config['ELASTICNET_MODEL_LOCATION_TWENTYCM']  # Hard-coded model path
+        scaler_path_20 = self._app.config['ELASTICNET_SCALER_LOCATION_TWENTYCM']   # Hard-coded scaler path
         
-        if DNN_Model is None:
-            try:
-                DNN_Model = tf.keras.models.load_model(self._app.config['DNN_MODEL_LOCATION'], compile=False)
-                print("Model loaded successfully.")
-            except Exception as e:
-                print(f"An error occurred while loading the model: {e}")
-        else:
-            print("Model is already loaded, skipping load.")
+        model_path_50 = self._app.config['ELASTICNET_MODEL_LOCATION_FIFITYCM']  # Hard-coded model path
+        scaler_path_50 = self._app.config['ELASTICNET_SCALER_LOCATION_FIFITYCM']   # Hard-coded scaler path
+        
+        model_path_80 = self._app.config['ELASTICNET_MODEL_LOCATION_EIGHTYCM']  # Hard-coded model path
+        scaler_path_80 = self._app.config['ELASTICNET_SCALER_LOCATION_EIGHTYCM']   # Hard-coded scaler path
+        
+        #if DNN_Model is None:
+        #    try:
+        #        DNN_Model = tf.keras.models.load_model(self._app.config['DNN_MODEL_LOCATION'], compile=False)
+        #        print("DNN Model loaded successfully.")
+        #    except Exception as e:
+        #        print(f"An error occurred while loading the DNN model: {e}")
+        #else:
+        #    print("DNN Model is already loaded, skipping load.")
             
-        if ElasticNet_Model is None:
+        if ElasticNet_Model_50CM is None:
             try:
-                ElasticNet_Model = joblib.load(model_path)
-                print("ElasticNet_Model loaded successfully.")
+                ElasticNet_Model_50CM = joblib.load(model_path_50)
+                print("50CM ElasticNet_Model loaded successfully.")
             except Exception as e:
-                print(f"An error occurred while loading the  ElasticNet_Model: {e}")
+                print(f"An error occurred while loading the 50CM ElasticNet_Model: {e}")
         else:
-            print("ElasticNet_Model is already loaded, skipping load.")
+            print("50CM ElasticNet_Model is already loaded, skipping load.")
             
-        if ElasticNet_Model_scaler is None:
+        if ElasticNet_Model_scaler_50CM is None:
             try:
-                ElasticNet_Model_scaler = joblib.load(scaler_path)
-                print("ElasticNet_Model_scaler loaded successfully.")
+                ElasticNet_Model_scaler_50CM = joblib.load(scaler_path_50)
+                print("50CM ElasticNet_Model_scaler loaded successfully.")
             except Exception as e:
-                print(f"An error occurred while loading the ElasticNet_Model_scaler: {e}")
+                print(f"An error occurred while loading the 50CM ElasticNet_Model_scaler: {e}")
         else:
-            print("ElasticNet_Model_scaler is already loaded, skipping load.")
+            print("50CM ElasticNet_Model_scaler is already loaded, skipping load.")
+            
+        if ElasticNet_Model_20CM is None:
+            try:
+                ElasticNet_Model_20CM = joblib.load(model_path_20)
+                print("20CM ElasticNet_Model loaded successfully.")
+            except Exception as e:
+                print(f"An error occurred while loading the 20CM ElasticNet_Model: {e}")
+        else:
+            print("20CM ElasticNet_Model is already loaded, skipping load.")
+            
+        if ElasticNet_Model_scaler_20CM is None:
+            try:
+                ElasticNet_Model_scaler_20CM = joblib.load(scaler_path_20)
+                print("20CM ElasticNet_Model_scaler loaded successfully.")
+            except Exception as e:
+                print(f"An error occurred while loading the 20CM ElasticNet_Model_scaler: {e}")
+        else:
+            print("20CM ElasticNet_Model_scaler is already loaded, skipping load.")
+            
+        if ElasticNet_Model_80CM is None:
+            try:
+                ElasticNet_Model_80CM = joblib.load(model_path_80)
+                print("80CM ElasticNet_Model loaded successfully.")
+            except Exception as e:
+                print(f"An error occurred while loading the 80CM ElasticNet_Model: {e}")
+        else:
+            print("80CM ElasticNet_Model is already loaded, skipping load.")
+            
+        if ElasticNet_Model_scaler_80CM is None:
+            try:
+                ElasticNet_Model_scaler_80CM = joblib.load(scaler_path_80)
+                print("80CM ElasticNet_Model_scaler loaded successfully. ")
+            except Exception as e:
+                print(f"An error occurred while loading the 80CM ElasticNet_Model_scaler: {e}")
+        else:
+            print("80CM ElasticNet_Model_scaler is already loaded, skipping load.")
 
     
     def Get_Model(self):
@@ -364,9 +414,14 @@ class VNA_Cal(object):
         scaler_path (str): Path to the saved StandardScaler.
         data_dict (dict): A dictionary containing live data to be processed.
         """
+        global ElasticNet_Model_20CM
+        global ElasticNet_Model_scaler_20CM
         
-        global ElasticNet_Model
-        global ElasticNet_Model_scaler
+        global ElasticNet_Model_50CM
+        global ElasticNet_Model_scaler_50CM
+        
+        global ElasticNet_Model_80CM
+        global ElasticNet_Model_scaler_80CM
         
         #model_path = r'C:\Users\JoshuaPaterson\OneDrive - Phibion Pty Ltd\Documents\GitHub\DielectricSensorSmallScaleTestingData\DielectricSensorRawDataVis\VNA Sensor Raw Data Testing T10 and T11 combined\elasticnet_model_data_reduction_test.pkl'  # Hard-coded model path
         #scaler_path = r'C:\Users\JoshuaPaterson\OneDrive - Phibion Pty Ltd\Documents\GitHub\DielectricSensorSmallScaleTestingData\DielectricSensorRawDataVis\VNA Sensor Raw Data Testing T10 and T11 combined\scalerdata_reduction_test.pkl'  # Hard-coded scaler path
@@ -379,16 +434,31 @@ class VNA_Cal(object):
         #scaler = joblib.load(scaler_path)  # Load the scaler used for training
         
         # Step 3: Preprocess (normalize) the live data using the loaded scaler
-        formatted_data_normalized = ElasticNet_Model_scaler.transform(formatted_data)
+        formatted_data_normalized_50 = ElasticNet_Model_scaler_50CM.transform(formatted_data)
         
         # Step 4: Make prediction using the trained ElasticNet model
-        prediction = ElasticNet_Model.predict(formatted_data_normalized)
+        prediction_50 = ElasticNet_Model_50CM.predict(formatted_data_normalized_50)
+        
+        # Step 3: Preprocess (normalize) the live data using the loaded scaler
+        formatted_data_normalized_80 = ElasticNet_Model_scaler_80CM.transform(formatted_data)
+        
+        # Step 4: Make prediction using the trained ElasticNet model
+        prediction_80 = ElasticNet_Model_80CM.predict(formatted_data_normalized_80)
+        
+        # Step 3: Preprocess (normalize) the live data using the loaded scaler
+        formatted_data_normalized_20 = ElasticNet_Model_scaler_20CM.transform(formatted_data)
+        
+        # Step 4: Make prediction using the trained ElasticNet model
+        prediction_20 = ElasticNet_Model_20CM.predict(formatted_data_normalized_20)
         
         # Step 5: Print the prediction result
-        print(f"Predicted value for ElasticNet Model: {prediction[0]:.2f}")
+        print(f"Predicted value for ElasticNet Model 20cm: {prediction_20[0]:.2f}")
+        print(f"Predicted value for ElasticNet Model 50cm: {prediction_50[0]:.2f}")
+        print(f"Predicted value for ElasticNet Model 80cm: {prediction_80[0]:.2f}")
         
         # Return the prediction
-        return prediction[0]
+        #return prediction[0]
+        return [prediction_20[0],prediction_50[0],prediction_80[0]]
 
     
     

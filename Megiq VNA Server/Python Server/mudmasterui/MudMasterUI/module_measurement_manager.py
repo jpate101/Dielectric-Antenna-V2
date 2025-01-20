@@ -194,6 +194,10 @@ class Measurement_Manager(object):
         data_dict['shear_vain_50cm'] = self._current_measurement_data['shear_vain_50cm'] or 0
         data_dict['shear_vain_80cm'] = self._current_measurement_data['shear_vain_80cm'] or 0
         
+        data_dict['Shear Vain A'] = self._current_measurement_data['Shear Vain A'] or 0
+        data_dict['Shear Vain B'] = self._current_measurement_data['Shear Vain B'] or 0
+        data_dict['Shear Vain C'] = self._current_measurement_data['Shear Vain C'] or 0
+        
         #print(data_dict['shear_vain_80cm'])
 
         return data_dict
@@ -392,27 +396,24 @@ class Measurement_Manager(object):
                 # Run the model on live data
                 self._dielectric_manager.load_model()
                 # Run the model on live data
-                DNN = self._dielectric_manager.run_model_on_live_data(self._dielectric_manager.Get_Model(), data_dict)
-                #DNN = self._dielectric_manager.run_model_on_live_data_elasticNet(data_dict)
+                #DNN = self._dielectric_manager.run_model_on_live_data(self._dielectric_manager.Get_Model(), data_dict)
+                DNN = self._dielectric_manager.run_model_on_live_data_elasticNet(data_dict)
                 
                 self._current_measurement_data['DNN'] = DNN
                 #self._current_measurement_data['DNN'] = 0
                 
                 #shear vain data test 
-                self._current_measurement_data['shear_vain_20cm'] = self._current_measurement_data['DNN']
-                self._current_measurement_data['shear_vain_50cm'] = random.randrange(0, 100)
-                self._current_measurement_data['shear_vain_80cm'] = random.randrange(0, 100)
+                self._current_measurement_data['shear_vain_20cm'] = DNN[0]
+                self._current_measurement_data['shear_vain_50cm'] = DNN[1]
+                self._current_measurement_data['shear_vain_80cm'] = DNN[2]
                 #added teltonika readings 
-                login_endpoint()
-                latLong = get_GPS_data_endpoint()
-                #print("\n")
-                #print(latLong)
-                #print("\n")
-                self._current_measurement_data['latitude'] = latLong['latitude']
-                self._current_measurement_data['longitude'] = latLong['longitude']
+                #login_endpoint()
+                #latLong = get_GPS_data_endpoint()
+                #self._current_measurement_data['latitude'] = latLong['latitude']
+                #self._current_measurement_data['longitude'] = latLong['longitude']
                 
-                #self._current_measurement_data['latitude'] = 0
-                #self._current_measurement_data['longitude'] = 0
+                self._current_measurement_data['latitude'] = 0
+                self._current_measurement_data['longitude'] = 0
 
                 # set the current datetime for the measurement
                 self._current_measurement_data['measurment_date'] = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")  # current universal coordinated time
@@ -561,9 +562,13 @@ class Measurement_Manager(object):
                 #DNN = self._dielectric_manager.run_model_on_live_data(self._dielectric_manager.Get_Model(), data_dict)
                 #print(f"DNN model output 20cm: {DNN}")  # Print the result of the DNN model
                 DNN = self._dielectric_manager.run_model_on_live_data_elasticNet(data_dict)
-                print(f"ElasticNet model output 50cm: {DNN}")  # Print the result of the ElasticNet model
+                #print(f"ElasticNet model output 50cm: {DNN[1]}")  # Print the result of the ElasticNet model
+                #print(DNN)
+                self._current_measurement_data['Shear Vain A'] = DNN[0]
+                self._current_measurement_data['Shear Vain B'] = DNN[1]
+                self._current_measurement_data['Shear Vain C'] = DNN[2]
                 
-                self._current_measurement_data['DNN'] = DNN
+                #self._current_measurement_data['DNN'] = DNN[1]
                 #self._current_measurement_data['DNN'] = 0
                     # now calculate the water percentage and density using the site config and current site
                     # check if the current site is in the list of sites, otherwise use the default site
@@ -573,13 +578,13 @@ class Measurement_Manager(object):
                     site_config = self._app.config['SITE_CONFIG']['default']
                     
                     #added teltonika readings 
-                login_endpoint()
-                latLong = get_GPS_data_endpoint()
-                self._current_measurement_data['latitude'] = latLong['latitude']
-                self._current_measurement_data['longitude'] = latLong['longitude']
+                #login_endpoint()
+                #latLong = get_GPS_data_endpoint()
+                #self._current_measurement_data['latitude'] = latLong['latitude']
+                #self._current_measurement_data['longitude'] = latLong['longitude']
                 
-                #self._current_measurement_data['latitude'] = 0
-                #self._current_measurement_data['longitude'] = 0
+                self._current_measurement_data['latitude'] = 0
+                self._current_measurement_data['longitude'] = 0
 
                     # set the current datetime for the measurement
                 self._current_measurement_data['measurment_date'] = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")  # current universal coordinated time
