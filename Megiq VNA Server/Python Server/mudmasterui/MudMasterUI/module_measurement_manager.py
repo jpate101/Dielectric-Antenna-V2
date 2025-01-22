@@ -389,15 +389,12 @@ class Measurement_Manager(object):
                 self._current_measurement_data['density'] = random.randrange(0, 20)
                 self._current_measurement_data['actuator_extension'] = self._mounting_system.get_actuator_position()
                 
-                #login_endpoint()
-                #latLong = get_GPS_data_endpoint()
-                #print("\n")
-                #print(latLong)
-                #print("\n")
-                #self._current_measurement_data['latitude'] = latLong['latitude']
-                #self._current_measurement_data['longitude'] = latLong['longitude']
-                self._current_measurement_data['latitude'] =0
-                self._current_measurement_data['longitude'] = 0
+                login_endpoint()
+                latLong = get_GPS_data_endpoint()
+                self._current_measurement_data['latitude'] = latLong['latitude']
+                self._current_measurement_data['longitude'] = latLong['longitude']
+                #self._current_measurement_data['latitude'] =0
+                #self._current_measurement_data['longitude'] = 0
                 
                 self._current_measurement_data['shear_vain_20cm'] = random.randrange(0, 100)
                 self._current_measurement_data['shear_vain_50cm'] = random.randrange(0, 100)
@@ -441,10 +438,6 @@ class Measurement_Manager(object):
                 print("before load")
                 self._dielectric_manager.load_model()
                 # Run the model on live data
-                
-                
-                #DNN = self._dielectric_manager.run_model_on_live_data(self._dielectric_manager.Get_Model(), data_dict)
-                #print(f"DNN model output 20cm: {DNN}")  # Print the result of the DNN model
                 DNN = self._dielectric_manager.run_model_on_live_data_elasticNet(data_dict)
                 #print(f"ElasticNet model output 50cm: {DNN[1]}")  # Print the result of the ElasticNet model
                 #print(DNN)
@@ -462,13 +455,13 @@ class Measurement_Manager(object):
                     site_config = self._app.config['SITE_CONFIG']['default']
                     
                     #added teltonika readings 
-                #login_endpoint()
-                #latLong = get_GPS_data_endpoint()
-                #self._current_measurement_data['latitude'] = latLong['latitude']
-                #self._current_measurement_data['longitude'] = latLong['longitude']
+                login_endpoint()
+                latLong = get_GPS_data_endpoint()
+                self._current_measurement_data['latitude'] = latLong['latitude']
+                self._current_measurement_data['longitude'] = latLong['longitude']
                 
-                self._current_measurement_data['latitude'] = 0
-                self._current_measurement_data['longitude'] = 0
+                #self._current_measurement_data['latitude'] = 0
+                #self._current_measurement_data['longitude'] = 0
 
                     # set the current datetime for the measurement
                 self._current_measurement_data['measurment_date'] = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")  # current universal coordinated time

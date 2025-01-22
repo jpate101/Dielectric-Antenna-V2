@@ -303,14 +303,6 @@ class VNA_Cal(object):
         model_path_80 = self._app.config['ELASTICNET_MODEL_LOCATION_EIGHTYCM']  # Hard-coded model path
         scaler_path_80 = self._app.config['ELASTICNET_SCALER_LOCATION_EIGHTYCM']   # Hard-coded scaler path
         
-        #if DNN_Model is None:
-        #    try:
-        #        DNN_Model = tf.keras.models.load_model(self._app.config['DNN_MODEL_LOCATION'], compile=False)
-        #        print("DNN Model loaded successfully.")
-        #    except Exception as e:
-        #        print(f"An error occurred while loading the DNN model: {e}")
-        #else:
-        #    print("DNN Model is already loaded, skipping load.")
             
         if ElasticNet_Model_50CM is None:
             try:
@@ -367,9 +359,6 @@ class VNA_Cal(object):
             print("80CM ElasticNet_Model_scaler is already loaded, skipping load.")
 
     
-    def Get_Model(self):
-        global DNN_Model
-        return DNN_Model
     def prepare_live_data( self, data_dict):
         """Prepare live data for model input, including magnitude and phase."""
         s11_real = data_dict['S11R']
@@ -383,27 +372,6 @@ class VNA_Cal(object):
         formatted_data = np.concatenate([s11_real, s11_imag, magnitudes, phases]).reshape(1, -1)  # Reshape for single prediction
         return formatted_data
 
-    def run_model_on_live_data(self, model, data_dict):
-        """Run the model on live data and print the predictions."""
-        formatted_data = VNA_Cal.prepare_live_data(self, data_dict)
-        
-        # Reshape for LSTM input
-        formatted_data_reshaped = formatted_data.reshape((formatted_data.shape[0], 1, formatted_data.shape[1]))
-        
-        # Make prediction
-        prediction = model.predict(formatted_data_reshaped)
-        
-        # Print the prediction
-        print(f"Predicted value for DNN Model: {prediction[0][0]}")
-        
-        #print(f"Predicted values for DNN Model:")
-        #print(f"Output 1: {prediction[0][0]}")
-        #print(f"Output 2: {prediction[0][1]}")
-        #print(f"Output 3: {prediction[0][2]}")
-        
-        #return [prediction[0][0],prediction[0][1],prediction[0][2]]
-        
-        return prediction[0][0]
     
     def run_model_on_live_data_elasticNet(self, data_dict):
         """
@@ -422,16 +390,9 @@ class VNA_Cal(object):
         
         global ElasticNet_Model_80CM
         global ElasticNet_Model_scaler_80CM
-        
-        #model_path = r'C:\Users\JoshuaPaterson\OneDrive - Phibion Pty Ltd\Documents\GitHub\DielectricSensorSmallScaleTestingData\DielectricSensorRawDataVis\VNA Sensor Raw Data Testing T10 and T11 combined\elasticnet_model_data_reduction_test.pkl'  # Hard-coded model path
-        #scaler_path = r'C:\Users\JoshuaPaterson\OneDrive - Phibion Pty Ltd\Documents\GitHub\DielectricSensorSmallScaleTestingData\DielectricSensorRawDataVis\VNA Sensor Raw Data Testing T10 and T11 combined\scalerdata_reduction_test.pkl'  # Hard-coded scaler path
-        
+
         # Step 1: Prepare the live data (assuming prepare_live_data function is available)
         formatted_data = VNA_Cal.prepare_live_data(self, data_dict)
-        
-        # Step 2: Load the trained model and scaler
-        #elasticnet_model = joblib.load(model_path)  # Load the trained ElasticNet model
-        #scaler = joblib.load(scaler_path)  # Load the scaler used for training
         
         # Step 3: Preprocess (normalize) the live data using the loaded scaler
         formatted_data_normalized_50 = ElasticNet_Model_scaler_50CM.transform(formatted_data)
