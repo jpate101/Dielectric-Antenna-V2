@@ -4,6 +4,7 @@ The flask application package.
 import threading
 
 from flask import Flask
+import requests
 from MudMasterUI.config import Config
 from MudMasterUI.supportFunctions import *
 from MudMasterUI.config_site import Site_Config
@@ -24,6 +25,15 @@ controller_vna = VNA_Manager()
 controller_mountingSystem = MountingSystem_Manager()
 module_dielectric_manager = VNA_Cal()
 measurement_manager = Measurement_Manager()
+
+def start_measurement():
+    """Function to send a GET request to start the measurement. used to start measurement on startup of server """
+    url = 'http://localhost:8080/mounting-system-v2/Measure'  # Adjust to your actual server URL
+    try:
+        response = requests.get(url)  # Send GET request to trigger Measure()
+        print(f"HTTP request sent. Response: {response.status_code} - {response.text}")
+    except Exception as e:
+        print(f"Error sending HTTP request: {e}")
 
 
 
@@ -90,11 +100,6 @@ def createApp(config_main=Config, config_machine=Config_Machine, site_config=Sit
     from MudMasterUI.NN_Data_Collection import bp as bp_nnDataCollect
     app.register_blueprint(bp_nnDataCollect)
     
-    #try:
-    #    module_dielectric_manager.load_model()#load DNN into memory 
-    #except Exception as e:
-    #    print(f"An error occurred: {e}")
-    #module_dielectric_manager.load_model()
-    
+    threading.Thread(target=start_measurement, daemon=True).start()
     
     return app

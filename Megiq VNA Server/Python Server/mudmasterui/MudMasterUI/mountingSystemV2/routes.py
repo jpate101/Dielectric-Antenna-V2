@@ -34,6 +34,8 @@ from MudMasterUI import measurement_manager  # Import measurement manager
 from MudMasterUI import module_dielectric_manager
 from MudMasterUI import globalErrorVar  # Import global error tracking
 
+import MudMasterUI.config as ConfigFile
+
 """ Defines
 *******************************************************************************
 """
@@ -92,36 +94,6 @@ def Leave():
     takeMeasurement = False
     return jsonify({"message": "Leave Successful"})  
 
-# @bp.route('/mounting-system-v2/Calibrate', methods=['GET'])
-# def Calibrate():
-#     """Performs calibration by extending the actuator and starting calibration."""
-#     global takeMeasurement
-#     global isExtended
-#     takeMeasurement = False
-#     try:
-#         if isExtended == 1 or isExtended == 2:
-#             # Extend the actuator if it's not already extended
-#             globalErrorVar.CurrentlyExtending = True
-#             sleep = controller_mountingSystem.fullyExtend()
-#             if sleep == "success":
-#                 time.sleep(32)  # Wait for the actuator to fully extend
-#                 sleep = controller_mountingSystem.ApplyBrake()
-#                 isExtended = 3
-#                 globalErrorVar.CurrentlyExtending = False
-#         # Start calibration process
-#         measurement_manager.calibration_state_MV2()
-#         if globalErrorVar.ErrorFromMeasurementManager:
-#             return jsonify({"error": "Timeout occurred", "message": "VNA timed out"})
-#         globalErrorVar.ErrorFromMeasurementManager = False
-#         isExtended = 3
-#         return jsonify({"message": "Calibrated"})  
-#     except TimeoutError as e:
-#         isExtended = 1
-#         return jsonify({"error": "Timeout occurred", "message": "VNA timed out"})
-#     except Exception as e:
-#         isExtended = 1
-#         return jsonify({"error": "Error while calibrating", "message": "Unsuccessful"})
-
 @bp.route('/mounting-system-v2/Measure', methods=['GET'])
 def Measure():
     """Starts or stops the measurement thread based on the current state."""
@@ -130,11 +102,6 @@ def Measure():
     if takeMeasurement:
         takeMeasurement = False
         return jsonify({"message": "Measurement thread stopped. No longer logging Measurements"})
-    
-    #try:
-    #    module_dielectric_manager.load_model()
-    #except Exception as e:
-    #    print(f"An error occurred: {e}")
     
     try:
         # Start the measurement thread if it's not already running
@@ -192,7 +159,7 @@ def measurement_thread():
                 pass
         
         measurement_manager.start_measurement()
-        
+        print("waiting for app to be initalised")
         while takeMeasurement:
             measurement_manager._current_state = 'measurement_MV2'
             time.sleep(measurement_manager._app.config['CONFIG_RUN']['measurement_manager']['measurement_delay'])
@@ -205,6 +172,18 @@ def measurement_thread():
             elif globalErrorVar.ErrorFromTeltonika:
                 globalErrorVar.ErrorFromTeltonika = False
                 takeMeasurement = False
+                
+            current_time = datetime.now().strftime('%H:%M')  # Get current time in HH:MM format
+            print(current_time)
+            print(ConfigFile.Config.AUTO_SHUT_DOWN_TIME)
+            if current_time == ConfigFile.Config.AUTO_SHUT_DOWN_TIME:  # If it's 4:00 PM
+                takeMeasurement = False
+                fully_retract()  # Call fully_retract 
+                break
+        
+                
     except Exception as e:
         isExtended = 1
     globalErrorVar.CurrentlyLogging = False
+    
+    print("mesurement stopped")
