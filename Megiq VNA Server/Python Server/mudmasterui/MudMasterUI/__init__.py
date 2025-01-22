@@ -18,7 +18,6 @@ from MudMasterUI.module_measurement_manager import Measurement_Manager # import 
 
 from MudMasterUI.fileTransfer import File_Transfer # import File Transfer class 
 
-import tensorflow as tf
 
 #initaliseing and creating 4 controller objects
 controller_vna = VNA_Manager()

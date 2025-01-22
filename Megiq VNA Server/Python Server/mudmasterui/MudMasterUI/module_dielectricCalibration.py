@@ -30,8 +30,6 @@ from copy import deepcopy
 from MudMasterUI.supportFunctions import *
 from skrf.io import Touchstone
 
-import tensorflow as tf
-from tensorflow.keras.models import load_model
 
 import joblib  # For loading the model and scaler
 
@@ -46,7 +44,6 @@ ElasticNet_Model_50CM = None
 ElasticNet_Model_scaler_50CM = None
 ElasticNet_Model_80CM = None
 ElasticNet_Model_scaler_80CM = None
-graph = tf.Graph()
 
 """ NN Functions
 *******************************************************************************

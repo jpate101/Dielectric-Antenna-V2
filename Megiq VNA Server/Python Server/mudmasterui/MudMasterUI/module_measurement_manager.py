@@ -36,8 +36,6 @@ from MudMasterUI.supportFunctions import *
 from MudMasterUI.teltonikaSupportFunctions import *
 from MudMasterUI import globalErrorVar
 
-import tensorflow as tf
-
 
 import random
 
