@@ -20,10 +20,7 @@ class Config(object):
     
     ELASTICNET_MODEL_LOCATION_EIGHTYCM = r'C:\Users\JoshuaPaterson\OneDrive - Phibion Pty Ltd\Documents\GitHub\Dielectric-Antenna-V2\Megiq VNA Server\Python Server\mudmasterui\MudMasterUI\nnData\80_EN_MT_WELD.pkl'
     ELASTICNET_SCALER_LOCATION_EIGHTYCM = r'C:\Users\JoshuaPaterson\OneDrive - Phibion Pty Ltd\Documents\GitHub\Dielectric-Antenna-V2\Megiq VNA Server\Python Server\mudmasterui\MudMasterUI\nnData\80_EN_MT_WELD_scaler.pkl'
-    
-    
-    DNN_MODEL_LOCATION = r'C:\Users\JoshuaPaterson\OneDrive - Phibion Pty Ltd\Documents\GitHub\Dielectric-Antenna-V2\Megiq VNA Server\Python Server\mudmasterui\MudMasterUI\nnData\20_DNN_MT_WELD_D1_T12.keras'
-    
+
     TRANSFER_DELAY = 30
     CONFIG_DIRECTORY = os.path.join(basedir, 'configFiles')
     CONFIG_DIRECTORY_VNA_CAL = os.path.join(CONFIG_DIRECTORY, 'vna_cal')
