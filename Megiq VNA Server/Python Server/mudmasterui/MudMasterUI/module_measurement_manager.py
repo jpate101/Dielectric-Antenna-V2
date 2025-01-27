@@ -422,10 +422,14 @@ class Measurement_Manager(object):
                 print("measurement_state_MV2")
                 
                 self._next_measurement_time = now + self._app.config['CONFIG_RUN']['measurement_manager']['measurement_delay']#the reason it take 30second before nex measurement 
-            
-            
                 # get the measurement from the VNA
-                self._current_measurement_data['vna_data'] = self._vna.get_nextData(forNN=True)
+                try:
+                    self._current_measurement_data['vna_data'] = self._vna.get_nextData(forNN=True)
+                except Exception as e:
+                    # Handle other exceptions
+                    print(f"An error occurred in MV2 at self._vna.get_nextData(forNN=True): {e}")
+                    return
+                #self._current_measurement_data['vna_data'] = self._vna.get_nextData(forNN=True)
                 self._current_measurement_data['actuator_extension'] = self._mounting_system.get_actuator_position() # here is the string to float issue/error log 
                 
                 print("--__--__--__--__")
@@ -453,13 +457,13 @@ class Measurement_Manager(object):
                     site_config = self._app.config['SITE_CONFIG']['default']
                     
                     #added teltonika readings 
-                login_endpoint()
-                latLong = get_GPS_data_endpoint()
-                self._current_measurement_data['latitude'] = latLong['latitude']
-                self._current_measurement_data['longitude'] = latLong['longitude']
+                #login_endpoint()
+                #latLong = get_GPS_data_endpoint()
+                #self._current_measurement_data['latitude'] = latLong['latitude']
+                #self._current_measurement_data['longitude'] = latLong['longitude']
                 
-                #self._current_measurement_data['latitude'] = 0
-                #self._current_measurement_data['longitude'] = 0
+                self._current_measurement_data['latitude'] = 0
+                self._current_measurement_data['longitude'] = 0
 
                     # set the current datetime for the measurement
                 self._current_measurement_data['measurment_date'] = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")  # current universal coordinated time

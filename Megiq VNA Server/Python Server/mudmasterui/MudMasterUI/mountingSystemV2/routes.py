@@ -165,7 +165,7 @@ def measurement_thread():
             time.sleep(measurement_manager._app.config['CONFIG_RUN']['measurement_manager']['measurement_delay'])
             if globalErrorVar.ErrorFromMeasurementManager:
                 globalErrorVar.ErrorFromMeasurementManager = False
-                takeMeasurement = False
+                #takeMeasurement = False # removed to allow measurments to be ask when opterator leave for breaks as dash would be turned off
             elif globalErrorVar.ErrorFromActuatorReadWrite:
                 globalErrorVar.ErrorFromActuatorReadWrite = False
                 takeMeasurement = False
@@ -184,6 +184,7 @@ def measurement_thread():
                 
     except Exception as e:
         isExtended = 1
+        print("exceptioon in Mounting system V2 routes")
     globalErrorVar.CurrentlyLogging = False
     
-    print("mesurement stopped")
+    print("mesurement stopped at routes.py for msv2")

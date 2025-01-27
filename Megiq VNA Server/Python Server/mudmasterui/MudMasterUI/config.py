@@ -10,7 +10,7 @@ class Config(object):
     MACHINE_DIRECTORY = r'C:\Users\JoshuaPaterson\Downloads\Testing1'
     TRANSFER_DIRECTORY = r'C:\Users\JoshuaPaterson\Downloads\Testing2'
     
-    AUTO_SHUT_DOWN_TIME = '14:25'
+    AUTO_SHUT_DOWN_TIME = '14:00'
     
     ELASTICNET_MODEL_LOCATION_FIFITYCM = r'C:\Users\JoshuaPaterson\OneDrive - Phibion Pty Ltd\Documents\GitHub\Dielectric-Antenna-V2\Megiq VNA Server\Python Server\mudmasterui\MudMasterUI\nnData\50_EN_MT_WELD.pkl'
     ELASTICNET_SCALER_LOCATION_FIFITYCM = r'C:\Users\JoshuaPaterson\OneDrive - Phibion Pty Ltd\Documents\GitHub\Dielectric-Antenna-V2\Megiq VNA Server\Python Server\mudmasterui\MudMasterUI\nnData\50_EN_MT_WELD_scaler.pkl'
