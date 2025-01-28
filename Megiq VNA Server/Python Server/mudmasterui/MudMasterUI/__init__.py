@@ -27,7 +27,7 @@ measurement_manager = Measurement_Manager()
 
 def start_measurement():
     """Function to send a GET request to start the measurement. used to start measurement on startup of server """
-    url = 'http://localhost:8080/mounting-system-v2/Measure'  # Adjust to your actual server URL
+    url = 'http://localhost:80/mounting-system-v2/Measure'  # Adjust to your actual server URL
     try:
         response = requests.get(url)  # Send GET request to trigger Measure()
         print(f"HTTP request sent. Response: {response.status_code} - {response.text}")
