@@ -158,42 +158,42 @@ def submit_label_v2():
     with open(json_file_path, 'w') as json_file:
         json.dump(data_to_save, json_file)
 
-    # Define the path to the VNA touchstones directory
-    vna_touchstones_dir = r'C:\Users\JoshuaPaterson\Downloads\Testing1\vnaTouchstones'
-    latest_folder_path = None
-    latest_time = 0
+    ## Define the path to the VNA touchstones directory
+    #vna_touchstones_dir = r'C:\Users\JoshuaPaterson\Downloads\Testing1\vnaTouchstones'
+    #latest_folder_path = None
+    #latest_time = 0
 
-    # Find the latest folder in the vnaTouchstones directory
-    for folder in os.listdir(vna_touchstones_dir):
-        folder_path = os.path.join(vna_touchstones_dir, folder)
-        if os.path.isdir(folder_path):
-            folder_time = os.path.getmtime(folder_path)
-            if folder_time > latest_time:
-                latest_time = folder_time
-                latest_folder_path = folder_path
+    ## Find the latest folder in the vnaTouchstones directory
+    #for folder in os.listdir(vna_touchstones_dir):
+    #    folder_path = os.path.join(vna_touchstones_dir, folder)
+    #    if os.path.isdir(folder_path):
+    #        folder_time = os.path.getmtime(folder_path)
+    #        if folder_time > latest_time:
+    #            latest_time = folder_time
+    #            latest_folder_path = folder_path
 
-    if latest_folder_path is None:
-        return jsonify(message="No folders found in the vnaTouchstones directory."), 400
+    #if latest_folder_path is None:
+    #    return jsonify(message="No folders found in the vnaTouchstones directory."), 400
 
-    # Path to the calibration data folder
-    calibration_data_folder = os.path.join(latest_folder_path, 'calData')
+    ## Path to the calibration data folder
+    #calibration_data_folder = os.path.join(latest_folder_path, 'calData')
 
-    # Check for the existence of the calData folder
-    if not os.path.exists(calibration_data_folder):
-        return jsonify(message="Calibration data folder does not exist."), 400
+    ## Check for the existence of the calData folder
+    #if not os.path.exists(calibration_data_folder):
+    #    return jsonify(message="Calibration data folder does not exist."), 400
 
-    # Construct the S1P file path for the actuator position "210"
-    s1p_file_path = os.path.join(calibration_data_folder, '210.s1p')
+    ## Construct the S1P file path for the actuator position "210"
+    #s1p_file_path = os.path.join(calibration_data_folder, '210.s1p')
 
-    # Check if the S1P file exists
-    if not os.path.exists(s1p_file_path):
-        return jsonify(message="S1P file for actuator position '210' not found."), 400
+    ## Check if the S1P file exists
+    #if not os.path.exists(s1p_file_path):
+    #    return jsonify(message="S1P file for actuator position '210' not found."), 400
 
-    # Define the new location for the copied S1P file in the new folder
-    new_s1p_file_path = os.path.join(new_folder_path, 'Cal_data.s1p')
+    ## Define the new location for the copied S1P file in the new folder
+    #new_s1p_file_path = os.path.join(new_folder_path, 'Cal_data.s1p')
 
-    # Copy the S1P file to the new location
-    shutil.copy(s1p_file_path, new_s1p_file_path)
+    ## Copy the S1P file to the new location
+    #shutil.copy(s1p_file_path, new_s1p_file_path)
 
     return jsonify(message=f"Data saved to {new_folder_path}")
 
