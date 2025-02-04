@@ -249,17 +249,17 @@ class Measurement_Manager(object):
         self._save_data_directory['vnaData'] = os.path.join(self._save_data_directory['main'], 'vnaData')
         
         # make the directories
-        if not os.path.exists(self._save_data_directory['main']):
-            os.makedirs(self._save_data_directory['main'])
+        #if not os.path.exists(self._save_data_directory['main']):
+        #    os.makedirs(self._save_data_directory['main'])
 
-        if not os.path.exists(self._save_data_directory['calData']):
-            os.makedirs(self._save_data_directory['calData'])
+        #if not os.path.exists(self._save_data_directory['calData']):
+        #    os.makedirs(self._save_data_directory['calData'])
 
-        if not os.path.exists(self._save_data_directory['vnaData']):
-            os.makedirs(self._save_data_directory['vnaData'])
+        #if not os.path.exists(self._save_data_directory['vnaData']):
+        #    os.makedirs(self._save_data_directory['vnaData'])
 
-        print('saving calibration data to: ', self._save_data_directory['calData'])
-        self._dielectric_manager.save_calibration_data(self._save_data_directory['calData'])
+        #print('saving calibration data to: ', self._save_data_directory['calData'])
+        #self._dielectric_manager.save_calibration_data(self._save_data_directory['calData'])
 
         # create the measurment file
         self._measurement_file = os.path.join(self._app.config['MACHINE_DIRECTORY'], self._app.config['CONFIG_SYSTEM']['dataLogger']['baseFileName_measurement'].format(datetime.datetime.utcnow().strftime("%Y-%m-%d_%H-%M-%S")))

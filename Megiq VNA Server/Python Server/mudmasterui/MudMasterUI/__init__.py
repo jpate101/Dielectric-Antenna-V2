@@ -60,7 +60,7 @@ def createApp(config_main=Config, config_machine=Config_Machine, site_config=Sit
     )
 
     # Create necessary directories as specified in the app configuration
-    create_directories(app)
+    #create_directories(app) # no longer need due to s1p files being saved to csv and cal data no longer used
     
     # Load and apply the runtime configuration settings
     load_run_config(app)

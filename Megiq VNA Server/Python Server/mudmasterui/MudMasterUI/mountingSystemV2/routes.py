@@ -69,7 +69,7 @@ def mounting_system():
             'id': key,
             'name': current_app.config['SITE_CONFIG'][key]['name'],
             'country': current_app.config['SITE_CONFIG'][key]['country'],
-            'calibration_date': current_app.config['SITE_CONFIG'][key]['calibration_date']
+            #'calibration_date': current_app.config['SITE_CONFIG'][key]['calibration_date']
         } for key in current_app.config['SITE_CONFIG'].keys()
     )
     

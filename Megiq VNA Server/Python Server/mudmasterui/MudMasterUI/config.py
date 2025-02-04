@@ -23,7 +23,7 @@ class Config(object):
 
     TRANSFER_DELAY = 30
     CONFIG_DIRECTORY = os.path.join(basedir, 'configFiles')
-    CONFIG_DIRECTORY_VNA_CAL = os.path.join(CONFIG_DIRECTORY, 'vna_cal')
+    #CONFIG_DIRECTORY_VNA_CAL = os.path.join(CONFIG_DIRECTORY, 'vna_cal')
 
     # stores the runtime information for the specific machine
     CONFIG_FILE_RUN = os.path.join(CONFIG_DIRECTORY, 'config_run.json')
@@ -112,7 +112,7 @@ class Config(object):
         },
         'dataLogger': {
             'baseFileName_measurement': '{}_measurementData.csv',
-            'baseFileName_vna': '{}_vnaData.s1p',  # saved as a s1p touchstone file - using the skrf library
+            #'baseFileName_vna': '{}_vnaData.s1p',  # saved as a s1p touchstone file - using the skrf library
             'baseDirectory_cal_data': '{}_cal_data',
             'headings_measurement': [ 'measurment_date','latitude','longitude','Shear_Vain_20','Shear_Vain_50','Shear_Vain_80','Raw Sensor Data'],#added 'latitude','longitude'
         },

@@ -176,13 +176,13 @@ class VNA_Cal(object):
         self._theta2 = theta['Theta2']
 
         # check if there is any calibration data file, if so, load them in
-        if(os.path.exists(self._app.config['CONFIG_DIRECTORY_VNA_CAL'])):
-            # iterate through the files in the directory and load them into the calibration data
-            for file in os.listdir(self._app.config['CONFIG_DIRECTORY_VNA_CAL']):
-                if(file.endswith('.s1p')):
-                    with open(os.path.join(self._app.config['CONFIG_DIRECTORY_VNA_CAL'], file), 'r') as infile:
-                        # read the touchstone file using the skrf library - the file name is the actuator position
-                        self._calData[int(file.split('.')[0])] = Touchstone(os.path.join(self._app.config['CONFIG_DIRECTORY_VNA_CAL'], file)).get_sparameter_data()
+        #if(os.path.exists(self._app.config['CONFIG_DIRECTORY_VNA_CAL'])):
+        #    # iterate through the files in the directory and load them into the calibration data
+        #    for file in os.listdir(self._app.config['CONFIG_DIRECTORY_VNA_CAL']):
+        #        if(file.endswith('.s1p')):
+        #            with open(os.path.join(self._app.config['CONFIG_DIRECTORY_VNA_CAL'], file), 'r') as infile:
+        #                # read the touchstone file using the skrf library - the file name is the actuator position
+        #                self._calData[int(file.split('.')[0])] = Touchstone(os.path.join(self._app.config['CONFIG_DIRECTORY_VNA_CAL'], file)).get_sparameter_data()
 
     
     def is_calibrated(self):
