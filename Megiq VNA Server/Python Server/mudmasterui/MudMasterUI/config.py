@@ -5,7 +5,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config(object):
     SECRET_KEY = '7f2GCO8mOE6EaSgNt2MSrkBIqdya3j-BW7MInjh75B1H5GRJtnT6dkDXaN39KalMjE1f2nhxT6w2IH-5Hm0adwlXY5eF6rx4A8wy'
-    VERSION = '0.2.0'
+    VERSION = '1.1.0'
 
     MACHINE_DIRECTORY = r'C:\Users\JoshuaPaterson\Downloads\Testing1'
     TRANSFER_DIRECTORY = r'C:\Users\JoshuaPaterson\Downloads\Testing2'
@@ -114,7 +114,7 @@ class Config(object):
             'baseFileName_measurement': '{}_measurementData.csv',
             'baseFileName_vna': '{}_vnaData.s1p',  # saved as a s1p touchstone file - using the skrf library
             'baseDirectory_cal_data': '{}_cal_data',
-            'headings_measurement': [ 'measurment_date', 'actuator_extension', 'vna_filename','latitude','longitude','Shear_Vain_20','Shear_Vain_50','Shear_Vain_80'],#added 'latitude','longitude'
+            'headings_measurement': [ 'measurment_date','latitude','longitude','Shear_Vain_20','Shear_Vain_50','Shear_Vain_80','Raw Sensor Data'],#added 'latitude','longitude'
         },
         'measurement_manager': {
             'measurement_delay_list': [10, 20, 30, 60, 120, 300]

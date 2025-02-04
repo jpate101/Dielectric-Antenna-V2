@@ -9,13 +9,13 @@
 </div>
 
 <!-- Container for mounting system controls -->
-<div id="mount_controls" class="row">
+<div id="mount_controls" class="row bg-light">
     <!-- Left column: Sensor Controls and Error Indicators -->
     <div class="col-md-6 mb-4">
-        <div class="h-100 p-5 text-white bg-dark rounded-3 position-relative">
+        <div class="h-100 p-5 text-white bg-success rounded-3 position-relative">
             <h2>VNA Sensor Controls</h2>
             <p style="margin: 10px;">
-                <span id="current_action" style="
+                 <!-- <span id="current_action" style="
                     color: black;
                     font-weight: bold; 
                     background-color: white; 
@@ -23,13 +23,16 @@
                     border-radius: 4px; 
                     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); 
                     margin: 10px;
-                ">Automated startup measurements process started currently measureing</span>
+                ">Automated startup measurements process started currently measureing</span>-->
             </p>
 
             <div id="indicator-check-text">
-                <p>
-                    Check the indicators at the top right are green.
+                <p style="
+                    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7), 0px 0px 5px white;
+                    ">
+                    Check the indicators at the top right are Blue.
                     If not reconnect Sensor and Actuator to Computer. Then refresh the page.
+
                 </p>
             </div>
 
@@ -88,8 +91,25 @@
                         </button>
                         -->
 
+                        <div class="card border-success mt-4">
+                            <div class="card-header bg-success text-white">
+                                <h4 class="mb-0">Current Action</h4>
+                            </div>
+                            <div class="card-body">
+                                <span id="current_action" style="
+                                    color: green;  /* Green color for text */
+                                    font-weight: bold; 
+                                    background-color: white; 
+                                    
+                                    border-radius: 4px; 
+                                    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); 
+                                    
+                                ">Automated startup measurements process started, currently measuring</span>
+                            </div>
+                        </div>
+
                         <!-- Button to start/stop measurements -->
-                        <button id="run-measurements-button" class="btn btn-primary btn-lg"
+                        <button id="run-measurements-button" class="btn btn-success btn-lg"
                             data-distance="{{ config.CONFIG_SYSTEM.mountingSystem.extend_distance }}"
                             type="button">Run/Stop Measurements
                             <div class="nav-item my-auto">
@@ -108,6 +128,8 @@
                                     id="RetractButtonIndicator" title=""></span>
                             </div>
                         </button>
+
+                        
                     </div>
                 </div>
             </div>
@@ -261,25 +283,25 @@
         console.log(data);
 
         // Update status indicators based on received data
-        $("#vnaReadTimeoutErrorIndicator").css("color", data.errorMeasureing == 0 ? "limegreen" : "red")
+        $("#vnaReadTimeoutErrorIndicator").css("color", data.errorMeasureing == 0 ? "#007BFF" : "red")
             .attr('title', data.errorMeasureing == 0 ? "When Red Timeout occurred while reading VNA data" : "Error occurred while reading VNA data");
 
-        $("#ActuatorReadWriteErrorIndicator").css("color", data.errorActuatorReadWrite == 0 ? "limegreen" : "red")
+        $("#ActuatorReadWriteErrorIndicator").css("color", data.errorActuatorReadWrite == 0 ? "#007BFF" : "red")
             .attr('title', data.errorActuatorReadWrite == 0 ? "When Red ReadWrite error occurred when communicating with actuator" : "Error communicating with actuator");
 
-        $("#teltonikaErrorIndicator").css("color", data.errorTeltonika == 0 ? "limegreen" : "red")
+        $("#teltonikaErrorIndicator").css("color", data.errorTeltonika == 0 ? "#007BFF" : "red")
             .attr('title', data.errorTeltonika == 0 ? "GPS is good" : "Error with GPS");
 
-        $("#RetractingActuator").css("color", data.CurrentlyRetracting == 0 ? "gray" : "limegreen")
+        $("#RetractingActuator").css("color", data.CurrentlyRetracting == 0 ? "gray" : "#007BFF")
             .attr('title', data.CurrentlyRetracting == 0 ? "not Currently Retracting" : "Currently Retracting");
 
-        $("#CalibrateButtonIndicator").css("color", data.CurrentlyExtending == 0 && data.CurrentlyCalibrating == 0 ? "gray" : "limegreen")
+        $("#CalibrateButtonIndicator").css("color", data.CurrentlyExtending == 0 && data.CurrentlyCalibrating == 0 ? "gray" : "#007BFF")
             .attr('title', data.CurrentlyExtending == 0 && data.CurrentlyCalibrating == 0 ? "not Currently Calibrating" : "Currently Calibrating and extending");
 
-        $("#RunningMesurementsButtonIndicator").css("color", data.CurrentlyLogging == 0 ? "gray" : "limegreen")
+        $("#RunningMesurementsButtonIndicator").css("color", data.CurrentlyLogging == 0 ? "gray" : "#007BFF")
             .attr('title', data.CurrentlyLogging == 0 ? "not Currently Logging" : "Currently Logging");
 
-        $("#indicator-check-text").css('color', data.vnaConnection == 2 && data.mountingSystemConection == 0 && data.teltonikaConnection == 1 ? "limegreen" : "darkorange");
+        $("#indicator-check-text").css('color', data.vnaConnection == 2 && data.mountingSystemConection == 0 && data.teltonikaConnection == 1 ? "blue" : "red");
     };
 </script>
 {% endblock %}

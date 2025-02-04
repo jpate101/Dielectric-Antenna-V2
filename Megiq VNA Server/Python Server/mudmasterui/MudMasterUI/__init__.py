@@ -35,7 +35,6 @@ def start_measurement():
         print(f"Error sending HTTP request: {e}")
 
 
-
 def createApp(config_main=Config, config_machine=Config_Machine, site_config=Site_Config):
     """
     Initializes and deploys a Flask application with specified configurations and modules.

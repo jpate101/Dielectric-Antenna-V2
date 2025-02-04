@@ -75,6 +75,7 @@ class Measurement_Manager(object):
             'Shear Vain A': None,
             'Shear Vain B': None,
             'Shear Vain C': None,
+            'Raw Sensor Data': None,
             }
 
         self._next_measurement_time = 0
@@ -468,15 +469,39 @@ class Measurement_Manager(object):
                     # set the current datetime for the measurement
                 self._current_measurement_data['measurment_date'] = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")  # current universal coordinated time
 
+                ### convert raw data to the same structure as it is save in s1p files to save in same format in csv 
+                
+                # Extract frequency, S11R, and S11I from the datadict
+                frequency = self._current_measurement_data['vna_data']['frequency']
+                S11R = self._current_measurement_data['vna_data']['S11R']
+                S11I = self._current_measurement_data['vna_data']['S11I']
+
+                # Prepare the output data in the required format
+                Raw_Sensor_data = "!Created with skrf (http://scikit-rf.org)\n"
+                Raw_Sensor_data += "# Hz S RI R 50.0\n"
+                Raw_Sensor_data += "!freq ReS11 ImS11\n"
+
+                # Format the sensor data
+                for i in range(len(frequency)):
+                    # Format the frequency to 1 decimal place, and append the corresponding S11R and S11I values
+                    Raw_Sensor_data += f"{frequency[i]:.1f} {S11R[i]} {S11I[i]}\n"
+
+                # Replace the newline characters with spaces to ensure it's treated as a single cell in CSV
+                # Enclose the entire block in quotes so that the newlines are preserved as part of a single cell
+                Raw_Sensor_data = f'"{Raw_Sensor_data}"'
+
+                # Save the data as a CSV cell
+                self._current_measurement_data['Raw Sensor Data'] = Raw_Sensor_data
+                                            
+                ###
                     # save the measurement 
                     # vna data needs to be saved as a touchstone file
                     # everything else should be saved as a csv file
 
                     # make the filename for the vnaData, this needs the current datetime, actuator extension and vnaData in the name
-                vna_filename = self._app.config['CONFIG_SYSTEM']['dataLogger']['baseFileName_vna'].format(self._current_measurement_data['measurment_date'].replace(':', '-') + '_' + str(self._current_measurement_data['actuator_extension']))
-                save_s11_data(vna_filename, self._save_data_directory['vnaData'], self._current_measurement_data['vna_data'])
-                
-                self._current_measurement_data['vna_filename'] = vna_filename
+                #vna_filename = self._app.config['CONFIG_SYSTEM']['dataLogger']['baseFileName_vna'].format(self._current_measurement_data['measurment_date'].replace(':', '-') + '_' + str(self._current_measurement_data['actuator_extension']))
+                #save_s11_data(vna_filename, self._save_data_directory['vnaData'], self._current_measurement_data['vna_data'])
+                #self._current_measurement_data['vna_filename'] = vna_filename
                     # now save the remaining data as a csv file in the main directory
                     #measurement_data_filename = self._app.config['CONFIG_SYSTEM']['dataLogger']['baseFileName_measurement'].format(self._current_measurement_data['measurment_date'].replace(':', '-') + '_' + str(self._current_measurement_data['actuator_extension']))
                 save_measurement_data(self._measurement_file, self._current_measurement_data, self._app.config['CONFIG_SYSTEM']['dataLogger']['headings_measurement'])
