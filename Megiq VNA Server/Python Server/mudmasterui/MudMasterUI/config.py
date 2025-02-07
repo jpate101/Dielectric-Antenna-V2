@@ -23,7 +23,6 @@ class Config(object):
 
     TRANSFER_DELAY = 30
     CONFIG_DIRECTORY = os.path.join(basedir, 'configFiles')
-    #CONFIG_DIRECTORY_VNA_CAL = os.path.join(CONFIG_DIRECTORY, 'vna_cal')
 
     # stores the runtime information for the specific machine
     CONFIG_FILE_RUN = os.path.join(CONFIG_DIRECTORY, 'config_run.json')

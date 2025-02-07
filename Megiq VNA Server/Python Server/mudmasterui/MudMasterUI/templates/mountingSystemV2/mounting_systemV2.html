@@ -15,15 +15,6 @@
         <div class="h-100 p-5 text-white bg-success rounded-3 position-relative">
             <h2>VNA Sensor Controls</h2>
             <p style="margin: 10px;">
-                 <!-- <span id="current_action" style="
-                    color: black;
-                    font-weight: bold; 
-                    background-color: white; 
-                    padding: 5px; 
-                    border-radius: 4px; 
-                    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); 
-                    margin: 10px;
-                ">Automated startup measurements process started currently measureing</span>-->
             </p>
 
             <div id="indicator-check-text">
@@ -79,18 +70,6 @@
             <div class="row">
                 <div class="col-10">
                     <div class="d-grid gap-4">
-                        <!-- Button to calibrate the system -- 
-                        <button id="calibrate-button" class="btn btn-primary btn-lg"
-                            data-distance="-{{ config.CONFIG_SYSTEM.mountingSystem.retract_distance }}"
-                            type="button">Calibrate
-                            <div class="nav-item my-auto">
-                                <span class="fas fa-power-off mx-1 text-center align-middle"
-                                    style="vertical-align: middle; text-align: center; color: gray"
-                                    id="CalibrateButtonIndicator" title=""></span>
-                            </div>
-                        </button>
-                        -->
-
                         <div class="card border-success mt-4">
                             <div class="card-header bg-success text-white">
                                 <h4 class="mb-0">Current Action</h4>
@@ -104,7 +83,7 @@
                                     border-radius: 4px; 
                                     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); 
                                     
-                                ">Automated startup measurements process started, currently measuring</span>
+                                ">Waiting for server to update state infomation ...</span>
                             </div>
                         </div>
 
@@ -152,28 +131,6 @@
         // Update the displayed actuator position
         $("#current_position").text(data.position);
     };
-
-    // Function to calibrate the system
-    function calibrateButtonAction() {
-        $("#current_action").html("Extending actuator then Calibrating <br> Do not Press another button");
-        $.ajax({
-            url: '/mounting-system-v2/Calibrate',
-            type: 'GET',
-            success: function (response) {
-                if (response.error) {
-                    console.error('Error:', response.error);
-                    $("#current_action").html(response.error); // Display error message
-                } else {
-                    console.log('Fully extended:', response);
-                    $("#current_action").html("Done Calibrating <br> Ready for next Command"); // Success message
-                }
-            },
-            error: function (error) {
-                console.error('Error while extending:', error);
-                $("#current_action").html("Error While Calibrating likely timed out while getting vna data");
-            }
-        });
-    }
 
     // Function to start or stop measurements
     function runMeasurementAction() {
@@ -236,25 +193,6 @@
         // Convert server-side variables to JavaScript
         var measurement_delay_list = JSON.parse('{{ measurement_delays | tojson | safe }}');
         var current_measurement_delay = '{{ config.CONFIG_RUN.measurement_manager.measurement_delay }}';
-        var site_list = JSON.parse('{{ sites | tojson | safe }}');
-        var current_site = '{{ config.CONFIG_RUN.site }}';
-
-        // Event listener for site selection change
-        $('#site-select').change(function () {
-            var selectedSite = $(this).val();
-            $.ajax({
-                url: '{{ url_for("main.settings_post") }}',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ site: selectedSite }),
-                success: function () {
-                    location.reload();
-                },
-                error: function () {
-                    alert("Failed to update site selection.");
-                }
-            });
-        });
 
         // Event listener for measurement delay dropdown change
         $('#measurement-delay-select').change(function () {
@@ -295,13 +233,22 @@
         $("#RetractingActuator").css("color", data.CurrentlyRetracting == 0 ? "gray" : "#007BFF")
             .attr('title', data.CurrentlyRetracting == 0 ? "not Currently Retracting" : "Currently Retracting");
 
-        $("#CalibrateButtonIndicator").css("color", data.CurrentlyExtending == 0 && data.CurrentlyCalibrating == 0 ? "gray" : "#007BFF")
-            .attr('title', data.CurrentlyExtending == 0 && data.CurrentlyCalibrating == 0 ? "not Currently Calibrating" : "Currently Calibrating and extending");
-
         $("#RunningMesurementsButtonIndicator").css("color", data.CurrentlyLogging == 0 ? "gray" : "#007BFF")
             .attr('title', data.CurrentlyLogging == 0 ? "not Currently Logging" : "Currently Logging");
 
         $("#indicator-check-text").css('color', data.vnaConnection == 2 && data.mountingSystemConection == 0 && data.teltonikaConnection == 1 ? "blue" : "red");
+
+        // Check if RunningMeasurementsButtonIndicator is active
+        if (data.CurrentlyLogging == 0) {
+            // Not logging measurements
+            if (data.CurrentlyRetracting == 0) {
+                $("#current_action").html("Not currently performing any action");
+            }
+        } else {
+            // Logging measurements
+            $("#current_action").html("Currently logging measurements...");
+        }
+
     };
 </script>
 {% endblock %}

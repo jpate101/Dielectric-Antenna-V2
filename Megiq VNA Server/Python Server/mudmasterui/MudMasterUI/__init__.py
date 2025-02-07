@@ -7,7 +7,6 @@ from flask import Flask
 import requests
 from MudMasterUI.config import Config
 from MudMasterUI.supportFunctions import *
-from MudMasterUI.config_site import Site_Config
 
 from MudMasterUI.config_machine import Config_Machine
 
@@ -35,7 +34,7 @@ def start_measurement():
         print(f"Error sending HTTP request: {e}")
 
 
-def createApp(config_main=Config, config_machine=Config_Machine, site_config=Site_Config):
+def createApp(config_main=Config, config_machine=Config_Machine):
     """
     Initializes and deploys a Flask application with specified configurations and modules.
 
@@ -51,16 +50,12 @@ def createApp(config_main=Config, config_machine=Config_Machine, site_config=Sit
     # Load the configuration settings into the app from the provided configuration objects
     app.config.from_object(config_main)       # Load main configuration
     app.config.from_object(config_machine)    # Load machine-specific configuration
-    app.config.from_object(site_config)       # Load site-specific configuration
 
     # Format and set the MACHINE_DIRECTORY in the app configuration based on machine number
     app.config['MACHINE_DIRECTORY'] = app.config['MACHINE_DIRECTORY'].format(
         app.config['CONFIG_MACHINE']['machineNumber'],
         app.config['CONFIG_MACHINE']['machineNumber']
     )
-
-    # Create necessary directories as specified in the app configuration
-    #create_directories(app) # no longer need due to s1p files being saved to csv and cal data no longer used
     
     # Load and apply the runtime configuration settings
     load_run_config(app)
@@ -69,7 +64,6 @@ def createApp(config_main=Config, config_machine=Config_Machine, site_config=Sit
     controller_vna.init_app(app)  # Initialize VNA controller
     controller_mountingSystem.init_app(app)  # Initialize mounting system controller
     module_dielectric_manager.init_app(app)  # Initialize dielectric manager module
-    
     
     # Initialize the measurement manager with the Flask app instance and controllers
     measurement_manager.init_app(
@@ -80,7 +74,6 @@ def createApp(config_main=Config, config_machine=Config_Machine, site_config=Sit
     )
     #create File_transfer opject that will transer files from one folder to another 
     File_Transfer(app)
-
     # Register blueprints for different parts of the application / basically sets up webpages at certain web addresses 
     from MudMasterUI.main import bp as bp_main
     app.register_blueprint(bp_main)  # Register main blueprint
@@ -98,6 +91,6 @@ def createApp(config_main=Config, config_machine=Config_Machine, site_config=Sit
     from MudMasterUI.NN_Data_Collection import bp as bp_nnDataCollect
     app.register_blueprint(bp_nnDataCollect)
     
-    threading.Thread(target=start_measurement, daemon=True).start()
+    threading.Thread(target=start_measurement, daemon=True).start()# start automated measureing start 
     
     return app

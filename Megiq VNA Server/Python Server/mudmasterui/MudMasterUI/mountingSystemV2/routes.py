@@ -63,16 +63,6 @@ def mounting_system():
     # Define a default measurement delay
     current_measurement_delay = 60  
     
-    # Create a list of site configurations
-    sites = list(
-        {
-            'id': key,
-            'name': current_app.config['SITE_CONFIG'][key]['name'],
-            'country': current_app.config['SITE_CONFIG'][key]['country'],
-            #'calibration_date': current_app.config['SITE_CONFIG'][key]['calibration_date']
-        } for key in current_app.config['SITE_CONFIG'].keys()
-    )
-    
     # Set the measurement manager state to 'idle'
     measurement_manager._current_state = 'idle'
     
@@ -84,7 +74,6 @@ def mounting_system():
         showFooter=True,
         measurement_delays=current_app.config['CONFIG_SYSTEM']['measurement_manager']['measurement_delay_list'],
         current_measurement_delay=current_app.config['CONFIG_RUN']['measurement_manager']['measurement_delay'],
-        sites=sites,
     )
 
 @bp.route('/mounting-system-v2/Leave', methods=['GET'])

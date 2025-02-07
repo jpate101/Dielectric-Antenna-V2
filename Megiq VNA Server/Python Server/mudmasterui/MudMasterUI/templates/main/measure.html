@@ -3,36 +3,43 @@
 {% block content %}
 
 <!-- Container for displaying site and measurement details -->
-<div class="row">
+<div class="row" style="margin-top: 10px;">
     <!-- Card displaying the current site -->
     <!-- Card displaying the last measurement date -->
-    <div class="col-md-4 mb-4 card-group">
-        <div class="card bg-dark mb-3 shadow flex-fill text-white">
+    <!--<div class="col-md-4 mb-4 card-group">-->
+    <div class="card-group">
+        <div class="card bg-success mb-3 shadow flex-fill text-white">
             <div class="card-body my-2">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5>Last Measurement</h5>
                     <!-- Display last measurement date dynamically -->
                     <div id="display_date"></div>
                 </div>
+                <div>
+                    <p>Ensure measurements are running if not return to home page and click run measurements button</p>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
+
 <!-- Container for displaying gauges -->
-<div id="gauge_container" class="row">
+<div id="gauge_container" class="row" style="width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;"> <!-- Flex column and center alignment -->
     
     <!-- Gauge for 20cm shear vain KPA -->
-    <div class="col-4 chart-container">
-        <canvas id="gauge_20cm_shear_vain"></canvas>
+    <div class="col-12 chart-container" style="width: 100%; padding: 10px; text-align: center;"> <!-- Center the canvas and make it wider -->
+        <canvas id="gauge_20cm_shear_vain" style="max-width: 100%;"></canvas>
     </div>
+    
     <!-- Gauge for 50cm shear vain KPA -->
-    <div class="col-4 chart-container">
-        <canvas id="gauge_50cm_shear_vain"></canvas>
+    <div class="col-12 chart-container" style="width: 100%; padding: 10px; text-align: center;"> <!-- Center the canvas and make it wider -->
+        <canvas id="gauge_50cm_shear_vain" style="max-width: 100%;"></canvas>
     </div>
+    
     <!-- Gauge for 80cm shear vain KPA -->
-    <div class="col-4 chart-container">
-        <canvas id="gauge_80cm_shear_vain"></canvas>
+    <div class="col-12 chart-container" style="width: 100%; padding: 10px; text-align: center;"> <!-- Center the canvas and make it wider -->
+        <canvas id="gauge_80cm_shear_vain" style="max-width: 100%;"></canvas>
     </div>
 </div>
 
@@ -53,9 +60,9 @@
         // Initialize gauges for water percentage, density, and permittivity
         
         // Initialize new gauges for shear vain KPA
-        var gauge_20cm_shear_vain = new Gauge('gauge_20cm_shear_vain', '20cm Shear Vain KPA', 0, 100, 0, ' KPA');
-        var gauge_50cm_shear_vain = new Gauge('gauge_50cm_shear_vain', '50cm Shear Vain KPA', 0, 100, 0, ' KPA');
-        var gauge_80cm_shear_vain = new Gauge('gauge_80cm_shear_vain', '80cm Shear Vain KPA', 0, 100, 0, ' KPA');
+        var gauge_20cm_shear_vain = new Gauge('gauge_20cm_shear_vain', '20cm Shear Vain KPA', 0, 140, 0, ' KPA');
+        var gauge_50cm_shear_vain = new Gauge('gauge_50cm_shear_vain', '50cm Shear Vain KPA', 0, 140, 0, ' KPA');
+        var gauge_80cm_shear_vain = new Gauge('gauge_80cm_shear_vain', '80cm Shear Vain KPA', 0, 140, 0, ' KPA');
 
         // Handle incoming messages from the EventSource
         source_progress.onmessage = function (event) {

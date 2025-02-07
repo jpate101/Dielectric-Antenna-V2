@@ -257,8 +257,6 @@ class VNA_Manager(object):
         # used to ensure the requesting code doesn't lose access to the 
         # data when a new set of data is processed.
         startingMeasurement = self._currentData['measurementCount']
-        #while(startingMeasurement == self._currentData['measurementCount']):
-            #time.sleep(0.1)
             
         start_time = time.time()
         timeout = 20  # 10 seconds timeout
@@ -272,10 +270,7 @@ class VNA_Manager(object):
             globalErrorVar.ErrorFromMeasurementManager = True
             raise TimeoutError("Timeout occurred: 10 seconds elapsed while waiting for new data.")
             #raise Exception("Timeout occurred: 10 seconds elapsed while waiting for new data.")
-
             
-        #print("here 2")
-
         # now there is new data, copy it and give it
 
         self._lock.acquire()
@@ -356,8 +351,6 @@ class VNA_Manager(object):
         data_array = np.array(data_list)
         # convert the frequency domain data in data_array to time domain and convert to db
         data_array = 10*np.log10(abs(np.fft.fft(data_array)))
-
-            
 
         return data_array
 
@@ -446,7 +439,6 @@ class VNA_Manager(object):
 
         """
         # initial setup
-
         print('VNA control thread start')
         # first request the status from the VNA server to check whether it is ready to go
         self._vnaStatus = self.vna_webRequest('get_status')

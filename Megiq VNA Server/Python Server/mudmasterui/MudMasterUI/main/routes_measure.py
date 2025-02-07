@@ -41,7 +41,7 @@ def measure():
     """
     Route to start the measurement process and render the measurement page.
     """
-    measurement_manager.start_measurement()  # Start the measurement process
+    #measurement_manager.start_measurement()  # Start the measurement process
 
     # Render the 'measure.html' template with the current year and other context variables
     return render_template(

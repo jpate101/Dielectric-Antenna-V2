@@ -136,9 +136,12 @@
     </main>
 
     <footer class="footer py-3 fixed-bottom">
-        <div class="container">
+        <div class="container d-flex" style="width: 100%; justify-content: space-between;">
             <!-- Footer text showing version and machine number -->
-            <div class="text-light">Mudmaster UI - Version: {{ config.VERSION }} | Machine: {{ config.CONFIG_MACHINE.machineNumber }}</div>
+            <div class="text-light" style="text-align: left; flex-grow: 1;">
+                <img src="/static/images/logoInverted.png" alt="Logo" style="max-height: 25px;"> <!-- Adjust image size as needed -->
+            </div>
+            <div class="text-light" style="text-align: right;">Mudmaster UI - Version: {{ config.VERSION }} | Machine: {{ config.CONFIG_MACHINE.machineNumber }}</div>
         </div>
     </footer>
 

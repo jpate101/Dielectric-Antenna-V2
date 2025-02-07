@@ -94,10 +94,7 @@ def nn_calculate_permittivity(Theta1, Theta2, s11_in, permittivity_min, permitti
         @retval permittivity - The permittivity of the material.
 
     """
-    #print("nn_calculate_permittivity 1 ")
     pred_y = predict(Theta1, Theta2, s11_in)
-    #print("nn_calculate_permittivity 2 ")
-
     # convert the predicted y values back to a permittivity value
     return scale_permittivity_from_nn(pred_y, permittivity_min, permittivity_max)
 
@@ -125,7 +122,6 @@ def predict(Theta1, Theta2, X):
     p = np.zeros((m, 1))
     h1 = sigmoid(np.hstack((np.ones((m, 1)), X)) @ Theta1.conj().T)
     p = sigmoid(np.hstack((np.ones((m, 1)), h1)) @ Theta2.conj().T)
-
     return p
 
 
@@ -151,13 +147,10 @@ class VNA_Cal(object):
 
         """
         self._calData = {} # dictionary of calibration data from the VNA - as {actuator_extension: {'frequency': np.array([]), 'S11R': np.array([]), 'S11I': np.array([])}}
-
         # neural network training parameters
         self._theta1 = None
         self._theta2 = None
-        
         self.DNN_Model = None
-
         if(app != None):
             self.init_app(app)
 
@@ -174,82 +167,6 @@ class VNA_Cal(object):
         theta = np.load(self._app.config['CONFIG_SYSTEM']['nn']['theta_file'], allow_pickle=True).item()
         self._theta1 = theta['Theta1']
         self._theta2 = theta['Theta2']
-
-        # check if there is any calibration data file, if so, load them in
-        #if(os.path.exists(self._app.config['CONFIG_DIRECTORY_VNA_CAL'])):
-        #    # iterate through the files in the directory and load them into the calibration data
-        #    for file in os.listdir(self._app.config['CONFIG_DIRECTORY_VNA_CAL']):
-        #        if(file.endswith('.s1p')):
-        #            with open(os.path.join(self._app.config['CONFIG_DIRECTORY_VNA_CAL'], file), 'r') as infile:
-        #                # read the touchstone file using the skrf library - the file name is the actuator position
-        #                self._calData[int(file.split('.')[0])] = Touchstone(os.path.join(self._app.config['CONFIG_DIRECTORY_VNA_CAL'], file)).get_sparameter_data()
-
-    
-    def is_calibrated(self):
-        """ @brief  Checks if the VNA is calibrated.
-            @param  None
-            @retval True if the VNA is calibrated, False otherwise.
-
-        """
-        return len(self._calData) > 0
-
-
-    def get_calibration_positions(self):
-        """ @brief  Returns the calibration data names.
-            @param  None
-            @retval self._calData - The calibration data.
-
-        """
-        return list(self._calData.keys())
-
-
-    def add_calibration_measurement(self, actuator_extension, data_dict):
-        """ @brief  Method used to set the calibration data to the internal reference. 
-            @param  actuator_extension - the actuator extension that the data was taken at - in mm.
-            @param  data_dict - dictionary of data retrieved from the VNA. Formatted as {'frequency': np.array([]), 'S11R': np.array([]), 'S11I': np.array([])}
-            @retval None
-
-        """
-        self._calData[actuator_extension] = deepcopy(data_dict)
-        print('Calibration data added for actuator extension: ' + str(actuator_extension))
-        print('total number of calibration data points: ' + str(len(self._calData)))
-
-        # if the calibration data directory doesn't exist, create it
-        create_directories(self._app)
-
-        save_s11_data(str(actuator_extension), self._app.config['CONFIG_DIRECTORY_VNA_CAL'], data_dict)
-
-
-    # a function to save the current calibration data so that it can be used with the data at a later date
-    def save_calibration_data(self, save_directory):
-        """ @brief  Saves the calibration data to a file.
-            @param  save_directory - the directory to save the calibration data to.
-            @retval None
-
-        """
-        # create the save directory if it doesn't exist. The current date and time should be added to the directory name
-
-        if(not os.path.exists(save_directory)):
-            os.makedirs(save_directory)
-
-        # save the calibration data as separate s1p files in a folder called calibration in the output data directory, they should be named with their actuator extension
-        for actuator_extension in self._calData:
-            save_s11_data(str(actuator_extension), save_directory, self._calData[actuator_extension])
-
-
-    def clear_calibration_data(self):
-        """ @brief  Clears the calibration data.
-            @param  None
-            @retval None
-
-        """
-        self._calData = {}
-
-        # delete the calibration data directory if it exists
-        if(os.path.exists(self._app.config['CONFIG_DIRECTORY_VNA_CAL'])):
-            os.rmdir(self._app.config['CONFIG_DIRECTORY_VNA_CAL'])
-            
-
 
     def convert_to_permittivity(self, data_dict, actuator_extension):
         """ @brief  Uses the calibration data to calculate the permittivity of the input data. 

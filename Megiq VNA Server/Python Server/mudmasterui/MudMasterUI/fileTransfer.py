@@ -47,7 +47,6 @@ class File_Transfer(object):
         # Create and start a thread to run the file transfer process
         self.thread = threading.Thread(target=self.run)
         self.thread.daemon = True  # This ensures the thread will exit when the main program exits
-        print("- one drive start 1-")
         self.thread.start()
         
     def copy_new_files(self):
