@@ -62,7 +62,7 @@ class Measurement_Manager(object):
         """
         self._current_state = 'idle'
         self._current_measurement_data = {
-            'measurment_date': None,
+            'measurement_date': None,
             'vna_data': None, 
             'actuator_extension': None,
             'permittivity': None, 
@@ -173,7 +173,7 @@ class Measurement_Manager(object):
             @retval None
         """
         data_dict = {}
-        data_dict['measurment_date'] = self._current_measurement_data['measurment_date']
+        data_dict['measurement_date'] = self._current_measurement_data['measurement_date']
         data_dict['actuator_extension'] = self._current_measurement_data['actuator_extension'] or 0
         data_dict['permittivity'] = self._current_measurement_data['permittivity'] or 0
         data_dict['water_percentage'] = self._current_measurement_data['water_percentage'] or 0
@@ -235,7 +235,7 @@ class Measurement_Manager(object):
             @retval True - the measurement process was started. False - the calibration hasn't been performed.
 
         """
-        # create the measurment file
+        # create the measurement file
         self._measurement_file = os.path.join(self._app.config['MACHINE_DIRECTORY'], self._app.config['CONFIG_SYSTEM']['dataLogger']['baseFileName_measurement'].format(datetime.datetime.utcnow().strftime("%Y-%m-%d_%H-%M-%S")))
         print('saving measurement data to: ', self._measurement_file)
 
@@ -330,14 +330,14 @@ class Measurement_Manager(object):
                 #self._current_measurement_data['longitude'] = 0
 
                 # set the current datetime for the measurement
-                self._current_measurement_data['measurment_date'] = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")  # current universal coordinated time
+                self._current_measurement_data['measurement_date'] = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")  # current universal coordinated time
 
                 self._current_measurement_status = 0
 
             else:
                 # fake measurement data
                 print(" in measurement state - fake reading taken/in csv")
-                self._current_measurement_data['measurment_date'] = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")
+                self._current_measurement_data['measurement_date'] = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")
                 self._current_measurement_data['permittivity'] = random.randrange(40, 60)
                 self._current_measurement_data['water_percentage'] = random.randrange(0, 100)
                 self._current_measurement_data['density'] = random.randrange(0, 20)
@@ -404,7 +404,7 @@ class Measurement_Manager(object):
                 #self._current_measurement_data['longitude'] = 0
 
                     # set the current datetime for the measurement
-                self._current_measurement_data['measurment_date'] = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")  # current universal coordinated time
+                self._current_measurement_data['measurement_date'] = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")  # current universal coordinated time
 
                 ### convert raw data to the same structure as it is save in s1p files to save in same format in csv 
                 
@@ -429,7 +429,7 @@ class Measurement_Manager(object):
                 ###
                 # save the measurement to csv 
                 # now save the remaining data as a csv file in the main directory
-                #measurement_data_filename = self._app.config['CONFIG_SYSTEM']['dataLogger']['baseFileName_measurement'].format(self._current_measurement_data['measurment_date'].replace(':', '-') + '_' + str(self._current_measurement_data['actuator_extension']))
+                #measurement_data_filename = self._app.config['CONFIG_SYSTEM']['dataLogger']['baseFileName_measurement'].format(self._current_measurement_data['measurement_date'].replace(':', '-') + '_' + str(self._current_measurement_data['actuator_extension']))
                 save_measurement_data(self._measurement_file, self._current_measurement_data, self._app.config['CONFIG_SYSTEM']['dataLogger']['headings_measurement'])
                 
                 print('---------Measurements taken---------')
@@ -453,12 +453,12 @@ class Measurement_Manager(object):
             print("measurement_state_MV3")    
             self._current_measurement_data['vna_data'] = self._vna.get_nextData(forNN=True)
             # set the current datetime for the measurement
-            self._current_measurement_data['measurment_date'] = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")  # current universal coordinated time
+            self._current_measurement_data['measurement_date'] = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")  # current universal coordinated time
 
             # save the measurement 
             # vna data needs to be saved as a touchstone file
             # everything else should be saved as a csv file
-            vna_filename = self._app.config['CONFIG_SYSTEM']['dataLogger']['baseFileName_vna'].format(self._current_measurement_data['measurment_date'].replace(':', '-') + '_' + str(self._current_measurement_data['actuator_extension']))
+            vna_filename = self._app.config['CONFIG_SYSTEM']['dataLogger']['baseFileName_vna'].format(self._current_measurement_data['measurement_date'].replace(':', '-') + '_' + str(self._current_measurement_data['actuator_extension']))
             save_s11_data(vna_filename, globalErrorVar.NN_Data_Collection_File_path, self._current_measurement_data['vna_data'])
             self.start_measurement()
             print('---------Measurements taken MV3---------')
@@ -483,7 +483,7 @@ class Measurement_Manager(object):
         """
         # initial setup
 
-        print('measurment system  thread start')
+        print('measurement system  thread start')
 
         # while loop
         while(self._managementThreadRun):

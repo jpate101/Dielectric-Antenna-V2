@@ -240,7 +240,7 @@ def calibration_progress():
     return Response(stream_calibration_progress(current_app.config), mimetype="text/event-stream")
 
 
-@bp.route('/stream/measurment-progress', methods=['GET'])
+@bp.route('/stream/measurement-progress', methods=['GET'])
 def measurement_progress():
     """
     Stream measurement progress as a server-sent event (SSE).

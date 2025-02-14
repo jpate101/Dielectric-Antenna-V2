@@ -154,7 +154,7 @@ def measurement_thread():
             time.sleep(measurement_manager._app.config['CONFIG_RUN']['measurement_manager']['measurement_delay'])
             if globalErrorVar.ErrorFromMeasurementManager:
                 globalErrorVar.ErrorFromMeasurementManager = False
-                #takeMeasurement = False # removed to allow measurments to be ask when opterator leave for breaks as dash would be turned off
+                #takeMeasurement = False # removed to allow measurements to be ask when opterator leave for breaks as dash would be turned off
             elif globalErrorVar.ErrorFromActuatorReadWrite:
                 globalErrorVar.ErrorFromActuatorReadWrite = False
                 takeMeasurement = False

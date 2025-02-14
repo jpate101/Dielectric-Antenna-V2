@@ -538,7 +538,7 @@ class VNA_Manager(object):
                             #     # convert the amplitude back to linear
                             #     self._currentData['port2'][measurement['frequency']] = cmath.rect(10 ** (measurement['amplitude'] / 20), measurement['phase'])
                         
-                            # print('Measurment count: ' + str(newData['measurementCount']) + ' time: ' + str(end - start))
+                            # print('Measurement count: ' + str(newData['measurementCount']) + ' time: ' + str(end - start))
                             self._currentData['measurementCount'] = newData['measurementCount']
                             self._currentData['sweepTime'] = newData['sweepTime']
                             # release the lock so the data can be accessed
