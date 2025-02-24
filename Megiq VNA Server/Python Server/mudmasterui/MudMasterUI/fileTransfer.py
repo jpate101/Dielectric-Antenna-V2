@@ -41,7 +41,6 @@ class File_Transfer(object):
         
         # Define source and destination folder paths
         self.src_folder = self._app.config['MACHINE_DIRECTORY']
-        #self._app.config['CONFIG_SYSTEM']['mountingSystem']['actuator_min']
         self.dest_folder = self._app.config['TRANSFER_DIRECTORY']
         
         # Create and start a thread to run the file transfer process
@@ -106,8 +105,7 @@ class File_Transfer(object):
             self.copy_new_files()
             print("Waiting for 30 minutes...")
             # Sleep for 30 minutes to wait before checking again
-            time.sleep(self._app.config['TRANSFER_DELAY'] * 60)  # Uncomment this line for actual 30 minutes delay
-            #time.sleep(30)  # Comment out this line for actual 30 minutes delay during testing
+            time.sleep(self._app.config['TRANSFER_DELAY'] * 60)  # wait for TRANSFER_DELAY untill copying and deleting files 
 
 
             

@@ -201,7 +201,7 @@ def vnaData_delta():
     return Response(stream_vnaData(current_app.config), mimetype="text/event-stream")
 
 
-@bp.route('/stream/mounting-system/actuator/position', methods=['GET'])
+@bp.route('/stream/mounting-system/actuator/position', methods=['GET'])#can maybe remove
 def mountingSystem_actuator_position():
     """
     Stream mounting system actuator position as a server-sent event (SSE).

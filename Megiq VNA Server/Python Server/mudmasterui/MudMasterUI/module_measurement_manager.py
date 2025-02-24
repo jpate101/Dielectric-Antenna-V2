@@ -79,6 +79,7 @@ class Measurement_Manager(object):
             'Shear Vain B': None,
             'Shear Vain C': None,
             'Raw Sensor Data': None,
+            'DistanceToGround': None,
             }
 
         self._next_measurement_time = 0
@@ -134,38 +135,6 @@ class Measurement_Manager(object):
     """ Functions
     *******************************************************************************
     """
-    def set_site(self, site):
-        """ @brief  Sets the current site of the measurement manager. This is the 
-                    mine site that the machine is operating at.
-            @param  site - the mine site that the machine is currently operating at
-            @retval None
-
-        """
-        self._current_measurement_data['site'] = site
-
-
-    def get_calibration_progress(self):
-        """ @brief  This function will return the current calibration progress.
-            @param  None
-            @retval None
-
-        """
-        status = 'idle'
-
-        if self._current_state == 'calibration':
-            # if any of the calibration status is not 2 then the calibration is not complete
-            if any(self._calibration_status[key] != 2 for key in self._calibration_status):
-                status = 'calibrating'
-            else:
-                status = 'complete'
-
-        # set status to complete if all calibration positions in the calibration status dictionary have a value of 2
-        if all(value == 2 for value in self._calibration_status.values()):
-            status = 'complete'
-            
-
-        return {'progress': self._calibration_status, 'status': status}
-
 
     def get_measurement_display_data(self):
         """ @brief  This function will return the current measurement display data.
@@ -185,14 +154,6 @@ class Measurement_Manager(object):
         data_dict['shear_vain_20cm'] = self._current_measurement_data['Shear_Vain_20'] or 0
         data_dict['shear_vain_50cm'] = self._current_measurement_data['Shear_Vain_50'] or 0
         data_dict['shear_vain_80cm'] = self._current_measurement_data['Shear_Vain_80'] or 0
-        
-         
-        
-        #data_dict['Shear_Vain_20'] = self._current_measurement_data['Shear_Vain_20'] or 0
-        #data_dict['Shear_Vain_50'] = self._current_measurement_data['Shear_Vain_50'] or 0
-        #data_dict['Shear_Vain_80'] = self._current_measurement_data['Shear_Vain_80'] or 0
-        
-        #print(data_dict['shear_vain_80cm'])
 
         return data_dict
 
@@ -208,26 +169,6 @@ class Measurement_Manager(object):
 
         """
         return self.set_state('idle')
-
-
-    def run_calibration(self):
-        """ @brief  This function will start the calibration process.
-            @param  None
-            @retval True - the calibration process was started. False - the calibration process was not started.
-
-        """
-        return self.set_state('calibration')
-
-
-    def clear_calibration(self):
-        """ @brief  This function will clear the calibration data.
-            @param  None
-            @retval None
-
-        """
-        self._current_calibration_position = -1  # set the current calibration position to -1 to indicate that the calibration is not complete
-        self._dielectric_manager.clear_calibration_data()
-
 
     def start_measurement(self):
         """ @brief  This function will start the measurement process.
@@ -246,26 +187,6 @@ class Measurement_Manager(object):
         return 
 
 
-    def set_state(self, state):
-        """ @brief  Sets the current state of the measurement manager.
-            @param  state - the state to set
-            @retval None
-
-        """
-        if state == 'measurement':
-            if self._dielectric_manager.is_calibrated() == True or testing == True:
-                self._current_state = state
-            
-            else:
-                return False
-
-        else:
-            self._current_state = state
-
-        return True
-
-
-
     """ State Functions
     *******************************************************************************
     """
@@ -278,85 +199,7 @@ class Measurement_Manager(object):
         """
         time.sleep(self._app.config['CONFIG_RUN']['measurement_manager']['idle_sleep_time'])
 
-    def measurement_state(self, testing=False):
-        """ @brief  This state is used to take a measurement from the VNA.
-            @param  None
-            @retval None
-
-        """
-        
-        now = time.monotonic()
-
-        # check if enough time has passed since the last measurement
-        if(now >= self._next_measurement_time):
-            print("measurement_state")
-            self._current_measurement_status = 1
-            
-            testing = False #added of testing
-
-
-            if testing == False:
-                # get the measurement from the VNA
-                self._current_measurement_data['vna_data'] = self._vna.get_nextData(forNN=True)
-
-                # now calculate the water percentage and density using the site config and current site
-                # check if the current site is in the list of sites, otherwise use the default site
-
-                data_dict = self._current_measurement_data['vna_data']
-                # Run the model on live data
-                self._dielectric_manager.load_model()
-                # Run the model on live data
-                #DNN = self._dielectric_manager.run_model_on_live_data(self._dielectric_manager.Get_Model(), data_dict)
-                DNN = self._dielectric_manager.run_model_on_live_data_elasticNet(data_dict)
-                
-                self._current_measurement_data['DNN'] = DNN
-                #self._current_measurement_data['DNN'] = 0
-                
-                #shear vain data test 
-                self._current_measurement_data['Shear_Vain_20'] = DNN[0]
-                self._current_measurement_data['Shear_Vain_50'] = DNN[1]
-                self._current_measurement_data['Shear_Vain_80'] = DNN[2]
-                
-                self._current_measurement_data['shear_vain_20cm'] = DNN[0]
-                self._current_measurement_data['shear_vain_50cm'] = DNN[1]
-                self._current_measurement_data['shear_vain_80cm'] = DNN[2]
-                #added teltonika readings 
-                login_endpoint()
-                latLong = get_GPS_data_endpoint()
-                self._current_measurement_data['latitude'] = latLong['latitude']
-                self._current_measurement_data['longitude'] = latLong['longitude']
-                
-                #self._current_measurement_data['latitude'] = 0
-                #self._current_measurement_data['longitude'] = 0
-
-                # set the current datetime for the measurement
-                self._current_measurement_data['measurement_date'] = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")  # current universal coordinated time
-
-                self._current_measurement_status = 0
-
-            else:
-                # fake measurement data
-                print(" in measurement state - fake reading taken/in csv")
-                self._current_measurement_data['measurement_date'] = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")
-                self._current_measurement_data['permittivity'] = random.randrange(40, 60)
-                self._current_measurement_data['water_percentage'] = random.randrange(0, 100)
-                self._current_measurement_data['density'] = random.randrange(0, 20)
-                self._current_measurement_data['actuator_extension'] = self._mounting_system.get_actuator_position()
-                
-                login_endpoint()
-                latLong = get_GPS_data_endpoint()
-                self._current_measurement_data['latitude'] = latLong['latitude']
-                self._current_measurement_data['longitude'] = latLong['longitude']
-                #self._current_measurement_data['latitude'] =0
-                #self._current_measurement_data['longitude'] = 0
-                
-                self._current_measurement_data['shear_vain_20cm'] = random.randrange(0, 100)
-                self._current_measurement_data['shear_vain_50cm'] = random.randrange(0, 100)
-                self._current_measurement_data['shear_vain_80cm'] = random.randrange(0, 100)
-
-                self._current_measurement_status = 0
-
-            self._next_measurement_time = now + self._app.config['CONFIG_RUN']['measurement_manager']['measurement_delay']#the reason it take 30second before nex measurement 
+    
 
     """ Module Thread that joshua paterson added for RSI PRO mount 
     ***********************************************************************
@@ -373,6 +216,14 @@ class Measurement_Manager(object):
             if(now >= self._next_measurement_time):
                 
                 print("measurement_state_MV2")
+                
+                self._current_measurement_data['DistanceToGround'] = self._mounting_system.GetDistanceToGround()
+                
+                if (self._current_measurement_data['DistanceToGround'] == "fail"):
+                    self._current_measurement_data['DistanceToGround'] = -1
+                    
+                
+                print(self._current_measurement_data['DistanceToGround'])
                 
                 self._next_measurement_time = now + self._app.config['CONFIG_RUN']['measurement_manager']['measurement_delay']#the reason it take 30second before nex measurement 
                 # get the measurement from the VNA
@@ -494,10 +345,6 @@ class Measurement_Manager(object):
                 self.measurement_state_MV2()
                 self._current_state = 'idle'
                 # don't need the sleep, this is handled by the function
-            elif(self._current_state == 'measurement'):
-                self.measurement_state(testing=testing)
-                # don't need the sleep, this is handled by the function
-                pass
             else:
                 print('measurement system  thread error')
                 time.sleep(0.1)

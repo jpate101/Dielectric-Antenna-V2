@@ -119,31 +119,3 @@ def save_measurement_data(filename, datadict, headers):
     with open(filename, 'a') as f:
         f.write(data_string + '\n')
 
-
-""" Models for water and density
-*******************************************************************************
-"""
-
-def model_water_percentage(permittivity, gradient_value, intercept_value):
-    """ @brief:  Model used to calculate the percentage of water in the material.
-        @param:  permittivity: The permittivity of the material.
-        @param:  gradient_value: The gradient of the line for the model.
-        @param:  intercept_value: The intercept of the line for the model.
-        @retval: The percentage of water in the material.
-    
-    """
-    return (permittivity - intercept_value) / gradient_value
-
-
-def model_density(water_percentage, G, gamma_w, S):
-    """ @brief:  Model used to calculate the density of the material.
-        @param:  water_percentage: The percentage of water in the material.
-        @param:  G: The conductivity of the material.
-        @param:  gamma_w: The conductivity of water.
-        @param:  S: The specific heat of the material.
-        @retval: The density of the material.
-    
-    """
-    w = water_percentage / 100
-    temp = 1 + w*G/S
-    return G * gamma_w / temp

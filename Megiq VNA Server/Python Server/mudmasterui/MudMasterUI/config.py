@@ -101,6 +101,7 @@ class Config(object):
             'RSI PRO Retract' : "2\n",
             'RSI PRO Stop' : "3\n",
             'RSI PRO Connection Check' : "4\n",
+            'Get Distance to Ground' : "5\n",
         },
         'mountingSystem': {
             'actuator_max': 220, # mm - actual length is 140 mm, but limiting by 10 mm to avoid overextension # change by me to 220 for testing
@@ -113,7 +114,7 @@ class Config(object):
             'baseFileName_measurement': '{}_measurementData.csv',
             #'baseFileName_vna': '{}_vnaData.s1p',  # saved as a s1p touchstone file - using the skrf library
             'baseDirectory_cal_data': '{}_cal_data',
-            'headings_measurement': [ 'measurement_date','latitude','longitude','Shear_Vain_20','Shear_Vain_50','Shear_Vain_80','Raw Sensor Data'],#added 'latitude','longitude'
+            'headings_measurement': [ 'measurement_date','latitude','longitude','Shear_Vain_20','Shear_Vain_50','Shear_Vain_80','Raw Sensor Data','DistanceToGround'],#added 'latitude','longitude'
         },
         'measurement_manager': {
             'measurement_delay_list': [10, 20, 30, 60, 120, 300]

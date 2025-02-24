@@ -317,3 +317,56 @@ class MountingSystem_Manager(object):
             self.closeSerial()
             self.openSerial()
             return "fail"
+        
+    def GetDistanceToGround(self):
+        """
+        still testing function incomplete 
+        
+        
+        Sends command "5" to the actuator and handles the response to get distance to the ground.
+
+        @param  None
+        @retval str - Returns "success" if the command is sent successfully; 
+                  otherwise, returns "fail".
+        """
+        try:
+            def write_read(x):
+                """
+                Sends a command to the actuator and reads the response.
+
+                @param x: Command to be sent to the actuator.
+                @retval data: Response from the actuator.
+                """
+                self._serialPort.write(bytes(x, 'utf-8'))
+                time.sleep(0.05)
+                data = self._serialPort.readline()
+                return data
+
+            # Command "5" should be mapped in your config commands
+            num = self._config_commands['Get Distance to Ground']
+            #print(f"Sending command: {num}")
+            
+            # Send the command and get the response
+            value = write_read(num)
+            #print(f"Response from actuator: {value.decode().strip()}")
+
+            # If the response contains distance information, we can process it
+            if "Distance to Ground" in value.decode():
+                #print("Distance to ground successfully received from Arduino.")
+                response = value.decode().strip()
+                print (response)
+                # Remove the "Distance to Ground" text from the response
+                response = response.replace("Distance to Ground: ", "")
+                return response
+            
+            # If the response is unexpected or empty
+            print("Unexpected response:", value.decode())
+            #globalErrorVar.ErrorFromActuatorReadWrite = True
+            return "fail"
+        
+        except Exception as e:
+            print(f"An error occurred while sending command 5: {e}")
+            #globalErrorVar.ErrorFromActuatorReadWrite = True
+            self.closeSerial()
+            self.openSerial()
+            return "fail"

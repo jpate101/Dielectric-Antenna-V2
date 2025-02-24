@@ -88,9 +88,11 @@ def createApp(config_main=Config, config_machine=Config_Machine):
     from MudMasterUI.mountingSystemV2 import bp as bp_mountingSystemV2
     app.register_blueprint(bp_mountingSystemV2)  # Register updated mounting system blueprint
     
-    from MudMasterUI.NN_Data_Collection import bp as bp_nnDataCollect
-    app.register_blueprint(bp_nnDataCollect)
+    # Added by Joshua: Register blueprint for the data collection method nn predicting 
+    from MudMasterUI.NN_Data_Collection import bp as bp_nnDataCollect 
+    app.register_blueprint(bp_nnDataCollect) # Register blueprint
     
+    #start taking measurments every x seconds - removed if you dont want to start measureing on server start up 
     threading.Thread(target=start_measurement, daemon=True).start()# start automated measureing start 
     
     return app
