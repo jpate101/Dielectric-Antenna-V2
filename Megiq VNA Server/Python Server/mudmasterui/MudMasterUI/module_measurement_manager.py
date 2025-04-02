@@ -183,7 +183,6 @@ class Measurement_Manager(object):
         # add the headers to the measurement file
         with open(self._measurement_file, 'w') as f:
             f.write(','.join(self._app.config['CONFIG_SYSTEM']['dataLogger']['headings_measurement']) + '\n')
-        #return self.set_state('measurement')
         return 
 
 
