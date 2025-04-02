@@ -136,6 +136,7 @@ def measurement_thread():
     try:
         if isExtended == 1 or isExtended == 2:
             try:
+                time.sleep(32)
                 # Extend actuator if required
                 globalErrorVar.CurrentlyExtending = True
                 controller_mountingSystem.fullyExtend()
