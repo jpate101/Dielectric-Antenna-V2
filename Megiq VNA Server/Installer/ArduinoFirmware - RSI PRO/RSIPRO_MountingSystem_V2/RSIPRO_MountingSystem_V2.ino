@@ -39,29 +39,23 @@ bool initializeMPU(unsigned long timeout) {
 }
 
 void setup() {
-
-
   // Motor pin initialization
   pinMode(MotorPinB, OUTPUT);
   pinMode(MotorSpeedPinB, OUTPUT);
   pinMode(MotorBrakePinB, OUTPUT);
 
   Serial.begin(9600); // Initialize serial communication
-
-  Serial.println("test");
-
   while (!Serial) delay(10);  // Wait for serial monitor
 
-  Serial.println("test2");
   // Initialize I2C
   Wire.begin();
-
+  
+  
   // Initialize the VL53L1X sensor with a 5-second timeout
   if (!initializeVL53L1X(5000)) {
-    Serial.println(F("Error: VL53L1X initialization timed out."));
+    //Serial.println(F("Error: VL53L1X initialization timed out."));
     while (1) delay(10);  // Halt the program after timeout (or handle as needed)
   }
-  Serial.println("test3");
 
   // Start the ranging process for VL53L1X
   if (!vl53.startRanging()) {
@@ -70,21 +64,16 @@ void setup() {
     while (1) delay(10);
   }
 
-  Serial.println("test4");
-
   // Initialize the MPU6050 sensor with a 5-second timeout
   if (!initializeMPU(5000)) {
     //Serial.println("Error: MPU6050 initialization timed out. Continuing...");
   } else {
     //Serial.println("MPU6050 sensor initialized successfully.");
   }
-
-  Serial.println("test5");
 }
 
 void loop() {
   if (Serial.available() > 0) {
-    
     String input = Serial.readStringUntil('\n'); // Read the input from serial
     input.trim(); // Remove any leading/trailing whitespace
 

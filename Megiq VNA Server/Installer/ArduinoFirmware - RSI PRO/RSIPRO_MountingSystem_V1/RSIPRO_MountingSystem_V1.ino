@@ -42,7 +42,14 @@ void loop() {
     }else if (input == "4") {
       // Command to start Motor B to stop by app
       Serial.println("check success"); // Echo back confirmation
+    }else if (input == "4") {
+      // Command to start Motor B to stop by app
+      Serial.println("to be added"); // Echo back confirmation
+    }else if (input == "5") {
+      // Command to start Motor B to stop by app
+      Serial.println("ERROR: Couldn't get distance from VL53L1X."); // Echo back confirmation
     }
+
     
     delay(100); // Delay for stability
   }
