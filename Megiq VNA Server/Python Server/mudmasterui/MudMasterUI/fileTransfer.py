@@ -1,113 +1,124 @@
 import os
-import shutil
 import time
 import threading
-import subprocess
-#
+from datetime import datetime
 
 class File_Transfer(object):
     """
     *****************************************************************************
     @file   file_transfer.py
-    @author Joshua Paterson
-    @date   20 August 2024
-    @brief  Handles the transfer of new files from a source folder to a destination folder.
-    REFERENCE:
-        This module provides a class to monitor a source directory and copy any new
-        files to a destination directory. It operates in a separate thread, periodically
-        checking for new files to copy.
-    
+    @brief  Handles the transfer of new files from a source folder to a destination folder
+            and removes files not from the current day in the source folder.
     *****************************************************************************
-        Methods
-    *****************************************************************************
-        __init__(self, app):
-            Initializes the File_Transfer object with application context and starts
-            a background thread to handle file transfer operations.
+    Methods:
+    __init__(self, app):
+        Initializes the File_Transfer object with application context and starts
+        a background thread to handle file transfer operations.
 
-        copy_new_files(self):
-            Checks the source folder for new files and copies them to the destination
-            folder if they are not already present there.
+    copy_new_files(self):
+        Checks the source folder for files from the current day and combines them into
+        a single file in the destination folder.
 
-        run(self):
-            Runs in a separate thread to continuously check for and transfer new files
-            at regular intervals (currently every 30 minutes).
-    *****************************************************************************
+    clean_old_files(self):
+        Removes files that are not from the current day in the source folder.
+
+    run(self):
+        Runs in a separate thread to periodically check for and transfer new files
+        and clean up old files from the source folder at regular intervals.
     """
     
     def __init__(self, app):
         """Initialize the File_Transfer object and start the file transfer thread."""
         
         self._app = app
-        
-        # Define source and destination folder paths
         self.src_folder = self._app.config['MACHINE_DIRECTORY']
         self.dest_folder = self._app.config['TRANSFER_DIRECTORY']
         
         # Create and start a thread to run the file transfer process
         self.thread = threading.Thread(target=self.run)
-        self.thread.daemon = True  # This ensures the thread will exit when the main program exits
+        self.thread.daemon = True
         self.thread.start()
-        
+
     def copy_new_files(self):
-        """Copy new or updated files from src_folder to dest_folder and delete them from the source if they are not the latest.
-        Also include subfolders while keeping the folder structure in both locations, excluding folders named 'calData'.
-        """
+        """Combine all files from the current day into one single file in the transfer directory."""
+        
         def process_directory(src_dir, dest_dir):
-            # Ensure destination folder exists, create it if necessary
+            """Process each file and subdirectory in the source directory."""
             if not os.path.exists(dest_dir):
                 os.makedirs(dest_dir)
 
+            # Get today's date for filename
+            today_date = datetime.now().strftime('%Y-%m-%d')
+            daily_file = os.path.join(dest_dir, f'transfer_{today_date}.csv')
+
+            # Check if the daily file exists
+            file_exists = os.path.exists(daily_file)
+
+            # Process files from the source directory
             for item in os.listdir(src_dir):
                 src_item = os.path.join(src_dir, item)
-                dest_item = os.path.join(dest_dir, item)
 
                 if os.path.isdir(src_item):
-                    if item != 'calData':
-                        process_directory(src_item, dest_item)
-                    # Skip the 'calData' folder, no further processing needed
-                    
+                    # Process subdirectories (you can add logic to exclude folders like 'calData' here)
+                    process_directory(src_item, dest_dir)
                 elif os.path.isfile(src_item):
                     try:
-                        # If the file exists in the destination folder, check modification times
-                        if os.path.isfile(dest_item):
-                            src_mtime = os.path.getmtime(src_item)
-                            dest_mtime = os.path.getmtime(dest_item)
-                            
-                            if src_mtime > dest_mtime:
-                                # Source file is newer, copy and replace it in the destination
-                                shutil.copy2(src_item, dest_item)
-                                print(f"Updated and replaced: {item}")
-                                # Do not delete the source file; it's the latest version.
-                            
-                            else:
-                                # Destination file is newer or same, so delete the source file
-                                os.remove(src_item)
-                                print(f"Deleted (source was outdated): {item}")
+                        # Check if the file is from today (by its creation or modification date)
+                        file_date = datetime.fromtimestamp(os.path.getmtime(src_item)).strftime('%Y-%m-%d')
                         
-                        else:
-                            # File does not exist in the destination, copy it
-                            shutil.copy2(src_item, dest_item)
-                            print(f"Copied: {item}")
+                        if file_date == today_date:
+                            # Open the source file for reading
+                            with open(src_item, 'r') as src_file:
+                                lines = src_file.readlines()
 
-                            # After copying, delete the source file as it is now redundant
-                            os.remove(src_item)
-                            print(f"Deleted: {item}")
+                            # If the transfer file doesn't exist, create it and write the header
+                            if not file_exists:
+                                with open(daily_file, 'w') as daily_file_create:
+                                    # Write the header (first line) from the first file
+                                    daily_file_create.write(lines[0])  # Write the header once
+                                    file_exists = True  # Set file exists to True
+
+                            # Append the rest of the lines (skipping the header)
+                            with open(daily_file, 'a') as daily_file_append:
+                                for line in lines[1:]:  # Skip the header
+                                    daily_file_append.write(line)
+
+                            print(f"Appended data from {item} to daily file")
 
                     except Exception as e:
                         print(f"Error processing file {item}: {e}")
+                        # Skip the file and continue to the next one
+                        continue
 
         # Start processing from the root source and destination folders
         process_directory(self.src_folder, self.dest_folder)
 
+    def clean_old_files(self):
+        """Remove files that are not from the current day in the source folder."""
+        
+        today_date = datetime.now().strftime('%Y-%m-%d')
+        
+        for item in os.listdir(self.src_folder):
+            src_item = os.path.join(self.src_folder, item)
+            
+            # If it's a file, check its modification date
+            if os.path.isfile(src_item):
+                file_date = datetime.fromtimestamp(os.path.getmtime(src_item)).strftime('%Y-%m-%d')
+                
+                # If the file is not from today, delete it
+                if file_date != today_date:
+                    try:
+                        os.remove(src_item)
+                        print(f"Deleted old file: {item}")
+                    except Exception as e:
+                        print(f"Error deleting file {item}: {e}")
+                        # Skip this file and continue to the next one
+                        continue
+
     def run(self):
         """Continuously check for new files and copy them at regular intervals."""
         while True:
-            self.copy_new_files()
-            print("Waiting for 30 minutes...")
-            # Sleep for 30 minutes to wait before checking again
-            time.sleep(self._app.config['TRANSFER_DELAY'] * 60)  # wait for TRANSFER_DELAY untill copying and deleting files 
-
-
-            
-            
-    
+            self.copy_new_files()  # Copy files and combine them into one for the current day
+            self.clean_old_files()  # Clean up old files that are not from today
+            print("Waiting for next cycle...")
+            time.sleep(self._app.config['TRANSFER_DELAY'] * 60)  # Wait for the configured delay before the next cycle

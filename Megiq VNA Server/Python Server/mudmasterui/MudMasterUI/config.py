@@ -4,9 +4,12 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config(object):
+    
+    
+    
     SECRET_KEY = '7f2GCO8mOE6EaSgNt2MSrkBIqdya3j-BW7MInjh75B1H5GRJtnT6dkDXaN39KalMjE1f2nhxT6w2IH-5Hm0adwlXY5eF6rx4A8wy'
     VERSION = '1.1.0'
-
+    #
     MACHINE_DIRECTORY = r'C:\Users\JoshuaPaterson\Downloads\Testing1'
     TRANSFER_DIRECTORY = r'C:\Users\JoshuaPaterson\Downloads\Testing2'
     
@@ -20,8 +23,22 @@ class Config(object):
     
     ELASTICNET_MODEL_LOCATION_EIGHTYCM = r'C:\Users\JoshuaPaterson\OneDrive - Phibion Pty Ltd\Documents\GitHub\Dielectric-Antenna-V2\Megiq VNA Server\Python Server\mudmasterui\MudMasterUI\nnData\80_EN_MT_WELD.pkl'
     ELASTICNET_SCALER_LOCATION_EIGHTYCM = r'C:\Users\JoshuaPaterson\OneDrive - Phibion Pty Ltd\Documents\GitHub\Dielectric-Antenna-V2\Megiq VNA Server\Python Server\mudmasterui\MudMasterUI\nnData\80_EN_MT_WELD_scaler.pkl'
-
-    TRANSFER_DELAY = 30
+    #
+    #Usersfolder = "MM18"
+    #Userscloudfolder = "MM18 (OLD or Stagging) (1)"
+    #SECRET_KEY = '7f2GCO8mOE6EaSgNt2MSrkBIqdya3j-BW7MInjh75B1H5GRJtnT6dkDXaN39KalMjE1f2nhxT6w2IH-5Hm0adwlXY5eF6rx4A8wy'
+    #VERSION = '2.0.0'
+    #MACHINE_DIRECTORY = fr'C:\Users\{Usersfolder}\Documents\RTDS Local Storage'
+    #TRANSFER_DIRECTORY = fr'C:\Users\{Usersfolder}\Phibion Pty Ltd\Realtime Density Sensor - {Userscloudfolder}'
+    #AUTO_SHUT_DOWN_TIME = '14:00'    
+    #ELASTICNET_MODEL_LOCATION_FIFITYCM = fr'C:\Users\{Usersfolder}\Phibion Pty Ltd\Realtime Density Sensor - {Userscloudfolder}\Megiq VNA Server (24032025)\Python Server\mudmasterui\MudMasterUI\nnData\50_EN_MT_WELD.pkl'
+    #ELASTICNET_SCALER_LOCATION_FIFITYCM = fr'C:\Users\{Usersfolder}\Phibion Pty Ltd\Realtime Density Sensor - {Userscloudfolder}\Megiq VNA Server (24032025)\Python Server\mudmasterui\MudMasterUI\nnData\50_EN_MT_WELD_scaler.pkl'
+    #ELASTICNET_MODEL_LOCATION_TWENTYCM = fr'C:\Users\M{Usersfolder}\Phibion Pty Ltd\Realtime Density Sensor - {Userscloudfolder}\Megiq VNA Server (24032025)\Python Server\mudmasterui\MudMasterUI\nnData\20_EN_MT_WELD.pkl'
+    #ELASTICNET_SCALER_LOCATION_TWENTYCM = fr'C:\Users\{Usersfolder}\Phibion Pty Ltd\Realtime Density Sensor - {Userscloudfolder}\Megiq VNA Server (24032025)\Python Server\mudmasterui\MudMasterUI\nnData\20_EN_MT_WELD_scaler.pkl'    
+    #ELASTICNET_MODEL_LOCATION_EIGHTYCM = fr'C:\Users\{Usersfolder}\Phibion Pty Ltd\Realtime Density Sensor - {Userscloudfolder}\Megiq VNA Server (24032025)\Python Server\mudmasterui\MudMasterUI\nnData\80_EN_MT_WELD.pkl'
+    #ELASTICNET_SCALER_LOCATION_EIGHTYCM = fr'C:\Users\{Usersfolder}\Phibion Pty Ltd\Realtime Density Sensor - {Userscloudfolder}\Megiq VNA Server (24032025)\Python Server\mudmasterui\MudMasterUI\nnData\80_EN_MT_WELD_scaler.pkl'
+    #
+    TRANSFER_DELAY = 1
     CONFIG_DIRECTORY = os.path.join(basedir, 'configFiles')
 
     # stores the runtime information for the specific machine

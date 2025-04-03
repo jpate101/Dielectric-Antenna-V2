@@ -183,6 +183,7 @@ class Measurement_Manager(object):
         # add the headers to the measurement file
         with open(self._measurement_file, 'w') as f:
             f.write(','.join(self._app.config['CONFIG_SYSTEM']['dataLogger']['headings_measurement']) + '\n')
+
         return 
 
 
@@ -290,6 +291,18 @@ class Measurement_Manager(object):
             # Handle other exceptions
             print(f"An error occurred in MV2: {e}")
             
+    def measurement_state_MV2_temp(self, testing=False):
+        
+        self._current_measurement_data['measurement_date'] = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")  # current universal coordinated time
+        self._current_measurement_data['latitude'] = 0
+        self._current_measurement_data['longitude'] = 0
+        self._current_measurement_data['Shear_Vain_20'] = 0
+        self._current_measurement_data['Shear_Vain_50'] = 0
+        self._current_measurement_data['Shear_Vain_80'] = 0
+        
+        self._current_measurement_data['Raw Sensor Data'] = 0
+        save_measurement_data(self._measurement_file, self._current_measurement_data, self._app.config['CONFIG_SYSTEM']['dataLogger']['headings_measurement'])
+        print('---------Measurements taken---------')    
             
             
     def measurement_state_MV3(self, testing=False):
@@ -341,7 +354,8 @@ class Measurement_Manager(object):
             if(self._current_state == 'idle'):
                 self.idle_state()
             elif(self._current_state == 'measurement_MV2'):#added by me //will prevent below if else statment from running and will also cause the measuremnt to dely on  self.measurement_state(testing=testing) as well  
-                self.measurement_state_MV2()
+                #self.measurement_state_MV2()
+                self.measurement_state_MV2_temp()
                 self._current_state = 'idle'
                 # don't need the sleep, this is handled by the function
             else:
