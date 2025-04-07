@@ -102,20 +102,31 @@ def save_measurement_data(filename, datadict, headers):
         @param:  datadict - the data to save
         @param:  headers - the headers to use for the csv file
         @retval: None
-    
     """
-    # check that the file ends with .csv, if not add it
-    if not filename.endswith('.csv'):
-        filename += '.csv'
+    try:
+        # check that the file ends with .csv, if not add it
+        if not filename.endswith('.csv'):
+            filename += '.csv'
 
-    # create a list of the data
-    data = [datadict[key] for key in headers]
-    # create a string of the data
-    data_string = ','.join(map(str, data))
-    #added due to ' being written in csv file 
-    data_string = data_string.replace("'", "")
-    #print(data_string)
-    # append the data to the file
-    with open(filename, 'a') as f:
-        f.write(data_string + '\n')
+        # create a list of the data
+        data = [datadict[key] for key in headers]
+        # create a string of the data
+        data_string = ','.join(map(str, data))
+        # added due to ' being written in csv file 
+        data_string = data_string.replace("'", "")
+        # print(data_string)
+
+        # append the data to the file
+        print("save_measurement_data call")
+        with open(filename, 'a') as f:
+            f.write(data_string + '\n')
+    
+    except FileNotFoundError as e:
+        print(f"Error: The file {filename} was not found. {e}")
+    except PermissionError as e:
+        print(f"Error: Permission denied when trying to write to {filename}. {e}")
+    except KeyError as e:
+        print(f"Error: Missing key in datadict or headers. {e}")
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
 

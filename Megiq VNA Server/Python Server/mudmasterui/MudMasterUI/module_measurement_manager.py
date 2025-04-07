@@ -300,7 +300,15 @@ class Measurement_Manager(object):
         self._current_measurement_data['Shear_Vain_50'] = 0
         self._current_measurement_data['Shear_Vain_80'] = 0
         
-        self._current_measurement_data['Raw Sensor Data'] = 0
+        self._current_measurement_data['Raw Sensor Data'] = """
+        1 2 3 
+        3 4 5 
+        7 8 9 
+        """
+        
+        self._current_measurement_data['Raw Sensor Data'] = f'"{self._current_measurement_data['Raw Sensor Data']}"'
+        
+        
         save_measurement_data(self._measurement_file, self._current_measurement_data, self._app.config['CONFIG_SYSTEM']['dataLogger']['headings_measurement'])
         print('---------Measurements taken---------')    
             
@@ -354,8 +362,9 @@ class Measurement_Manager(object):
             if(self._current_state == 'idle'):
                 self.idle_state()
             elif(self._current_state == 'measurement_MV2'):#added by me //will prevent below if else statment from running and will also cause the measuremnt to dely on  self.measurement_state(testing=testing) as well  
-                #self.measurement_state_MV2()
-                self.measurement_state_MV2_temp()
+                self.measurement_state_MV2()
+                #self.measurement_state_MV2_temp()
+                print("manager loop")
                 self._current_state = 'idle'
                 # don't need the sleep, this is handled by the function
             else:
