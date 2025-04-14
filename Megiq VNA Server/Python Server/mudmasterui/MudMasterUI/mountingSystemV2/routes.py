@@ -22,6 +22,7 @@ import json
 import time
 import os
 import threading
+import subprocess
 
 import numpy as np
 
@@ -128,55 +129,88 @@ def fully_retract():
         return jsonify({"error": "Error while retracting", "message": "Unsuccessful"})
 
 
+# Updated Dash IP with correct interface ID
+DASH_IP = "fe80::ae1d:dfff:fe40:58a7%5"
+
+def ping_dash():
+    """Pings the Dash device and returns True if online."""
+    try:
+        result = subprocess.run(
+            ["ping", "-n", "1", DASH_IP],
+            capture_output=True, text=True, timeout=3
+        )
+        return "ms" in result.stdout
+    except Exception:
+        return False
+
 def measurement_thread():
     """Thread function for handling measurement operations."""
     global takeMeasurement
     global isExtended
     globalErrorVar.CurrentlyLogging = True
+
     try:
-        if isExtended == 1 or isExtended == 2:
-            try:
-                time.sleep(10)
-                # Extend actuator if required
-                globalErrorVar.CurrentlyExtending = True
-                controller_mountingSystem.fullyExtend()
-                time.sleep(38)
-                controller_mountingSystem.ApplyBrake()
-                isExtended = 3
-                globalErrorVar.CurrentlyExtending = False
-            except Exception as e:
-                isExtended = 1
-                pass
-        
-        measurement_manager.start_measurement()
-        print("waiting for app to be initalised")
         while takeMeasurement:
-            measurement_manager._current_state = 'measurement_MV2'
-            time.sleep(measurement_manager._app.config['CONFIG_RUN']['measurement_manager']['measurement_delay'])
-            if globalErrorVar.ErrorFromMeasurementManager:
-                globalErrorVar.ErrorFromMeasurementManager = False
-                #takeMeasurement = False # removed to allow measurements to be ask when opterator leave for breaks as dash would be turned off
-            elif globalErrorVar.ErrorFromActuatorReadWrite:
-                globalErrorVar.ErrorFromActuatorReadWrite = False
-                takeMeasurement = False
-            elif globalErrorVar.ErrorFromTeltonika:
-                globalErrorVar.ErrorFromTeltonika = False
-                takeMeasurement = False
-                
-            # Convert shutdown time string from config to a time object
-            shutdown_time = datetime.strptime(ConfigFile.Config.AUTO_SHUT_DOWN_TIME, '%H:%M').time()
-            # Get current time as a time object
-            current_time = datetime.now().time()
-            print(current_time)
-            print(shutdown_time)
-            if current_time >= shutdown_time:  # If it's 4:00 PM need to test .time() 
-                takeMeasurement = False
-                fully_retract()  # Call fully_retract 
-                break
-                
+            if not ping_dash():
+                print("[INFO] Dash not detected. Waiting...")
+                time.sleep(5)
+                continue
+
+            print("[INFO] Dash detected. Preparing to start measurement...")
+
+            if isExtended in [1, 2]:
+                try:
+                    print("[ACTION] Extending actuator...")
+                    time.sleep(10)
+                    globalErrorVar.CurrentlyExtending = True
+                    controller_mountingSystem.fullyExtend()
+                    time.sleep(38)
+                    controller_mountingSystem.ApplyBrake()
+                    isExtended = 3
+                    globalErrorVar.CurrentlyExtending = False
+                    print("[SUCCESS] Actuator fully extended.")
+                except Exception as e:
+                    isExtended = 1
+                    print("[ERROR] Failed to extend actuator:", e)
+                    continue
+
+            measurement_manager.start_measurement()
+            print("[INFO] Measurement started.")
+
+            while takeMeasurement and ping_dash():
+                measurement_manager._current_state = 'measurement_MV2'
+                time.sleep(measurement_manager._app.config['CONFIG_RUN']['measurement_manager']['measurement_delay'])
+
+                if globalErrorVar.ErrorFromMeasurementManager:
+                    globalErrorVar.ErrorFromMeasurementManager = False
+                    print("[WARNING] Measurement manager error encountered.")
+
+                elif globalErrorVar.ErrorFromActuatorReadWrite or globalErrorVar.ErrorFromTeltonika:
+                    print("[ERROR] Critical error from actuator or Teltonika. Stopping measurement.")
+                    globalErrorVar.ErrorFromActuatorReadWrite = False
+                    globalErrorVar.ErrorFromTeltonika = False
+                    takeMeasurement = False
+                    break
+
+                shutdown_time = datetime.strptime(ConfigFile.Config.AUTO_SHUT_DOWN_TIME, '%H:%M').time()
+                current_time = datetime.now().time()
+                print(f"[TIME] Current time: {current_time} | Shutdown at: {shutdown_time}")
+
+                if current_time >= shutdown_time:
+                    print("[INFO] Auto shutdown time reached. Stopping measurement.")
+                    takeMeasurement = False
+                    break
+
+            print("[ACTION] Retracting actuator...")
+            fully_retract()
+            isExtended = 1
+            print("[SUCCESS] Actuator retracted.")
+
+            time.sleep(5)
+
     except Exception as e:
         isExtended = 1
-        print("exceptioon in Mounting system V2 routes")
+        print("[EXCEPTION] Measurement thread encountered an error:", e)
+
     globalErrorVar.CurrentlyLogging = False
-    
-    print("mesurement stopped at routes.py for msv2")#
+    print("[INFO] Measurement thread has exited.")
