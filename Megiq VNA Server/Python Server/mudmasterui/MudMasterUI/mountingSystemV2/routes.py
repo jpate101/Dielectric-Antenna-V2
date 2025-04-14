@@ -117,7 +117,7 @@ def fully_retract():
             globalErrorVar.CurrentlyRetracting = True
             sleep = controller_mountingSystem.fullyRetact()
             if sleep == "success":
-                time.sleep(32)  # Wait for the actuator to fully retract
+                time.sleep(38)  # Wait for the actuator to fully retract
                 controller_mountingSystem.ApplyBrake()
                 isExtended = 2
         globalErrorVar.CurrentlyRetracting = False
@@ -140,7 +140,7 @@ def measurement_thread():
                 # Extend actuator if required
                 globalErrorVar.CurrentlyExtending = True
                 controller_mountingSystem.fullyExtend()
-                time.sleep(32)
+                time.sleep(38)
                 controller_mountingSystem.ApplyBrake()
                 isExtended = 3
                 globalErrorVar.CurrentlyExtending = False
@@ -163,14 +163,16 @@ def measurement_thread():
                 globalErrorVar.ErrorFromTeltonika = False
                 takeMeasurement = False
                 
-            current_time = datetime.now().strftime('%H:%M')  # Get current time in HH:MM format
+            # Convert shutdown time string from config to a time object
+            shutdown_time = datetime.strptime(ConfigFile.Config.AUTO_SHUT_DOWN_TIME, '%H:%M').time()
+            # Get current time as a time object
+            current_time = datetime.now().time()
             print(current_time)
-            print(ConfigFile.Config.AUTO_SHUT_DOWN_TIME)
-            if current_time == ConfigFile.Config.AUTO_SHUT_DOWN_TIME:  # If it's 4:00 PM
+            print(shutdown_time)
+            if current_time >= shutdown_time:  # If it's 4:00 PM need to test .time() 
                 takeMeasurement = False
                 fully_retract()  # Call fully_retract 
                 break
-        
                 
     except Exception as e:
         isExtended = 1
