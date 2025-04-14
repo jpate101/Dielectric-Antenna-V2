@@ -179,4 +179,4 @@ def measurement_thread():
         print("exceptioon in Mounting system V2 routes")
     globalErrorVar.CurrentlyLogging = False
     
-    print("mesurement stopped at routes.py for msv2")
+    print("mesurement stopped at routes.py for msv2")#
