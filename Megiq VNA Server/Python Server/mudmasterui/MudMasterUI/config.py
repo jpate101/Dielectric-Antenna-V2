@@ -36,7 +36,7 @@ class Config(object):
     #ELASTICNET_MODEL_LOCATION_EIGHTYCM = fr'C:\Users\{Usersfolder}\Phibion Pty Ltd\Realtime Density Sensor - {Userscloudfolder}\Megiq VNA Server (24032025)\Python Server\mudmasterui\MudMasterUI\nnData\80_EN_MT_WELD.pkl'
     #ELASTICNET_SCALER_LOCATION_EIGHTYCM = fr'C:\Users\{Usersfolder}\Phibion Pty Ltd\Realtime Density Sensor - {Userscloudfolder}\Megiq VNA Server (24032025)\Python Server\mudmasterui\MudMasterUI\nnData\80_EN_MT_WELD_scaler.pkl'
     #
-    
+    DASH_IP = "fe80::ae1d:dfff:fe40:58a7%5"
     TRANSFER_DELAY = 5
     CONFIG_DIRECTORY = os.path.join(basedir, 'configFiles')
 

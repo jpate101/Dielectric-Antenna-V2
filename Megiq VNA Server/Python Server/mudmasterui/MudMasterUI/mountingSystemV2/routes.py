@@ -130,7 +130,8 @@ def fully_retract():
 
 
 # Updated Dash IP with correct interface ID
-DASH_IP = "fe80::ae1d:dfff:fe40:58a7%5"
+#DASH_IP = "fe80::ae1d:dfff:fe40:58a7%5"
+DASH_IP = ConfigFile.Config.DASH_IP
 
 def ping_dash():
     """Pings the Dash device and returns True if online."""
