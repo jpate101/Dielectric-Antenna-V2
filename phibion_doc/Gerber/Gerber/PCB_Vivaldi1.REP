@@ -1,0 +1,26 @@
+*************************************************************
+FileName = PCB_Vivaldi1.GBR
+AutoAperture = True
+*************************************************************
+Generating : Top Layer
+      File : PCB_Vivaldi1.GTL
+
+    Adding Layer      : Top Layer
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+*************************************************************
+
+*************************************************************
+Generating : Mechanical 1
+      File : PCB_Vivaldi1.GM1
+
+    Adding Layer      : Mechanical 1
+
+
+Used DCodes :
+    D10
+*************************************************************
+
